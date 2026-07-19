@@ -451,7 +451,7 @@ class TerminalClient(CommandPipelineMixin):
     def run(self):
         """터미널 클라이언트 실행 (배너 → 자동 로그인 → 명령 입력 루프)."""
         print("=" * 60)
-        print("🤖 KB증권 자동매매 봇 - 터미널 클라이언트")
+        print("🤖 KB증권 Open API 봇 - 터미널 클라이언트")
         print("=" * 60)
         print("/help 를 입력하면 사용 가능한 명령어를 볼 수 있습니다.")
         print("/exit 또는 /power off 로 프로그램을 종료할 수 있습니다.")

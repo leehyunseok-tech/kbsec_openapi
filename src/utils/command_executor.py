@@ -24,7 +24,12 @@ class CommandPendingExecution:
         self.executed_results: Dict[int, str] = {}
 
     def get_confirmation_message(self) -> str:
-        lines = ["🔍 다음 명령어를 실행할까요?\n"]
+        # 명령이 하나뿐이면 번호를 붙이지 않는다 — 세 클라이언트(터미널/텔레그램/웹)
+        # 공통 표시 규칙(사용자 요청, 🔍 이모지도 같은 이유로 제거). 여러 개일 때만
+        # 순번을 붙여 구분한다.
+        if len(self.commands) == 1:
+            return f"다음 명령어를 실행할까요?\n\n`{self.commands[0]}`"
+        lines = ["다음 명령어를 실행할까요?\n"]
         lines.extend(f"{idx}. `{cmd}`" for idx, cmd in enumerate(self.commands, 1))
         return "\n".join(lines)
 
