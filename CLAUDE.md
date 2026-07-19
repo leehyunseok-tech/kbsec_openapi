@@ -17,7 +17,7 @@ KB증권 OpenAPI(REST) 기반 자동매매 시스템 — 텔레그램/터미널/
 ```bash
 # 클라이언트 실행 (모듈 실행 필수 — 아래 "소스 레이아웃" 참고)
 uv run python -m src.run.terminal          # 터미널 클라이언트 (개발/테스트 시 기본)
-uv run python -m src.run.main              # 텔레그램 봇
+uv run python -m src.run.main              # 텔레그램 Agent
 uv run python -m src.run.web               # 웹 (http://localhost:8000)
 uv run python -m src.run.web token         # 웹 + config.py 키로 자동 로그인 (로컬 전용)
 

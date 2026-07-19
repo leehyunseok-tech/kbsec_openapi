@@ -1,7 +1,12 @@
 # 기능 현황
 
-KB증권 OpenAPI를 활용한 텔레그램/터미널/웹 기반 자동매매 봇의 전체 기능 목록과 담당 파일,
+KB증권 OpenAPI를 활용한 텔레그램/터미널/웹 기반 자동매매 Agent의 전체 기능 목록과 담당 파일,
 매핑 API를 정리한 문서입니다.
+
+이 저장소에는 다른 코딩 에이전트(Claude Code, Codex 등)가 KB증권 Open API를 바로 쓸 수 있게 만든
+별도 배포용 Agent Skill 패키지 `agent-skill/`도 포함되어 있습니다(자체 문서: `agent-skill/README.md`,
+`agent-skill/SKILL.md`). 장기적으로 별도 공개 저장소로 분리될 예정으로, 현재는 이 프로젝트 안에서
+준비/검증 중입니다.
 
 **범례**: ✅ 지원 · 🔁 REST 폴링 기반 · ⚠️ 제약 있음 · ❌ 미지원(KB API 없음)
 
@@ -134,7 +139,7 @@ brk/wave/grid/holdings 등 각 모니터가 공통으로 쓰는 threading 폴링
 | src/api/ 모듈 생성 방식 | `docs/api/generate_api_client.py`가 명세(md)에서 자동 생성 |
 | 자동매매 모니터 구조 | `src/utils/monitor_base.py` 공용 베이스 상속 |
 | 트리플 클라이언트 공용 파이프라인 | `src/run/command_pipeline.py`(`CommandPipelineMixin`) — main.py(텔레그램)/terminal.py(터미널)/web(브라우저) 공유 |
-| 웹 인터페이스 | `src/web/`(FastAPI JSON API + 순수 HTML/CSS/JS, 서버 템플릿 없음), 실행은 `src/run/web.py`(`run-web.*`) — 브라우저 쿠키당 `WebClient` 1개(다중 사용자, 각자 앱키로 로그인), 시크릿은 서버 메모리에만 보관. 단 설정값/자동매매 감시목록(`config/data/settings.json`)은 서버 공용 |
+| 웹 인터페이스 | `src/web/`(FastAPI JSON API + 순수 HTML/CSS/JS, 서버 템플릿 없음), 실행은 `src/run/web.py`(`run-web.*`) — 브라우저 쿠키당 `WebClient` 1개(다중 사용자, 각자 앱키로 로그인), 시크릿은 서버 메모리에만 보관. 실행 화면의 출력/히스토리/확인 프롬프트는 페이지 이동·새로고침 후에도 유지(sessionStorage + `/api/pending`), 로그인 상태에선 토큰재발급·화면초기화·로그아웃(KB `/oauth2/revoke` 토큰폐기) 버튼 제공. 단 설정값/자동매매 감시목록(`config/data/settings.json`)은 서버 공용 |
 | 웹 API 명세 탐색/테스트 | `src/web/spec_browser.py` + `src/web/static/api.html` — `docs/api/md` 폴더 구조 그대로 트리 탐색, 명세 md 열람, INPUT 폼(기본값: 선택지 첫 코드/필수는 공백 채움/그 외 빈 문자열) 편집 후 실제 KB API 테스트 호출(JSON 응답 원문 표시). 주문 계열(SSAM/SKAM)은 경고+확인 대화상자 |
 
 ---

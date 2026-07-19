@@ -11,12 +11,62 @@ const pendingBox = document.getElementById("pending");
 const pendingTitle = pendingBox.querySelector(".pending-title");
 const pendingButtons = pendingBox.querySelector(".pending-buttons");
 
-function appendOutput(text, cls) {
+// ── 출력창 상태 유지 (sessionStorage) ──────────────────────────────────
+// "API 명세"/"설정"으로 이동했다가 돌아오거나 새로고침해도 출력 이력이 남도록
+// 항목을 sessionStorage(같은 탭 한정, 탭 닫으면 소멸)에 저장하고 로드 시 복원한다.
+// 서버 세션(로그인/토큰)은 HttpOnly 쿠키로 이미 유지되므로 화면만 복원하면 된다.
+const OUTPUT_STORE_KEY = "kbsec_run_output";
+const HISTORY_STORE_KEY = "kbsec_run_history";
+const OUTPUT_STORE_MAX = 300;
+
+function loadStore(key) {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(key) || "[]");
+    return Array.isArray(v) ? v : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveStore(key, arr) {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(arr));
+  } catch (e) {
+    // 저장 공간 초과 등 — 화면 동작에는 영향 없으니 무시
+  }
+}
+
+let outputStore = loadStore(OUTPUT_STORE_KEY);
+
+const WELCOME_TEXT = "명령을 입력하면 결과가 여기에 표시됩니다. /help 로 전체 명령어를 볼 수 있습니다.";
+
+function renderEntry(text, cls) {
   const span = document.createElement("span");
   span.className = "entry" + (cls ? " " + cls : "");
   span.textContent = text;
   output.appendChild(span);
   output.scrollTop = output.scrollHeight;
+}
+
+function appendOutput(text, cls) {
+  renderEntry(text, cls);
+  outputStore.push({ t: text, c: cls || "" });
+  if (outputStore.length > OUTPUT_STORE_MAX) outputStore = outputStore.slice(-OUTPUT_STORE_MAX);
+  saveStore(OUTPUT_STORE_KEY, outputStore);
+}
+
+function clearScreen() {
+  outputStore = [];
+  saveStore(OUTPUT_STORE_KEY, outputStore);
+  output.innerHTML = "";
+  renderDetect(null);
+  renderEntry(WELCOME_TEXT, "notice");
+}
+
+// 저장된 이력이 있으면 초기 안내문 대신 이력을 복원한다
+if (outputStore.length > 0) {
+  output.innerHTML = "";
+  outputStore.forEach((e) => renderEntry(e.t, e.c));
 }
 
 function setBusy(busy) {
@@ -116,14 +166,19 @@ async function sendAnswer(value) {
 // ── 명령 전송 + 입력 히스토리(↑/↓) ────────────────────────────────────
 // 터미널처럼 ↑/↓ 로 이전에 입력한 명령을 다시 불러온다. draft는 히스토리 탐색을
 // 시작하기 직전에 치고 있던 내용 — ↓ 로 끝까지 내려오면 복원된다.
-const cmdHistory = [];
+// 히스토리도 출력 이력과 같이 sessionStorage에 저장해 페이지 이동 후에도 유지한다.
+let cmdHistory = loadStore(HISTORY_STORE_KEY);
 let historyIndex = -1; // -1 = 히스토리 탐색 중 아님
 let historyDraft = "";
 
 async function sendCommand() {
   const text = input.value.trim();
   if (!text) return;
-  if (cmdHistory[cmdHistory.length - 1] !== text) cmdHistory.push(text);
+  if (cmdHistory[cmdHistory.length - 1] !== text) {
+    cmdHistory.push(text);
+    if (cmdHistory.length > 100) cmdHistory = cmdHistory.slice(-100);
+    saveStore(HISTORY_STORE_KEY, cmdHistory);
+  }
   historyIndex = -1;
   historyDraft = "";
   input.value = "";
@@ -511,9 +566,46 @@ document.querySelectorAll(".side-rail").forEach((rail) => {
   if (localStorage.getItem("kbsec_side_" + id) === "1") setSideCollapsed(id, true);
 });
 
+// ── 화면초기화 버튼 + 세션 버튼(토큰재발급/로그아웃) 실행 화면 훅 ──────
+// 토큰재발급/로그아웃 버튼 자체는 api.js가 3개 페이지 공통으로 바인딩한다.
+// 실행 화면은 결과를 alert 대신 출력창/API 로그에 반영하도록 훅만 정의한다.
+const clearScreenBtn = document.getElementById("btn-clear-screen");
+if (clearScreenBtn) {
+  clearScreenBtn.addEventListener("click", (e) => {
+    // 버튼이 패널 제목줄(h2.v-head, 클릭=접기 토글) 안에 있으므로 전파를 막는다
+    e.stopPropagation();
+    // 화면(출력창)만 초기화 — 로그인/토큰/명령 히스토리는 그대로 유지
+    clearScreen();
+    input.focus();
+  });
+}
+
+window.onTokenRefreshed = (r) => {
+  appendOutput((r.success ? "" : "❌ ") + (r.message || "토큰 재발급"), "notice");
+  pollApiLog(); // 재발급 RQ/RP를 로그 패널에 즉시 반영
+};
+
+window.onSessionLogout = (r) => {
+  // 화면·히스토리·대기 세션까지 전부 초기화 (서버도 확인/선택 세션을 닫는다)
+  cmdHistory = [];
+  saveStore(HISTORY_STORE_KEY, cmdHistory);
+  historyIndex = -1;
+  renderPending(null);
+  clearScreen();
+  renderEntry((r.success ? "👋 " : "❌ ") + (r.message || "로그아웃"), "notice");
+  pollApiLog(); // 토큰 폐기 RQ/RP를 로그 패널에 즉시 반영
+};
+
 // ── 초기화 ─────────────────────────────────────────────────────────────
+// 미로그인 안내는 renderEntry(비저장)로만 표시 — appendOutput으로 저장하면
+// 페이지를 오갈 때마다 이력에 같은 안내문이 쌓인다.
 refreshStatusBadge().then((s) => {
   if (s && !s.logged_in) {
-    appendOutput("ℹ️ 아직 로그인되지 않았습니다. 상단 '설정'에서 KB증권 앱키/시크릿을 입력하면 자동으로 로그인됩니다.", "notice");
+    renderEntry("ℹ️ 아직 로그인되지 않았습니다. 상단 '설정'에서 KB증권 앱키/시크릿을 입력하면 자동으로 로그인됩니다.", "notice");
   }
 });
+
+// 페이지 이동/새로고침 전에 열려 있던 확인/선택 세션이 서버에 남아 있으면 복원
+apiGet("/api/pending").then((r) => {
+  if (r && r.pending) renderPending(r.pending);
+}).catch(() => {});

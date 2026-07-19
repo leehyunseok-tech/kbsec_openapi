@@ -22,6 +22,14 @@ class SessionManager:
             self.token_issued_at + timedelta(seconds=int(expires_in)) if expires_in is not None else None
         )
 
+    def clear(self):
+        """로그아웃 — 보관 중인 토큰/환경 정보를 전부 제거한다 (토큰 폐기 API 호출은 호출자 몫)."""
+        self.access_token = None
+        self.trading_env = None
+        self.host_url = None
+        self.token_issued_at = None
+        self.token_expires_at = None
+
     def is_logged_in(self):
         return self.access_token is not None
 

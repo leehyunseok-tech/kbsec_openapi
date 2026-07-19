@@ -51,7 +51,7 @@ def _get_client(api_key: str = None):
 def _build_system_prompt() -> str:
     guide = _load_command_guide()
     api_names = _build_api_name_list()
-    return f"""당신은 KB증권 Open API 봇의 명령어 변환 AI 어시스턴트입니다.
+    return f"""당신은 KB증권 Open API Agent의 명령어 변환 AI 어시스턴트입니다.
 
 사용자의 자연어 지시사항을 정확한 명령어로 변환하는 것이 당신의 역할입니다.
 

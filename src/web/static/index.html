@@ -3,16 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KB증권 Open API 봇 - 웹</title>
+  <title>KB증권 Open API Agent - 웹</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header>
     <div class="brand">
-      <span class="brand-mark">KB</span>
-      <h1>KB증권 Open API 봇</h1>
+      <!-- <span class="brand-mark">KB</span> -->
+      <h1>KB증권 Open API Agent</h1>
     </div>
     <span id="status-badge">확인 중...</span>
+    <!-- 계정(토큰) 관련 버튼 — 로그인 상태에서만 표시 (api.js가 바인딩/토글, 3개 페이지 공통) -->
+    <div id="session-actions" class="session-actions hidden">
+      <button id="btn-logout" class="danger" title="KB 토큰을 폐기(로그아웃)하고 화면을 초기화합니다">⏻ 로그아웃</button>
+      <button id="btn-token-refresh" title="마지막 로그인에 쓴 앱키로 KB 토큰을 새로 발급받습니다">토큰재발급</button>
+    </div>
     <span class="spacer"></span>
     <nav>
       <a href="/" class="active">실행</a>
@@ -85,7 +90,11 @@
       <!-- 주의: 여기는 details를 쓰지 않는다 — details는 flex 컨테이너가 되지 못해
            출력창(#output)이 패널의 남는 높이를 채우는 체인이 끊긴다. 접기는 JS 토글. -->
       <section class="panel cmd-panel resizable" id="cmd-panel">
-        <h2 class="v-head" data-vtoggle="cmd-panel">명령 실행 <span class="v-arrow">▾</span></h2>
+        <h2 class="v-head" data-vtoggle="cmd-panel">명령 실행 <span class="v-arrow">▾</span>
+          <!-- 출력창 전용 도구 — 로그인 여부와 무관하게 항상 표시. 클릭이 h2의 접기 토글로
+               번지지 않도록 app.js에서 stopPropagation 처리 -->
+          <button id="btn-clear-screen" class="panel-tool-btn" title="출력창을 비웁니다 (로그인/토큰/입력 히스토리는 유지)">🧹 화면초기화</button>
+        </h2>
         <div class="v-body">
           <div id="output"><span class="entry notice">명령을 입력하면 결과가 여기에 표시됩니다. /help 로 전체 명령어를 볼 수 있습니다.</span></div>
 

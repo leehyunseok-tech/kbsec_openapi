@@ -24,7 +24,7 @@ import threading
 from collections import deque
 
 from config import config
-from src.api.auth import get_token
+from src.api.auth import get_token, revoke_token
 from src.commands.login_command import handle_status
 from src.commands.srch_command import handle_srch
 from src.commands.buy_command import handle_buy
@@ -104,6 +104,12 @@ class WebClient(CommandPipelineMixin):
         self.telegram_token = None
         self.telegram_chat_id = None
 
+        # 마지막 로그인에 쓴 앱키/시크릿 (메모리 전용 — 토큰 재발급/로그아웃 시 토큰
+        # 폐기에 필요). 시크릿 무저장 원칙과 동일하게 이 인스턴스 밖으로 나가지 않는다.
+        self._login_env = None
+        self._login_client_key = None
+        self._login_client_secret = None
+
         self._notify_lock = threading.Lock()
         self.notifications = deque(maxlen=200)
 
@@ -178,10 +184,47 @@ class WebClient(CommandPipelineMixin):
 
         if result["success"]:
             self.session.set_token(result["access_token"], env, result["expires_in"])
+            self._login_env = env
+            self._login_client_key = client_key
+            self._login_client_secret = client_secret
             return {"success": True, "message": handle_status([], self.session)}
 
         error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
         return {"success": False, "message": f"로그인 실패: {error_msg}"}
+
+    def reissue_token(self) -> dict:
+        """토큰 재발급 — 마지막 로그인에 쓴 앱키/시크릿으로 새 토큰을 발급받는다."""
+        if not (self._login_client_key and self._login_client_secret):
+            return {"success": False, "message": "재발급에 쓸 앱키가 없습니다. 설정 화면에서 다시 로그인하세요."}
+        result = self.login(self._login_env or "real", self._login_client_key, self._login_client_secret)
+        if result["success"]:
+            result["message"] = "🔑 토큰을 재발급했습니다.\n" + result["message"]
+        return result
+
+    def logout(self) -> dict:
+        """로그아웃 — KB에 토큰 폐기를 요청하고, 이 세션의 토큰/앱키를 메모리에서 지운다.
+
+        폐기 API가 실패해도 로컬 상태는 반드시 지운다 — 사용자 관점의 로그아웃은
+        항상 성공해야 하고, 폐기 실패한 토큰은 만료 시각까지만 유효하다.
+        """
+        if not self.session.is_logged_in():
+            return {"success": False, "message": "로그인 상태가 아닙니다."}
+
+        detail = ""
+        if self._login_client_key and self._login_client_secret:
+            revoked = revoke_token(
+                self.session.host_url, self.session.access_token,
+                self._login_client_key, self._login_client_secret,
+            )
+            if not revoked["success"]:
+                detail = " (KB 토큰 폐기 요청은 실패 — 토큰은 만료 시각까지 유효할 수 있습니다)"
+
+        self.session.clear()
+        self._login_env = None
+        self._login_client_key = None
+        self._login_client_secret = None
+        get_session_manager().close_session(self.user_id)  # 열려 있던 확인/선택 세션도 정리
+        return {"success": True, "message": "로그아웃되었습니다." + detail}
 
     def describe_pending_session(self):
         """현재 활성 확인/선택 세션을 프론트엔드가 렌더링할 수 있는 JSON으로 변환.

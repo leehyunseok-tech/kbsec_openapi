@@ -63,7 +63,7 @@ def main():
     url = f"http://{display_host}:{port}/"
 
     print("=" * 60)
-    print("🌐 KB증권 Open API 봇 - 웹 클라이언트")
+    print("🌐 KB증권 Open API Agent - 웹 클라이언트")
     print("=" * 60)
     print(f"브라우저에서 접속: {url}")
 

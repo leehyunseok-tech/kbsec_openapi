@@ -66,7 +66,7 @@ from src.utils.holdings_monitor import HoldingsMonitor
 
 _AUTOTRADE_FEATURES = ("stls", "gdcrs", "ddcrs", "trst", "hold", "brk", "wave", "grid")
 
-HELP_TEXT = """🤖 KB증권 Open API 봇 - 사용 가능한 명령어
+HELP_TEXT = """🤖 KB증권 Open API Agent - 사용 가능한 명령어
 
 ℹ️  / 로 시작하면 아래 명령어로 즉시 실행되고, / 없이 입력하면 자연어로 인식되어
    AI가 명령어로 변환한 뒤 확인을 거쳐 실행됩니다 (예: "삼성전자 10주 사줘").
@@ -146,7 +146,7 @@ HELP_TEXT = """🤖 KB증권 Open API 봇 - 사용 가능한 명령어
 
 
 class TelegramBot(CommandPipelineMixin):
-    """텔레그램 명령어 기반 KB증권 Open API 봇.
+    """텔레그램 명령어 기반 KB증권 Open API Agent.
 
     AI 자연어 변환 이후의 처리(종목명/API명 해석, 선택/확인 세션, 일괄 실행)는
     terminal.py와 공유하는 CommandPipelineMixin(src/run/command_pipeline.py)에 있다.
@@ -495,7 +495,7 @@ class TelegramBot(CommandPipelineMixin):
     def run(self):
         """봇 실행 - 메시지 수신 루프"""
         print("=" * 60, flush=True)
-        print("[KB증권 Open API 봇 시작]", flush=True)
+        print("[KB증권 Open API Agent 시작]", flush=True)
         print("=" * 60, flush=True)
 
         # 봇 시작 알림 텔레그램 메시지

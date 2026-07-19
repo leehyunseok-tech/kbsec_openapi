@@ -109,6 +109,35 @@ header nav a.active { background: var(--kb-yellow); color: var(--kb-charcoal); }
 #status-badge.on::before { background: #3ddc84; box-shadow: 0 0 8px rgba(61, 220, 132, 0.8); }
 #status-badge.off::before { background: var(--err); box-shadow: 0 0 8px rgba(214, 69, 65, 0.7); }
 
+/* 헤더 세션 버튼(토큰재발급/화면초기화/로그아웃) — 로그인 상태에서만 표시 */
+.session-actions { display: flex; gap: 6px; margin-right: 10px; }
+.session-actions.hidden { display: none; }
+.session-actions button {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e4da;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.session-actions button:hover { background: rgba(255, 255, 255, 0.18); color: #fff; }
+/* 로그아웃(.danger)도 기본 버튼과 같은 톤 유지 — 전역 button.danger(빨간 채움)가
+   나중에 선언돼 이기므로 여기서 더 높은 특이성으로 중립 스타일을 되돌린다.
+   위험성은 hover 시 옅은 붉은 기운으로만 암시한다 */
+.session-actions button.danger {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e4da;
+  box-shadow: none;
+}
+.session-actions button.danger:hover {
+  background: rgba(214, 69, 65, 0.18);
+  border-color: rgba(214, 69, 65, 0.45);
+  color: #fff;
+}
+
 /* ── 레이아웃/패널 ── */
 main {
   max-width: 980px;
@@ -457,8 +486,23 @@ main.home-layout {
    details를 쓰지 않는 이유: details는 flex 컨테이너가 되지 못해(브라우저가 display를
    블록으로 강제) 높이 전달 체인이 끊긴다 — 접기는 .v-head 클릭(JS 토글)로 처리. */
 .cmd-panel { display: flex; flex-direction: column; height: 640px; }
-.cmd-panel .v-head { flex: 0 0 auto; cursor: pointer; user-select: none; }
+.cmd-panel .v-head { flex: 0 0 auto; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }
 .cmd-panel .v-arrow { color: var(--muted); font-size: 12px; margin-left: 4px; transition: transform 0.2s; }
+
+/* 패널 제목줄 우측의 작은 도구 버튼 (예: 명령 실행 패널의 "화면초기화") */
+.panel-tool-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.panel-tool-btn:hover { background: var(--kb-yellow-bg); color: var(--kb-charcoal); transform: none; box-shadow: none; filter: none; }
 .cmd-panel .v-body {
   flex: 1;
   min-height: 0;

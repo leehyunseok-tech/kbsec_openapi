@@ -1,4 +1,4 @@
-"""KB증권 OAuth2 접근토큰 발급 (/oauth2/token). 수기 작성 — 코드 생성 대상 아님."""
+"""KB증권 OAuth2 접근토큰 발급/폐기 (/oauth2/token, /oauth2/revoke). 수기 작성 — 코드 생성 대상 아님."""
 
 import json
 
@@ -7,6 +7,7 @@ from src.utils.api_logger import log_api_error, log_api_request, log_api_respons
 from src.api.client import _post
 
 TOKEN_ENDPOINT = "/oauth2/token"
+REVOKE_ENDPOINT = "/oauth2/revoke"
 
 
 def get_token(host_url, client_key, client_secret):
@@ -70,3 +71,47 @@ def get_token(host_url, client_key, client_secret):
     except Exception as e:
         log_api_error("네트워크 오류", str(e))
         return {"status_code": None, "body": {"error": str(e)}, "access_token": None, "expires_in": None, "success": False}
+
+
+def revoke_token(host_url, access_token, client_key, client_secret):
+    """
+    KB증권 OAuth2 접근토큰 폐기 (docs/api/md/OAuth/토큰 폐기-*.md).
+
+    로그아웃 시 발급받은 토큰을 서버 측에서 즉시 무효화한다. 요청 바디의
+    token/clientSecret은 api_logger가 앞 8자만 남기고 마스킹해 기록한다.
+
+    Returns:
+        dict: {'status_code': int|None, 'body': dict, 'success': bool}
+    """
+    url = host_url + REVOKE_ENDPOINT
+    headers = {"Content-Type": "application/json;charset=UTF-8"}
+    payload = {
+        "dataHeader": dict(config.device_info),
+        "dataBody": {
+            "token": access_token,
+            "clientId": client_key,
+            "clientSecret": client_secret,
+        },
+    }
+
+    log_api_request(api_name="토큰 폐기", api_id=None, url=url, headers=headers, data=payload)
+
+    try:
+        response = _post(url, payload, headers)
+        response_body = response.json() if response.content else {}
+
+        log_api_response(
+            status_code=response.status_code,
+            response_headers=dict(response.headers),
+            response_body=response_body,
+        )
+
+        result_code = response_body.get("dataHeader", {}).get("resultCode")
+        success = response.status_code == 200 and result_code == "200"
+        return {"status_code": response.status_code, "body": response_body, "success": success}
+    except json.JSONDecodeError as e:
+        log_api_error("JSON 파싱 오류", str(e))
+        return {"status_code": None, "body": {"error": str(e)}, "success": False}
+    except Exception as e:
+        log_api_error("네트워크 오류", str(e))
+        return {"status_code": None, "body": {"error": str(e)}, "success": False}

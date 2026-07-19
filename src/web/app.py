@@ -192,6 +192,45 @@ def post_answer(body: AnswerBody, request: Request, response: Response):
     return {"response": text, "pending": client.describe_pending_session()}
 
 
+@app.get("/api/pending")
+def get_pending(request: Request, response: Response):
+    """현재 열려 있는 확인/선택 세션 조회 — 실행 화면이 페이지 이동/새로고침 후
+    복원될 때 서버에 남아 있는 세션을 다시 렌더링하기 위한 엔드포인트."""
+    client = _client_for(request, response)
+    return {"pending": client.describe_pending_session()}
+
+
+# ── 토큰 재발급 / 로그아웃 ─────────────────────────────────────────────
+
+
+@app.post("/api/token/refresh")
+def token_refresh(request: Request, response: Response):
+    """로그인 상태에서 마지막 로그인에 쓴 앱키로 KB 토큰을 새로 발급받는다."""
+    client = _client_for(request, response)
+    if not client.session.is_logged_in():
+        response.status_code = 401
+        return {"success": False, "message": "로그인 상태가 아닙니다. 설정 화면에서 먼저 로그인하세요."}
+    result = client.reissue_token()
+    if not result["success"]:
+        response.status_code = 400
+    return result
+
+
+@app.post("/api/logout")
+def logout(request: Request, response: Response):
+    """로그아웃 — KB 토큰 폐기(/oauth2/revoke) 후 이 세션의 토큰/앱키를 메모리에서 제거.
+
+    세션 쿠키(WebClient 인스턴스) 자체는 유지된다 — token(autoload) 모드도 자동
+    로그인은 '새로 생기는 세션'에만 적용되므로, 로그아웃 후 새로고침해도 다시
+    자동 로그인되지 않는다. 다시 로그인하려면 설정 화면에서 키를 입력한다.
+    """
+    client = _client_for(request, response)
+    result = client.logout()
+    if not result["success"]:
+        response.status_code = 400
+    return result
+
+
 # ── 종목 검색 (로컬 마스터, 로그인 불필요) ──────────────────────────────
 
 
@@ -318,6 +357,22 @@ def get_help(request: Request, response: Response):
 
 
 # ── 정적 파일 (순수 HTML/CSS/JS 프론트엔드) ─────────────────────────────
+
+
+@app.middleware("http")
+async def static_no_cache(request: Request, call_next):
+    """정적 자산(HTML/JS/CSS)은 항상 재검증(no-cache)하도록 강제.
+
+    Cache-Control이 없으면 브라우저가 휴리스틱 캐시를 써서, 서버의 파일을 갱신한
+    직후 '구버전 HTML + 신버전 JS' 같은 섞임이 생긴다 — 실제로 새 버튼을 참조하는
+    app.js가 버튼 없는 캐시된 index.html 위에서 실행돼 상태 배지가 "확인 중..."에
+    멈추는 오류가 있었다. no-cache는 ETag/Last-Modified 재검증(304)을 허용하므로
+    파일이 안 바뀌었으면 본문 재전송 없이 가볍게 최신 상태가 보장된다.
+    """
+    response = await call_next(request)
+    if not request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 @app.get("/")

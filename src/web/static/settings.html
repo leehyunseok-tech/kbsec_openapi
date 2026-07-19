@@ -3,16 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>설정 - KB증권 Open API 봇</title>
+  <title>설정 - KB증권 Open API Agent</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header>
     <div class="brand">
-      <span class="brand-mark">KB</span>
-      <h1>KB증권 Open API 봇</h1>
+      <!-- <span class="brand-mark">KB</span> -->
+      <h1>KB증권 Open API Agent</h1>
     </div>
     <span id="status-badge">확인 중...</span>
+    <!-- 계정(토큰) 관련 버튼 — 로그인 상태에서만 표시 (api.js가 바인딩/토글, 3개 페이지 공통) -->
+    <div id="session-actions" class="session-actions hidden">
+      <button id="btn-logout" class="danger" title="KB 토큰을 폐기(로그아웃)합니다">⏻ 로그아웃</button>
+      <button id="btn-token-refresh" title="마지막 로그인에 쓴 앱키로 KB 토큰을 새로 발급받습니다">토큰재발급</button>
+    </div>
     <span class="spacer"></span>
     <nav>
       <a href="/">실행</a>
@@ -25,7 +30,7 @@
     <section class="panel">
       <h2>접속 설정</h2>
       <p class="hint">
-        · KB증권 <a href="https://www.kbsec.com" target="_blank" rel="noopener">홈페이지 (고객서비스->Opne API->Open API 신청/조회) </a>에서 발급받은 앱키/앱시크릿을 입력하고 저장하면 <b>즉시 로그인</b>됩니다.<br>
+        · KB증권 <a href="https://www.kbsec.com/go.able?linkcd=m06240001" target="_blank" rel="noopener">홈페이지 (고객서비스->Opne API->Open API 신청/조회) </a>에서 발급받은 앱키/앱시크릿을 입력하고 저장하면 <b>즉시 로그인</b>됩니다.<br>
         · 입력한 키는 <b>서버 메모리에만</b> 보관되며 파일로 저장되지 않습니다. 서버가 재시작되면 다시 입력해야 합니다.<br>
         · 선택 항목(Claude/텔레그램)은 비워둬도 됩니다 — 자연어 명령을 쓰려면 Claude API 키가 필요합니다.
       </p>
