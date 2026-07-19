@@ -667,3 +667,24 @@
 4. **config**: `config/config.py` 없으면 `config.example.py` 복사 생성, 있으면 보존(재실행 안전). 완료 메시지에 "실제 키 입력 → run-terminal/main/web 실행" 다음 단계 안내.
 5. 메시지 언어는 기존 관례대로 `.bat` 영문(cp949 콘솔 깨짐 방지)/`.sh` 한글. 검증: `bash -n` + Git Bash에서 sh 실제 실행, cmd로 bat 실제 실행 — 둘 다 기설치 환경 통과 경로 확인(uv sync/config 보존/안내 출력 정상).
 6. 문서: README "시작하기"에 "0. 원클릭 설치(권장)" 절 추가, 개발환경.md에 "설치 스크립트" 절 추가.
+---
+
+### Q: 내가 가지고 있는 agent 보여줘 / agent-docs-commit-helper (실행)
+
+### A: 사용 가능한 에이전트 목록 안내 후 agent-docs-commit-helper 실행 — 문서 정합성 3곳 수정 + 5개 커밋 분할안·메시지 작성.
+
+1. 에이전트 현황: 프로젝트 `.claude/agents/` 4종(api-spec-pipeline / command-consistency / trading-logic-reviewer / docs-commit-helper) + 전역 1종(docs-commit-helper 사본, 프로젝트 쪽이 우선) + 기본 제공(general-purpose/Explore/Plan 등). 커스텀 정의가 세션 시작 후 생성돼 이번 세션엔 미등록 상태라, 정의 내용을 인라인한 general-purpose로 실행.
+2. 에이전트 결과 — 문서 수정 3곳: README 자연어 확인 메시지 예시를 현행 command_executor 출력(이모지·번호 제거)에 맞춤, features.md·CLAUDE.md의 "텔레그램 기반" 서술을 "텔레그램/터미널/웹 기반"으로 통일. 나머지 문서는 코드와 일치 확인.
+3. 커밋 분할안: mst 파이프라인 / web 클라이언트 / 표기·확인 메시지 / install 스크립트 / docs 5건으로 제안(메시지 본문 포함, 커밋은 미실행).
+
+---
+
+### Q: commit 하고 push 해줘
+
+### A: 제안된 5개 커밋을 그대로 생성하고 origin/master로 push 완료 (e356823..1575d4f).
+
+1. `3b6771e` mst: 종목마스터 파이프라인을 generate_mst 원샷 구조로 개편, 필드 라벨을 KB 공식 명세 기준으로 교정
+2. `af67f6a` web: FastAPI + 순수 HTML/JS 웹 클라이언트 추가, 트리플 클라이언트 체제로 확장
+3. `b3179cf` src: 봇 표기를 'KB증권 Open API 봇'으로 통일, 단일 명령 확인 메시지 간소화
+4. `4e838ae` install: 신규 클론 원클릭 설치 스크립트 추가
+5. `1575d4f` docs: 웹 클라이언트·종목마스터 개편·설치 스크립트를 문서에 반영
