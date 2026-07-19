@@ -41,16 +41,17 @@ def _build_api_name_list() -> str:
     return "\n".join(f"- {e['name']} ({e.get('category', '')})" for e in entries)
 
 
-def _get_client():
-    if not claude_api_key or claude_api_key.startswith("YOUR_"):
+def _get_client(api_key: str = None):
+    key = api_key or claude_api_key
+    if not key or key.startswith("YOUR_"):
         return None
-    return Anthropic(api_key=claude_api_key)
+    return Anthropic(api_key=key)
 
 
 def _build_system_prompt() -> str:
     guide = _load_command_guide()
     api_names = _build_api_name_list()
-    return f"""당신은 KB증권 자동매매 봇의 명령어 변환 AI 어시스턴트입니다.
+    return f"""당신은 KB증권 Open API 봇의 명령어 변환 AI 어시스턴트입니다.
 
 사용자의 자연어 지시사항을 정확한 명령어로 변환하는 것이 당신의 역할입니다.
 
@@ -87,20 +88,24 @@ def _build_system_prompt() -> str:
 중요: JSON 배열만 반환하고, 추가 설명이나 주석은 절대 포함하지 마세요."""
 
 
-def convert_natural_to_commands(text: str) -> Tuple[List[str], str]:
+def convert_natural_to_commands(text: str, api_key: str = None, model: str = None) -> Tuple[List[str], str]:
     """
     자연어를 명령어로 변환
+
+    api_key/model을 생략하면 config.py의 전역값을 쓴다(터미널/텔레그램 봇의 기존 동작).
+    src/web/client.py는 웹 세션(사용자)별로 설정 화면에서 입력받은 값을 넘겨,
+    다중 사용자가 하나의 서버를 같이 써도 서로 다른 Claude 키를 쓸 수 있게 한다.
 
     Returns:
         (명령어_배열, 에러메시지) - 성공 시 (명령어들, ""), 실패 시 ([], 에러메시지)
     """
-    client = _get_client()
+    client = _get_client(api_key)
     if client is None:
-        return [], "❌ Claude API 키가 설정되지 않았습니다. config/config.py의 claude_api_key를 확인하세요."
+        return [], "❌ Claude API 키가 설정되지 않았습니다. (터미널/텔레그램은 config/config.py의 claude_api_key, 웹은 설정 화면을 확인하세요)"
 
     try:
         message = client.messages.create(
-            model=claude_model,
+            model=model or claude_model,
             max_tokens=500,
             system=[{"type": "text", "text": _build_system_prompt(), "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": text}],

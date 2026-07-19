@@ -110,12 +110,18 @@ def answer_callback_query(callback_query_id, text=None):
         return False
 
 
-def send_photo(file_path: str, caption: str = "") -> dict:
-    """텔레그램으로 이미지 전송 (인라인 표시)."""
-    url = f"https://api.telegram.org/bot{telegram_token}/sendPhoto"
+def send_photo(file_path: str, caption: str = "", token: str = None, chat_id: str = None) -> dict:
+    """텔레그램으로 이미지 전송 (인라인 표시).
+
+    token/chat_id를 생략하면 config.py의 전역값을 쓴다(main.py 텔레그램 봇의 기존 동작).
+    src/web/client.py는 웹 세션별로 사용자가 입력한 값을 명시적으로 넘긴다.
+    """
+    token = token or telegram_token
+    chat_id = chat_id or telegram_chat_id
+    url = f"https://api.telegram.org/bot{token}/sendPhoto"
     try:
         with open(file_path, "rb") as f:
-            data = {"chat_id": telegram_chat_id}
+            data = {"chat_id": chat_id}
             if caption:
                 data["caption"] = caption
             response = _req.post(url, data=data, files={"photo": f})
@@ -132,12 +138,18 @@ def send_photo(file_path: str, caption: str = "") -> dict:
         return {"status_code": None, "body": {"error": str(e)}, "success": False}
 
 
-def send_document(file_path: str, caption: str = "") -> dict:
-    """텔레그램으로 파일(문서) 전송."""
-    url = f"https://api.telegram.org/bot{telegram_token}/sendDocument"
+def send_document(file_path: str, caption: str = "", token: str = None, chat_id: str = None) -> dict:
+    """텔레그램으로 파일(문서) 전송.
+
+    token/chat_id를 생략하면 config.py의 전역값을 쓴다(main.py 텔레그램 봇의 기존 동작).
+    src/web/client.py는 웹 세션별로 사용자가 입력한 값을 명시적으로 넘긴다.
+    """
+    token = token or telegram_token
+    chat_id = chat_id or telegram_chat_id
+    url = f"https://api.telegram.org/bot{token}/sendDocument"
     try:
         with open(file_path, "rb") as f:
-            data = {"chat_id": telegram_chat_id}
+            data = {"chat_id": chat_id}
             if caption:
                 data["caption"] = caption
             response = _req.post(url, data=data, files={"document": f})

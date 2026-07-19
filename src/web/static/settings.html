@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>설정 - KB증권 Open API 봇</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-mark">KB</span>
+      <h1>KB증권 Open API 봇</h1>
+    </div>
+    <span id="status-badge">확인 중...</span>
+    <span class="spacer"></span>
+    <nav>
+      <a href="/">실행</a>
+      <a href="/api.html">API 명세</a>
+      <a href="/settings.html" class="active">설정</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>접속 설정</h2>
+      <p class="hint">
+        · KB증권 <a href="https://www.kbsec.com" target="_blank" rel="noopener">홈페이지 (고객서비스->Opne API->Open API 신청/조회) </a>에서 발급받은 앱키/앱시크릿을 입력하고 저장하면 <b>즉시 로그인</b>됩니다.<br>
+        · 입력한 키는 <b>서버 메모리에만</b> 보관되며 파일로 저장되지 않습니다. 서버가 재시작되면 다시 입력해야 합니다.<br>
+        · 선택 항목(Claude/텔레그램)은 비워둬도 됩니다 — 자연어 명령을 쓰려면 Claude API 키가 필요합니다.
+      </p>
+
+      <form id="settings-form">
+        <div class="field">
+          <label>거래 환경 <span class="req">*</span></label>
+          <select id="env">
+            <option value="real" selected>운영환경 (실거래)</option>
+            <option value="dev">개발환경 (모의투자 — KB증권 미제공, 현재 동작하지 않음)</option>
+          </select>
+          <p class="hint">⚠️ KB증권은 아직 개발환경(모의투자)을 제공하지 않아 운영환경(실거래)만 사용 가능합니다. 실제 계좌로 주문이 나갈 수 있으니 주의하세요.</p>
+        </div>
+
+        <div class="field">
+          <label>앱키 (client_key) <span class="req">*</span></label>
+          <input type="password" id="client_key" placeholder="KB증권 오픈API 포털에서 발급" autocomplete="off" required>
+        </div>
+
+        <div class="field">
+          <label>앱시크릿 (client_secret) <span class="req">*</span></label>
+          <input type="password" id="client_secret" placeholder="KB증권 오픈API 포털에서 발급" autocomplete="off" required>
+        </div>
+
+        <div class="field">
+          <label>Claude API 키 <span class="opt">(선택 — 자연어 명령에 필요)</span></label>
+          <input type="password" id="claude_api_key" placeholder="sk-ant-... (https://platform.anthropic.com)" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>Claude 모델 <span class="opt">(선택 — 미입력 시 기본 모델)</span></label>
+          <input type="text" id="claude_model" placeholder="claude-haiku-4-5-20251001" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>텔레그램 봇 토큰 <span class="opt">(선택 — 체결내역 CSV/차트 파일 전송에 사용)</span></label>
+          <input type="password" id="telegram_token" placeholder="1234567:ABC... (@BotFather)" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>텔레그램 채팅 ID <span class="opt">(선택)</span></label>
+          <input type="text" id="telegram_chat_id" placeholder="123456789" autocomplete="off">
+        </div>
+
+        <button type="submit" id="save-btn">저장하고 로그인</button>
+        <div id="form-msg" class="form-msg hidden"></div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>현재 상태</h2>
+      <table class="status-table">
+        <tr><td>로그인</td><td id="st-login">-</td></tr>
+        <tr><td>거래 환경</td><td id="st-env">-</td></tr>
+        <tr><td>토큰 남은 시간</td><td id="st-token">-</td></tr>
+        <tr><td>Claude (자연어 명령)</td><td id="st-claude">-</td></tr>
+        <tr><td>텔레그램 (파일 전송)</td><td id="st-telegram">-</td></tr>
+      </table>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/settings.js"></script>
+</body>
+</html>

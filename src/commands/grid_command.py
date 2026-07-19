@@ -8,7 +8,11 @@ def set_grid_monitor(monitor):
     _grid_monitor = monitor
 
 
-def handle_grid(args, session):
+def handle_grid(args, session, monitor=None):
+    # monitor 인자는 다중 인스턴스 클라이언트(src/web/client.py — 웹 세션마다 모니터가
+    # 따로 있음)가 자기 것을 명시적으로 넘기기 위한 것. 생략하면 set_grid_monitor로
+    # 등록된 프로세스 전역 모니터를 쓴다(main.py/terminal.py — 프로세스당 1개라 충분).
+    monitor = monitor if monitor is not None else _grid_monitor
     if not args:
         return _usage()
 
@@ -31,10 +35,10 @@ def handle_grid(args, session):
             return "❌ 기준가/간격/주문금액은 0보다 커야 합니다."
         if not (1 <= max_stages <= 10):
             return "❌ 최대단계는 1~10 사이여야 합니다."
-        return _grid_monitor.add(stk_cd, base_price, interval, order_amount, max_stages) if _grid_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        return monitor.add(stk_cd, base_price, interval, order_amount, max_stages) if monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
 
     if sub == "list":
-        return _grid_monitor.get_list_text() if _grid_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        return monitor.get_list_text() if monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
 
     if sub == "remove":
         if len(args) < 2:
@@ -43,7 +47,7 @@ def handle_grid(args, session):
             idx = int(args[1])
         except ValueError:
             return "❌ 일련번호는 숫자로 입력하세요."
-        return _grid_monitor.remove(idx) if _grid_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        return monitor.remove(idx) if monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
 
     return _usage()
 
