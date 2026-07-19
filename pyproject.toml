@@ -1,0 +1,12 @@
+[project]
+name = "kbsec-api"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "anthropic>=0.117.0",
+    "matplotlib>=3.11.0",
+    "openpyxl>=3.1.5",
+    "requests>=2.34.2",
+    "schedule>=1.2.2",
+]

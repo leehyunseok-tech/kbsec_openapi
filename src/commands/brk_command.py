@@ -1,0 +1,62 @@
+"""brk 명령 처리 - 돌파매수 감시 관리."""
+
+_brk_monitor = None
+
+
+def set_brk_monitor(monitor):
+    global _brk_monitor
+    _brk_monitor = monitor
+
+
+def handle_brk(args, session):
+    if not args:
+        return _usage()
+
+    sub = args[0].lower()
+
+    if sub == "rate":
+        if len(args) < 2:
+            if _brk_monitor:
+                return f"현재 돌파 기준 상승률: +{_brk_monitor.get_rate():.1f}%\n변경: brk rate {{상승률}}"
+            return "❌ 사용법: brk rate {상승률}"
+        try:
+            rate = float(args[1])
+        except ValueError:
+            return "❌ 상승률은 숫자로 입력하세요. 예: brk rate 3.5"
+        if _brk_monitor is None:
+            return "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        return _brk_monitor.set_rate(rate)
+
+    if sub == "list":
+        return _brk_monitor.get_list_text() if _brk_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+
+    if sub == "remove":
+        if len(args) < 2:
+            return "❌ 사용법: brk remove {일련번호}"
+        try:
+            idx = int(args[1])
+        except ValueError:
+            return "❌ 일련번호는 숫자로 입력하세요."
+        return _brk_monitor.remove(idx) if _brk_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+
+    if sub == "add":
+        if len(args) < 3:
+            return "❌ 사용법: brk add {종목코드} {명령어}\n예: brk add 005930 buy 005930 10"
+        stk_cd = args[1]
+        if not (stk_cd.isdigit() and len(stk_cd) == 6):
+            return "❌ 종목코드는 6자리 숫자여야 합니다."
+        command = " ".join(args[2:])
+        return _brk_monitor.add(stk_cd, command) if _brk_monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+
+    return _usage()
+
+
+def _usage():
+    return """📋 돌파매수 감시 명령어
+
+brk rate {상승률}            기준 상승률 설정 (예: brk rate 3.5)
+brk add {종목코드} {명령어}  감시 종목 추가 (예: brk add 005930 buy 005930 10)
+brk list                     감시 목록 조회
+brk remove {일련번호}        항목 제거
+start brk                    감시 시작
+stop brk                     감시 중단"""

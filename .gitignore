@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# 실제 API 키/시크릿이 담긴 로컬 설정 파일 (config.example.py는 커밋 대상)
+config/config.py
+
+# 런타임 동적 설정/예약/쿨다운 기록, 체결 로그 (개인 거래 데이터)
+config/data/*.json
+logs/
+
+# 로컬 Claude Code 권한/설정 (개인 머신 전용, 팀 공유 대상 아님)
+.claude/
