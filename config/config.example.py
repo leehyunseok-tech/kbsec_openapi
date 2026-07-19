@@ -33,7 +33,7 @@ device_info = {
 telegram_chat_id = "YOUR_TELEGRAM_CHAT_ID"
 telegram_token = "YOUR_TELEGRAM_BOT_TOKEN"
 
-# 자연어 명령어 변환용 Claude API 키 (https://console.anthropic.com 에서 발급, 선택)
+# 자연어 명령어 변환용 Claude API 키 (https://platform.anthropic.com 에서 발급, 선택)
 claude_api_key = "YOUR_CLAUDE_API_KEY"
 # 자연어 명령어 변환에 사용할 Claude 모델
 # 가능한 모델: "claude-opus-4-8" (최고 성능), "claude-sonnet-4-6" (균형), "claude-haiku-4-5-20251001" (빠름)

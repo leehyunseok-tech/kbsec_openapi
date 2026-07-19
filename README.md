@@ -1,14 +1,14 @@
 # kbsec_api — KB증권 OpenAPI 텔레그램 자동매매 봇
 
 KB증권 [OpenAPI](https://developer.kbsec.com)(REST, 74개 API)를 활용한 **텔레그램 기반 자동매매 시스템**입니다.
-텔레그램/터미널에서 명령어(또는 자연어)로 조회·매매·자동매매 전략을 실행할 수 있습니다. API 호출 코드는
+텔레그램/터미널/웹 브라우저에서 명령어(또는 자연어)로 조회·매매·자동매매 전략을 실행할 수 있습니다. API 호출 코드는
 명세서(md)로부터 **자동 생성**되어, 명세가 바뀌어도 스크립트 재실행만으로 갱신됩니다.
 
 > ⚠️ **투자 위험 고지 — 반드시 읽어주세요**: **KB증권은 아직 개발환경(모의투자)을 제공하지 않아, 이 프로그램은 운영환경(실거래)에서만 동작합니다.** 즉 모든 명령·자동매매 전략이 실제 계좌로 즉시 주문을 전송합니다. 별도의 "안전한 연습 환경"이 없으므로, 반드시 소액/소수량으로 직접 하나씩 테스트하며 시작하고, 자동매매(gdcrs/ddcrs/trst/stls/brk/wave/grid)는 설정값을 충분히 검토한 뒤 활성화하세요. 모든 투자 책임은 사용자에게 있습니다.
 
 ## ✨ 주요 기능
 
-- **이중 클라이언트**: `src/run/main.py`(텔레그램 봇, 운영용) / `src/run/terminal.py`(터미널, 개발·테스트용) — 동일한 명령 핸들러 공유
+- **삼중 클라이언트**: `src/run/main.py`(텔레그램 봇, 운영용) / `src/run/terminal.py`(터미널, 개발·테스트용) / `src/run/web.py`(웹 브라우저, 다중 사용자) — 동일한 명령 핸들러 공유
 - **자연어 명령**: Claude AI가 "삼성전자 10주 사줘" → `buy 005930 10`으로 변환 (실행 전 확인 필요)
 - **조회**: 현재가(국내+미국), 랭킹, 계좌현황, 종목마스터/검색(로컬 파일), 투자자별 매매 차트(국내 전용)
 - **매매**: 시장가/지정가/금액기반 매수, 전량/부분 매도, 미체결 취소 (국내 + 미국 주식, 티커로 매매 가능. 해외는 보유수량 자동조회 미지원이라 매도 시 수량 필수)
@@ -33,6 +33,7 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 | **앱키/시크릿 설정**                               | [config/config.py](config/config.py) (없으면 `config.example.py` 복사)                                                  |
 | **터미널에서 바로 테스트**                         | [src/run/terminal.py](src/run/terminal.py) (또는 `run-terminal.bat`/`run-terminal.sh`로 바로 실행)                                      |
 | **텔레그램 봇 원클릭 실행**                        | `run-main.bat`(Windows) / `run-main.sh`(macOS·Linux)                                                                     |
+| **웹 브라우저에서 사용**                           | `run-web.bat`/`run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)              |
 | **코드 생성 방법/규칙**                            | [docs/api/generate_api_client.py](docs/api/generate_api_client.py), [docs/api/README.md](docs/api/README.md)               |
 | **개발 환경(uv 등) 안내**                          | [docs/prompt/개발환경.md](docs/prompt/개발환경.md)                                                                        |
 | **텔레그램 봇 명령어 전체 목록**                   | [src/run/main.py](src/run/main.py)의 `HELP_TEXT`, 또는 봇/CLI에서 `help` 입력                                                         |
@@ -63,12 +64,24 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 
 ## 🚀 시작하기
 
+### 0. 원클릭 설치 (권장)
+
+GitHub에서 처음 받은 상태라면 설치 스크립트 하나로 개발환경 전체(uv 설치 → 의존성 설치 → `config/config.py` 템플릿 생성)가 준비됩니다. **Python만 미리 설치되어 있으면 됩니다** — 없으면 스크립트가 [python.org 다운로드 링크](https://www.python.org/downloads/)를 안내하고 종료합니다.
+
+```bash
+install-project.bat      # Windows
+./install-project.sh     # macOS / Linux (최초 1회: chmod +x install-project.sh)
+```
+
+설치가 끝나면 `config/config.py`에 실제 키만 채우고 `run-*.bat`/`run-*.sh`로 바로 실행할 수 있습니다. 이미 설치된 환경에서 다시 실행해도 안전합니다(있는 것은 건너뜀). 수동으로 설치하려면 아래 1~2단계를 따르세요.
+
 ### 1. 사전 요구사항
 
-- **uv** (파이썬 패키지 관리자) — 설치: `winget install --id=astral-sh.uv -e`
+- **Python** — https://www.python.org/downloads/ (Windows는 설치 시 "Add python.exe to PATH" 체크)
+- **uv** (파이썬 패키지 관리자) — 설치: `winget install --id=astral-sh.uv -e` (install-project 스크립트가 자동 설치해 줌)
 - KB증권 개발자포털에서 발급받은 **앱키(client_key) / 앱시크릿(client_secret)**
 - (텔레그램 봇 사용 시) 텔레그램 봇 토큰([@BotFather](https://t.me/BotFather)) 및 Chat ID
-- (자연어 명령 사용 시, 선택) [Anthropic API Key](https://console.anthropic.com)
+- (자연어 명령 사용 시, 선택) [Anthropic API Key](https://platform.anthropic.com)
 
 ### 2. 의존성 설치
 
@@ -110,6 +123,9 @@ uv run python -m src.run.terminal
 
 # 운영: 텔레그램 봇 (무한 폴링, telegram_token/telegram_chat_id 필요)
 uv run python -m src.run.main
+
+# 웹: 브라우저 인터페이스 (http://localhost:8000, 다중 사용자 지원)
+uv run python -m src.run.web
 ```
 
 > `src/run/main.py`·`src/run/terminal.py`는 반드시 `-m src.run.<모듈>` 형태(모듈 실행)로 실행해야 합니다.
@@ -127,20 +143,41 @@ uv run python -m src.run.main
 |---|---|---|---|
 | `run-terminal.bat` | Windows 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
 | `run-main.bat` | Windows 전용 | 텔레그램 봇 실행 | `src/run/main.py` |
+| `run-web.bat` | Windows 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
 | `run-terminal.sh` | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
 | `run-main.sh` | macOS·Linux 전용 | 텔레그램 봇 실행 | `src/run/main.py` |
+| `run-web.sh` | macOS·Linux 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
 
 ```bash
 # Windows (탐색기에서 더블클릭해도 됨)
 run-terminal.bat
 run-main.bat
+run-web.bat
 
 # macOS / Linux
 ./run-terminal.sh
 ./run-main.sh
+./run-web.sh
 ```
 
-> 처음 한 번은 `chmod +x run-terminal.sh run-main.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux). Windows에서는 필요 없습니다.
+> 처음 한 번은 `chmod +x run-terminal.sh run-main.sh run-web.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux). Windows에서는 필요 없습니다.
+
+---
+
+## 🌐 웹 클라이언트 사용법
+
+`run-web.*`(또는 `uv run python -m src.run.web`)을 실행하고 브라우저에서 http://localhost:8000 에 접속합니다.
+프론트엔드는 프레임워크 없이 **순수 HTML + CSS + JS(fetch)**, 백엔드는 FastAPI JSON API로만 구성되어 있습니다 (`src/web/`).
+
+- **다중 사용자**: 브라우저(쿠키)마다 독립 세션이 만들어져, 여러 사람이 같은 서버에 접속해 **각자 자기 앱키로** 로그인/매매할 수 있습니다.
+- **별도 로그인 화면 없음**: "설정" 화면에서 KB증권 **앱키(client_key)/앱시크릿(client_secret)** (필수)을 입력하고 저장하면 즉시 로그인됩니다. 거래 환경(운영/개발)도 여기서 선택합니다 (개발환경은 KB증권 미제공으로 현재 동작하지 않음). Claude API 키·텔레그램 토큰은 선택 입력입니다.
+- **입력한 키는 서버 메모리에만** 보관됩니다 — 파일로 저장되지 않으며, 서버를 재시작하면 다시 입력해야 합니다. 서버는 시크릿 원문을 응답으로 되돌려주지 않습니다.
+- **명령 입력은 터미널/텔레그램과 동일**: `/`로 시작하면 즉시 실행, `/` 없이 입력하면 AI 자연어 변환 후 확인. 확인/선택이 필요하면 화면에 버튼이 뜹니다 (터미널의 화살표 메뉴, 텔레그램의 인라인 버튼과 같은 역할). 화면 상단의 사용 방법 카드에서 예시 명령을 클릭하면 입력창에 자동으로 채워집니다. 명령 입력창에서 **↑/↓** 키로 이전에 입력한 명령을 다시 불러올 수 있습니다.
+- **종목 검색창**: 두 글자 이상 입력하면 글자를 칠 때마다 국내(종목명·종목코드)/해외(티커·이름) 종목이 실시간으로 검색됩니다 (예: "삼성전" → 삼성전기/삼성전자..., "IO" → IONQ..., 대소문자 무관 — "kb금융"도 KB금융 검색). 종목마스터는 서버 시작 시 메모리에 미리 로드되어 빠르게 응답하고, 검색 결과를 클릭하면 그 종목만 목록에 남고 명령 입력창에 종목코드가 들어갑니다(↑/↓ 이동 후 Enter 선택도 동일). 하이라이트 없이 Enter를 누르면 정확일치 종목만 표시됩니다. 자연어 명령("삼성전자 10주 사줘")을 입력하는 동안에는 입력창 아래에 인식된 종목(삼성전자 005930)이 칩으로 표시됩니다.
+- **API 명세 탐색/테스트 (`/api.html`)**: `docs/api/md`의 업무구분 폴더 구조(OAuth/국내주식/해외주식 → 계좌잔고/기본시세/...)를 그대로 트리로 탐색하면서 명세 문서를 웹에서 읽고, INPUT 파라미터가 기본값으로 채워진 폼을 수정해 **실제 KB API를 테스트 호출**하고 원본 JSON 응답을 확인할 수 있습니다. `dataHeader`(ipAddr/macAddr)는 일반 주문/조회와 동일하게 서버가 자동 구성합니다. ⚠️ 운영환경(실거래)이므로 주문 계열(SSAM/SKAM) API는 전송 전에 확인 대화상자와 경고가 표시됩니다.
+- **주의(서버 공용 데이터)**: 로그인/토큰/자동매매 모니터 스레드는 사용자별로 분리되지만, 설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록(`config/data/settings.json`)은 **서버 전체 공용**입니다. 여러 사람이 쓸 때는 자동매매 기능 사용을 조율하세요.
+- **호스트/포트 변경**: 환경변수 `KBSEC_WEB_HOST`(기본 `127.0.0.1` — 로컬 전용) / `KBSEC_WEB_PORT`(기본 `8000`). 같은 네트워크의 다른 기기나 클라우드 배포 시 `KBSEC_WEB_HOST=0.0.0.0`으로 실행하되, 반드시 신뢰할 수 있는 네트워크(VPN 등)나 인증 프록시 뒤에서만 노출하세요 — 웹 화면 자체에는 접근 인증이 없습니다.
+- **로컬 1인 사용 편의 — `token` 옵션**: `run-web.bat token`(Windows) / `./run-web.sh token`(macOS·Linux)으로 실행하면 `config/config.py`의 앱키(client_key/client_secret)와 선택 항목(Claude API 키, 텔레그램 토큰)으로 새 브라우저 세션이 자동으로 설정·로그인되고, 브라우저가 실행 화면(`/`)으로 자동으로 열립니다 — 매번 값을 다시 입력할 필요가 없습니다. 다만 이 옵션은 "설정 화면에서 각자 자기 키를 입력"하는 다중 사용자 원칙의 예외라서, **접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동 로그인됩니다** — 반드시 로컬(`127.0.0.1`)에서 혼자 쓸 때만 사용하고, `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출된 상태에서는 절대 켜지 마세요. 자동 설정 후에도 설정 화면의 입력칸 자체에는 시크릿 원문이 표시되지 않습니다(다중 사용자 모드와 동일하게, 응답으로 시크릿을 절대 돌려주지 않는 설계를 그대로 유지) — 로그인 상태만 즉시 반영됩니다.
 
 ---
 
@@ -201,9 +238,9 @@ IONQ  시장가(현재가 $12.34 기준)  10주 ...
 ```
 >>> 삼성전자 10주 사줘
 
-🔍 다음 명령어를 실행할까요?
+다음 명령어를 실행할까요?
 
-1. `buy 005930 10`
+`buy 005930 10`
 [Enter] 실행   [다른 키] 취소
 ```
 
@@ -392,6 +429,23 @@ uv run python docs/api/generate_api_client.py                   # 호출 코드 
 ```
 
 새 API를 추가할 땐 `docs/api/generate_api_client.py`의 `CODE_TO_MODULE` 딕셔너리에 코드→모듈 배정을 추가해야 합니다 (누락 시 경고 출력 후 건너뜀).
+
+### 종목마스터 갱신 (mst)
+
+```
+mst/origin/*.mst (KB 배포 원본)  ──┐
+docs/mst/xlsx/mst_*.xlsx (공식 필드 명세) ──┤── src/manage/generate_mst.py ──▶
+docs/api/api-list.md (API 코드 검증) ──┘
+    ├─ docs/mst/xlsx/openapi_mst_*.xlsx   (사용/참조 필드 선별표)
+    ├─ docs/mst/md/openapi_mst_*.md       (선별표 md + 코드→라벨 변환 규칙)
+    └─ mst/api/openapi_field_*.mst        (종목검색 런타임 데이터)
+```
+
+KB에서 새 종목마스터(`mtsjname.mst`/`mtsoutjname.mst`/`FORENMST_US.MST`)를 받았으면 `mst/origin/`에 덮어쓰고 한 번만 실행합니다:
+
+```bash
+uv run python -m src.manage.generate_mst
+```
 
 ---
 

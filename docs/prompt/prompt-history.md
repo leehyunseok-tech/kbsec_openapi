@@ -426,3 +426,244 @@
 6. **검증**: (a) 세션 해석 로직(텍스트 기반, 무변경)이 여전히 정상 동작하는지 목 네트워크+목 AI변환으로 재확인. (b) `ApiCallPending` 필드 순차 진행을 터미널 텍스트 경로와 텔레그램 콜백 경로 양쪽에서 실제로 2단계 프롬프트를 거쳐 최종 payload가 정확한지(`SSAM1802` 매수주문, 필드 2개) 확인, 중간에 잘못된 입력이 오면 세션이 제대로 정리되는지 확인. (c) `terminal_ui`의 비대화형 폴백을 `io.StringIO`로 stdin을 실제로 바꿔치기해서 진짜 코드 경로로 검증(confirm 빈줄/다른입력, select 정상번호/범위밖번호). (d) 실제 화살표 키 입력은 이 환경에서 재현 불가능하므로, `_read_key()`를 스크립트로 모킹해 인터랙티브 분기의 상태 전이(↑↓ 이동, 순환, 여러 자리 숫자 누적+Enter 확정, 화살표로 숫자버퍼 초기화, 범위밖 숫자 무시, Backspace 정정, Esc 취소, 빈 목록)를 12개 시나리오로 검증. (e) 80개 모듈 전체 import 스윕, 실제(모킹 아닌) `msvcrt` import와 `SetConsoleMode` 호출이 이 Windows 환경에서 에러 없이 동작함을 확인.
 7. **문서**: `README.md`의 자연어 명령 예시를 새 Enter 확인 흐름으로 갱신, `docs/features.md`의 "실행 전 확인 흐름" 행을 터미널/텔레그램 각각의 새 UI로 재작성, `CLAUDE.md` utils 목록에 `terminal_ui.py` 추가.
 8. **한계**: 실제 물리 키보드의 화살표 입력·실제 텔레그램 서버로의 인라인 버튼 렌더링은 이 세션에서 직접 구동해 확인할 수 없는 영역이라, 사용자가 `run-terminal.*`/실제 텔레그램 봇에서 최종 확인해야 함을 안내.
+
+---
+
+### Q: (웹 인터페이스 상담) 웹화면으로 실행하고 설정에서 config.py 내용을 입력받고, 나중에 클라우드로도 배포하려는데 어떤 기술 스택이 좋을지 추천해줘 → Jinja2+htmx 말고 순수 HTML/JS는 어때? → "순수 HTML+JS(fetch)" 이걸로만 하고 싶은데 가능해?
+
+### A: 3턴에 걸친 기술 스택 상담. 최종적으로 "백엔드 FastAPI(순수 JSON API) + 프론트 순수 HTML+CSS+JS(fetch), 서버 템플릿 없음" 단일 방식으로 확정.
+
+1. 첫 답변에서 FastAPI + Jinja2/htmx + 시크릿/운영설정 분리 + Docker 배포를 추천했으나, 사용자가 Jinja2/htmx에 익숙하지 않다고 해 순수 HTML+JS(fetch) 방식과 Jinja2-폼만(JS 없음) 방식 두 가지로 재구성해 제시.
+2. 사용자가 "순수 HTML+JS(fetch)만으로 전체를 만들고 싶다"고 확정 → 오히려 렌더링 방식이 하나로 통일되어 더 깔끔하다고 확인. 설정 화면도 `<input>` + `fetch(POST)`로 대시보드와 같은 패턴이며, 페이지 이동은 화면마다 별도 .html 파일(`<a href>`)로 SPA 라우터도 불필요함을 안내.
+
+---
+
+### Q: backend는 fastapi로 하고, web 관련 모든 소스는 src/web 폴더 안에, 실행하는 것만 src/run 아래에 만들어줘. 나한테 물어보지 말고 모든 작업을 진행해주고 문서들도 모두 업데이트해줘. (구축방향: 다중 사용자 / 로그인 화면 없이 설정에서 client_key·client_secret 필수 입력 + 나머지 선택 입력 + 개발/운영 선택 / 사용방법이 화면에 표시 / terminal·main처럼 직접 입력 실행)
+
+### A: 웹 인터페이스 전체 구현 완료 — 트리플 클라이언트 아키텍처(텔레그램/터미널/웹)로 확장.
+
+1. **의존성**: `uv add fastapi "uvicorn[standard]"`.
+2. **`src/web/client.py`(신규)**: `WebClient(CommandPipelineMixin)` — main/terminal과 동일한 `src/commands/*.py` 핸들러 공유. 브라우저 세션(쿠키) 1개 = 인스턴스 1개. 다중 사용자 전제라 config.py 앱키로 자동 로그인하지 않고, 설정 화면에서 받은 사용자별 client_key/client_secret으로 `login()` 실행(메모리만 보관, 디스크 저장 없음). 모니터 알림은 텔레그램 전송 대신 인스턴스별 `deque` 큐에 쌓아 프론트가 폴링. 확인/선택 세션은 `describe_pending_session()`이 JSON(`{kind: confirm|select, ...}`)으로 변환해 내려줌 — 세션 해석 로직(텍스트 "y"/"n"/번호)은 터미널/텔레그램과 동일하게 무변경.
+3. **`src/web/session_store.py`(신규)**: 쿠키 `kbsec_web_sid` ↔ WebClient 인메모리 매핑(`secrets.token_urlsafe`, 12시간 유휴 정리). 서버 재시작 시 전부 소멸 — 시크릿을 디스크에 남기지 않으려는 의도적 설계.
+4. **`src/web/app.py`(신규)**: FastAPI — `/api/settings`(GET: 마스킹된 상태만/POST: 설정 저장=즉시 KB 로그인), `/api/command`, `/api/answer`(확인/선택 버튼 응답), `/api/notifications`, `/api/help` + 정적 파일 서빙. Jinja2 등 서버 템플릿 없음, 시크릿 원문은 응답으로 절대 반환하지 않음.
+5. **`src/web/static/`(신규)**: 순수 HTML+CSS+JS(fetch), 외부 라이브러리/CDN 없음. `index.html`(사용 방법 카드 — 예시 명령 클릭 시 입력창 자동 채움 + 터미널풍 출력창 + 확인/선택 버튼 영역), `settings.html`(필수: 거래환경 real/dev 선택, client_key/client_secret — 선택: Claude 키/모델, 텔레그램 토큰/채팅ID), `js/api.js`(fetch 래퍼)/`js/app.js`/`js/settings.js`.
+6. **`src/run/web.py`(신규) + `run-web.bat`/`run-web.sh`**: uvicorn 구동만 담당(구현은 전부 src/web/). 기본 http://localhost:8000, `KBSEC_WEB_HOST`/`KBSEC_WEB_PORT`로 변경.
+7. **기존 코드 멀티유저 개선**: (a) `handle_brk/wave/grid`에 `monitor=None` 인자 추가 — 전역 싱글턴(set_*_monitor)만 쓰면 마지막 접속 사용자의 모니터가 전체 사용자의 명령을 가로채는 문제를 해결(웹은 자기 모니터를 명시적으로 전달, main/terminal은 기존 전역 방식 유지). (b) `convert_natural_to_commands(api_key=, model=)`, `send_photo/send_document(token=, chat_id=)` override 인자 추가(생략 시 config.py 전역값 — 기존 동작 불변).
+8. **검증**: 목 네트워크로 WebClient 7개 시나리오(confirm/select/ApiCallPending 필드 순차 진행/다중 사용자 세션 격리/모니터 인스턴스 격리/알림 큐 격리/login 안내) + 실제 서버 기동 후 HTTP 검증(정적 파일 200, 필수값 누락 400, 가짜 키 로그인 401 — 실제 KB API가 거부 응답, 쿠키 없는 요청마다 서로 다른 세션 발급) + 기존 터미널/텔레그램 회귀 테스트 전체 통과 재확인.
+9. **알려진 제약(문서/화면에 명시)**: 설정값·자동매매 감시목록(`config/data/settings.json`)은 SettingsManager가 파일 하나에 저장하므로 웹 사용자 전원이 공유. 사용자별 완전 분리는 설정 계층 전면 리팩터링이 필요해 이번 범위에서 제외하고 제약으로 문서화. 웹 화면 자체에 접근 인증이 없으므로 인터넷 노출 시 VPN/인증 프록시 뒤에 둘 것을 README에 안내.
+10. **문서**: README(웹 클라이언트 섹션 신설, 삼중 클라이언트, 스크립트 표), CLAUDE.md(src/web 구조, 필수 규칙에 WebClient.commands 등록 추가), docs/features.md(확인/선택 UI에 웹 추가, 아키텍처 표), docs/prompt/개발환경.md(의존성/스크립트/웹 인터페이스 섹션) 갱신.
+
+---
+
+### Q: docs/mst/mst/for-api/openapi_mtsjname.mst와 openapi_mtsoutjname.mst를 합쳐서 openapi_field_kospi-kosdaq.mst를, openapi_FORENMST_US.MST는 openapi_field_foren-us.mst를 만들어줘 — 코드값을 그대로 표시하지 말고 참조표를 보고 사람이 읽을 수 있는 의미로 바꿔서 표시(종목구분 ST→주식, 매매수량단위코드 D040→1주, 주문유형 0→주문불가/3→주문가능, 매수가능여부 0→불가/1→가능 등). docs/mst/md/ 아래 .md 문서의 "✅ 사용" 필드만 사용.
+
+### A: `docs/mst/mst/for-api/generate_field_reference_mst.py`(신규) 작성·실행 — 코드가 아닌 애플리케이션 문서/참조 자산이라 `src/`는 건드리지 않음.
+
+1. `docs/mst/md/openapi_mst_*.md`(코스피/코스닥/해외 3개) 필드 정의표에서 "✅ 사용" 필드만 추출: 코스피 19개 필드 중 8개(종목코드/종목명/관리종목여부/종목구분/거래정지여부/매매수량단위코드/주문유형/정리매매여부), 코스닥 16개 중 7개(코스피와 동일하되 **종목구분 필드 자체가 원본에 없음** — 신규순번 목록에 없음을 확인), 미국 16개 중 9개(거래소코드/종목코드/종목명_한글/종목명_영문/통화코드/거래정지여부/거래가능여부/매수가능여부/매도가능여부/소수점매매가능).
+2. 실제 파일을 전수 스캔(`Counter`)해 문서 참조표와 실데이터 코드값을 대조 — 여러 불일치를 발견:
+   - 코스피 종목구분에 문서 미등재 코드(RT/PF/IF/MF/DR/FS)가 361건 이상 존재.
+   - 매매수량단위코드에 문서 미등재 코드('040'/'B030'/'C030'/'H030'/'D100'/'100') 다수 존재 — 접두어 없는 '040'이 D040/C040과 동일한 의미(1주)인지 확신할 근거가 없어 추측하지 않음.
+   - 미국 거래소코드: 문서 참조표는 'AMS'로 표기했지만 실데이터는 'AMX' — 둘 다 아멕스로 매핑.
+   - 미국 거래가능여부: 문서는 "0(불가)/1(가능)" 이진값이라 했지만 실데이터엔 0이 아예 없고 1/2/3/4/7 다섯 종류 존재(사실상 시장상태코드로 추정) — 1만 "가능"으로 확정 번역하고 2/3/4/7은 "코드N(참조표 범위 밖)"으로 원본 유지.
+   - 미국 소수점매매가능: 문서는 이진값이라 했지만 실데이터엔 0 외에 8자리 날짜값(예: '20260630')이 존재 — "이 날짜부터 가능해진 것으로 추정"이라는 문구와 함께 날짜를 그대로 노출하고 "추정"이라고 명시(공식 근거 없음을 표시).
+3. **설계 원칙**: 문서 참조표에 없는 코드값은 의미를 지어내지 않고 `"{원본코드}(참조표 미등재)"`/`"코드{N}(참조표 범위 밖)"` 형태로 원본을 그대로 남긴다 — 실거래 판단 근거로 쓰일 수 있는 참고 문서라 틀린 추측보다 "모른다"를 명시하는 쪽이 안전하다는 판단.
+4. 코스피+코스닥은 `시장구분`(KOSPI/KOSDAQ, 원본에 없는 파생 필드) 컬럼을 추가해 하나의 파일로 병합, 코스닥 행의 `종목구분`은 원본에 없는 값이라 공란 처리. 두 출력 파일 모두 첫 줄에 헤더(필드명)를 추가(원본 .mst와 달리 사람이 읽기 위한 파일이므로).
+5. 원본 파일 인코딩을 `create_openapi_mst.py`/문서는 EUC-KR이라 명시했지만 실제로는 UTF-8로 재인코딩되어 있음을 디코딩 테스트로 확인(euc-kr/cp949 디코딩 실패, utf-8 성공) — 생성 스크립트도 UTF-8로 읽고 씀.
+6. 검증: 출력 라인 수(4293=4292행+헤더, 12511=12510행+헤더)가 원본 종목 수와 일치하는지 확인, 코스닥 종목구분 공란 처리 확인, 참조표 미등재/범위밖 코드가 원본 그대로 노출되는지 확인.
+7. `CLAUDE.md`의 `src/mst/` 설명에 두 참조 파일이 문서 전용이며 런타임 코드가 읽지 않는다는 점을 명시.
+
+---
+
+### Q: /stcd 및 종목검색에서 원본 코드값 파일(openapi_mtsjname.mst/openapi_mtsoutjname.mst/openapi_FORENMST_US.MST) 대신 사람이 읽기 좋은 openapi_field_kospi-kosdaq.mst/openapi_field_foren-us.mst를 쓰도록 전환. /stcd 결과에 필수값을 모두 표시.
+
+### A: `src/utils/stock_master.py` 데이터소스 전환 — 단, 해외 거래소코드는 실거래 API 파라미터라 원본 유지 필요성을 발견해 생성 스크립트부터 고침.
+
+1. **실거래 API 파라미터 충돌 발견**: `buy_command.py`/`sell_command.py`/`srch_command.py`가 `overseas_stock.exchange`를 KB 해외주문/시세 API의 `krx_cd`/`frgn_krx_ccd` 파라미터로 **그대로** 전달한다는 것을 grep으로 확인 — 이전에 만든 `openapi_field_foren-us.mst`는 거래소코드를 "나스닥" 등으로 이미 번역해버린 상태라, 이걸 그대로 `.exchange`에 넣으면 실거래 API 호출이 깨질 뻔했음. `generate_field_reference_mst.py`를 먼저 고쳐 거래소코드는 원본(NAS/NYS/AMX) 그대로 두고 표시용 `거래소명` 컬럼을 새로 추가한 뒤 재생성.
+2. `docs/mst/mst/for-api/openapi_field_kospi-kosdaq.mst`/`openapi_field_foren-us.mst`를 `src/mst/`(런타임 디렉토리)로 복사(수동 — 자동 동기화 스크립트 없음, 기존 3개 원본 파일도 같은 방식으로 반영되어 왔음을 확인).
+3. `src/utils/stock_master.py` 전면 재작성: `DomesticStock`/`OverseasStock` 데이터클래스에 필드 확장(종목구분/관리종목여부/거래정지여부/매매수량단위코드/주문유형, 거래소명/통화코드/거래가능여부/매수가능여부/매도가능여부/소수점매매가능 추가), 로더가 헤더 행(첫 줄) 스킵 후 파이프 파싱, 코스피+코스닥 통합 파일을 시장구분 컬럼으로 분리해 기존 `load_all()`의 `(kospi, kosdaq, overseas)` 3튜플 반환 형태는 그대로 유지(`mst_command.py` 등 기존 호출부 무변경).
+4. `search_domestic`/`search_overseas`/`find_by_code`/`find_overseas_by_ticker` 등 공개 함수 시그니처와 검색 로직(이름/코드 부분일치)은 그대로 유지 — 필드가 늘어난 것 외에 동작 변화 없음.
+5. `stcd_command.py`의 결과 출력을 국내/해외 각각 8개 필드 전부 표시하도록 확장(헤더 행도 추가): 국내는 `[종목명] [종목코드] [시장구분] [종목구분] [관리종목여부] [거래정지여부] [매매수량단위코드] [주문유형]`, 해외는 `[종목명] [티커] [거래소명] [통화코드] [거래가능여부] [매수가능여부] [매도가능여부] [소수점매매가능]`.
+6. **검증**: `find_overseas_by_ticker('NVDA').exchange == 'NAS'`(원본 유지, exchange_name만 "나스닥")로 실거래 API 파라미터 무결성 확인. `chart_analysis.py`의 `stock.market == "KOSDAQ"` 체크(국내 시장구분은 원래도 텍스트라 영향 없음), `stock_resolver.py`의 정확일치 우선 로직(`buy 삼성전자`→단일 확정, `buy IONQ`→정확 티커 일치로 단일 확정, `buy DEFIANCE`→진짜 모호해 4-튜플 ambiguous 반환) 전부 재확인. `mst`/`/stcd` 명령 실제 실행, 기존 UI 리디자인/웹 클라이언트 회귀 테스트 스위트 재통과, 13개 관련 모듈 임포트 스윕까지 확인.
+7. 원본 코드값 3개 파일(`openapi_mtsjname.mst`/`openapi_mtsoutjname.mst`/`openapi_FORENMST_US.MST`)은 런타임에서 더 이상 읽지 않지만, 삭제 여부는 사용자 명시적 요청이 아니라 `src/mst/`에 그대로 남겨두고(참고용) 필요시 사용자가 직접 정리하도록 안내.
+8. `CLAUDE.md`의 `src/mst/` 설명을 새 런타임 데이터소스/거래소코드 예외 처리/생성 스크립트 위치로 갱신.
+
+---
+
+### Q: (웹 화면 개선) 종목 검색창을 달아줘 — 글자별 증분 검색(두 글자 이상, "삼성"→삼성 포함 종목, "IO"→IONQ), 명령 실행창 ↑/↓ 히스토리, 마스터파일 시작 시 메모리 사전 로드, "삼성전자 10주 사줘" 같은 AI 명령에서 종목(005930) 인식 표시.
+
+### A: 4가지 전부 구현 — 백엔드 2개 엔드포인트 + 프론트 UI/JS 확장.
+
+1. **검색 랭킹 개선(핵심)**: 단순 부분일치로는 "IO" 검색 시 IONQ보다 영문명에 우연히 "IO"가 들어가는 종목(CORPORATION 등)이 먼저 나오는 문제를 HTTP 검증에서 발견 — `search_domestic`/`search_overseas`를 정확도 점수 정렬로 재작성(국내: 코드 정확일치 > 이름 전방일치 > 이름 부분일치 > 코드 부분일치, 해외: 티커 정확일치 > 티커 전방일치 > 티커 부분일치 > 한글명 > 영문명). limit 절단 전에 정렬하므로 좋은 매치가 잘려나가지 않는다. 이 랭킹은 `/stcd`와 stock_resolver에도 그대로 적용(결과 집합은 동일, 순서만 개선이라 기존 회귀 테스트 전부 통과).
+2. **`detect_in_text()`(stock_master.py 신규)**: 자유 문장 속 종목 인식 — 국내 종목명(2자+) 부분 문자열 포함, 6자리 숫자 토큰은 코드 정확 조회, 해외는 한글명 포함 또는 티커의 공백 구분 토큰 정확일치(짧은 티커 A/F 등의 오탐 방지 목적으로 부분일치 안 씀). 긴 이름 우선 정렬("삼성전자우 팔아줘"에서 삼성전자우가 삼성전자보다 먼저).
+3. **백엔드(app.py)**: 모듈 로드 시 `stock_master.load_all()` 선호출로 서버 시작 시점에 마스터를 메모리에 로드(lru_cache라 이후 재파싱 없음). `GET /api/stock/search?q=`(2글자 미만 빈 결과를 서버에서도 강제, 국내/해외 각 15건), `GET /api/stock/detect?text=`(문장 속 종목 최대 5건) — 로그인/쿠키 불필요(마스터는 전역 데이터).
+4. **프론트**: (a) index.html에 "🔎 종목 검색" 패널 — 200ms 디바운스 + 응답 역전 방지(seq), 결과는 국내/해외 그룹으로 나눠 이름/코드/시장·종목구분·매매단위·주문유형(국내), 거래소명·통화·매수/매도가능(해외) 표시, 행 클릭 시 명령 입력창에 코드 삽입. (b) 명령 입력창 ↑/↓ 히스토리 — 터미널처럼 이전 입력 순환, 탐색 시작 전 치던 내용(draft)은 ↓로 끝까지 내려오면 복원, 중복 연속 입력은 저장 안 함. (c) 자연어 종목 인식 칩 — '/'로 시작하지 않는 입력을 250ms 디바운스로 detect 호출해 입력창 아래에 "📌 인식된 종목: 삼성전자 005930 · KOSPI" 칩 표시, '/' 명령·전송 시 자동 숨김.
+5. **검증**: detect_in_text 6개 시나리오(삼성전자/삼성전자우 긴이름 우선/IONQ 티커/005930 코드/1글자 빈결과/아이온큐 한글명) 통과. 실제 서버 기동 후 HTTP로 "삼성"→삼성 전방일치 우선, "삼성전"→삼성전기·삼성전자..., "005930"→정확일치 1건 최상단, "IO"→IOCT/ION/IONQ...(티커 전방일치), 1글자 "삼"→빈 결과 확인. stock_resolver 정확일치 확정(`buy 삼성전자`→005930, `buy IONQ`→ok) 재확인, 기존 UI/웹 회귀 테스트 스위트 전부 통과.
+
+---
+
+### Q: run-web.* 실행 시 "load" 옵션을 주면 config/config.py의 키 값들이 웹 설정에 저절로 세팅되게 해줘 — 예: `run-web.bat load` → config.py 키로 자동 설정되고 http://localhost:8000/settings.html 이 첫 화면으로 열림.
+
+### A: `load` 옵션(로컬 단일 운영자 편의 기능) 구현 — 다중 사용자 기본 설계는 유지하고 명시적 opt-in으로만 예외.
+
+1. **`src/run/web.py`**: `sys.argv`에 `load`가 있으면 `KBSEC_WEB_AUTOLOAD=1` 환경변수를 uvicorn 기동 전에 설정(같은 프로세스 안에서 `src.web.app`을 지연 import하므로 타이밍 안전), 시작 콘솔에 "로컬 전용, 외부 노출 금지" 경고 출력, 서버가 리슨을 시작한 뒤(1.2초 지연) 백그라운드 스레드에서 `webbrowser.open()`으로 `http://localhost:8000/settings.html`을 자동으로 연다(load 없을 때는 브라우저 자동 실행 안 함, 기존 동작 유지). `run-web.bat`/`run-web.sh`는 `%*`/`"$@"`로 인자를 그대로 전달하도록 수정.
+2. **`src/web/app.py`**: `AUTOLOAD` 플래그(모듈 로드 시 환경변수 확인) + `_autoload_from_config(client)`(config.py의 `real_client_key`/`real_client_secret`/`claude_api_key`/`claude_model`/`telegram_token`/`telegram_chat_id`를 읽어 placeholder("YOUR_...")/빈 값이 아닌 것만 채우고 `client.login("real", ...)` 호출) 추가. `_client_for()`가 **새로 생성된 세션에 한해서만**(`is_new_session` — 이미 있던 세션은 재로그인하지 않음) autoload를 트리거하도록 연결.
+3. **보안 설계상 중요한 결정**: autoload는 세션을 "로그인시키는" 것이지 시크릿 원문을 프론트로 돌려주는 게 아니다 — `GET /api/settings` 응답 스키마는 다중 사용자 모드와 완전히 동일하게 유지(로그인 여부/환경/토큰 잔여시간 등 마스킹된 상태만), 설정 화면의 client_key/client_secret 입력칸에는 여전히 값이 채워지지 않는다(사용자가 요청한 "저절로 세팅"을 "즉시 로그인되어 바로 쓸 수 있는 상태"로 해석 — 시크릿을 브라우저로 되돌려주는 기존 보안 설계를 깨지 않기 위한 판단이었음을 사용자에게 명시적으로 설명).
+4. **검증**: 실제로 `KBSEC_WEB_AUTOLOAD=1`로 서버를 띄우고 실제 `config.py`의 real 앱키로 진짜 KB OAuth 토큰 발급까지 확인(`logged_in:true`, `env:real`, `claude_configured:true`, `telegram_configured:true`) — 이는 terminal.py/main.py가 기동 시 이미 수행하는 것과 동일한 종류의 인증 호출(주문 아님)이라 위험도가 이미 검증된 기존 동작과 같음. 동일 쿠키 재요청 시 재로그인 없이 세션 유지, 쿠키 없는 새 요청은 독립적으로 별도 자동 로그인, 응답에 client_key/client_secret 필드가 전혀 없음(시크릿 미노출)을 확인. 기존 웹/UI 리디자인 회귀 테스트 스위트 전부 재통과.
+5. `README.md`에 `load` 옵션 사용법과 보안 경고(로컬 전용, 외부 노출 금지, 시크릿은 여전히 화면에 표시 안 됨) 추가.
+
+---
+
+## 2026-07-19
+
+### Q: (1) 폴더 개편 반영 — docs/mst/mst/for-api를 mst/api로 개명·이동, src/mst 삭제했으니 종목검색이 mst/api를 참조하도록 소스/문서 전부 수정. (2) 이전 작업(웹 검색 개선 4종 + KB 디자인) 마저 진행. (3) 추가작업 — docs/api/md의 업무구분 폴더 구조를 웹에서 트리로 탐색하며 명세를 보고 input을 채워 실제 API를 테스트 호출(JSON 응답 표시)할 수 있는 화면. 체크리스트를 만들어 진행할 것.
+
+### A: 3건 전부 완료 — 체크리스트(TodoWrite) 기반 진행.
+
+1. **[확인작업] mst 경로 개편 반영**: `stock_master.py`의 `MST_DIR`을 `PROJECT_ROOT/mst/api`로 변경(런타임 유일 수정점). 주석/안내문 7개 파일(buy/srch/mst 커맨드, stock_resolver, command_pipeline, app.py, command_guide.md), 문서 3개(CLAUDE.md의 `src/mst/` 항목을 `mst/` 항목으로 재작성, features.md 3곳, README는 해당 없음 확인) 갱신. `mst/create_openapi_mst.py`의 하드코딩된 옛 절대경로(`D:\dev\openapi\...`)를 스크립트 위치 기준 상대경로(`origin/` → `api/`)로 수정, `mst/api/generate_field_reference_mst.py` docstring에서 "src/mst 수동 복사" 안내 삭제(이제 출력 폴더가 곧 런타임 폴더라 재실행만으로 반영됨). 검증: load_all() 2472/1820/12510 로드, /stcd·detect·exchange 원본코드 유지 전부 확인.
+2. **[이전작업 마무리] 웹 검색 개선 + KB 디자인**: (a) 대소문자 무시 — search_domestic/search_overseas/detect_in_text 모두 upper() 비교로 통일("kb금융"→KB금융). (b) `search_exact()`(stock_master 신규) + `/api/stock/search?exact=1` — 검색창에서 하이라이트 없이 Enter 시 이름/코드/티커 정확일치만 표시. (c) 검색 결과 ↑/↓ 키보드 내비게이션(하이라이트, scrollIntoView) + Enter로 선택 시 그 종목만 남기고 나머지 제거, Esc로 닫기. (d) KB금융 브랜드 디자인 전면 개편 — style.css 재작성(시그니처 옐로우 #ffbc00 + 다크 차콜, sticky 헤더, "KB" 브랜드 마크(이모지 제거), pill 네비게이션, 상태 배지 점 표시, 카드 그림자/호버 전환, fade-in 애니메이션, 640px/860px 반응형 브레이크포인트), 패널 제목의 이모지를 전부 제거하고 옐로우 액센트 바로 통일.
+3. **[추가작업] API 명세 탐색/테스트 화면**: 
+   - 백엔드 `src/web/spec_browser.py`(신규): docs/api/md 폴더 재귀 트리(build_tree), 파일명 타임스탬프(-YYYYMMDD-HHMMSS) 제거한 표시명, TR코드 추출(OAuth처럼 코드 없는 문서는 열람 전용), 경로조작(..) 차단, 상세(load_detail) — api_spec의 _parse_input_table 재사용하되 기본값 규칙은 "선택지 있으면 첫 코드, 필수면 공백 채움, 그 외 빈 문자열"(사용자 예시의 SSQM1801 요청 본문과 정확히 일치함을 검증: {"inq_clsf":"0","is_no":"","mkt_tm_ccd":"1","nxt_key":""}).
+   - app.py에 GET /api/spec/tree, GET /api/spec/detail?path=, POST /api/spec/execute(로그인 필수 401, 알 수 없는 코드 404, dataHeader는 call_business_api가 자동 구성) 추가.
+   - 프론트 api.html + js/apidoc.js(신규): 좌측 sticky 트리(카테고리 아코디언+파일 수 배지) / 우측 상세(제목·엔드포인트, 요청 폼 — 선택지는 <select>, 나머지는 텍스트, JSON 미리보기 실시간 동기화, 기본값 복원 버튼, 주문 계열(SSAM/SKAM) 경고 배너+전송 전 confirm, 응답 JSON pretty 표시, 초소형 마크다운 렌더러(제목/표/구분선/코드/불릿)로 명세 문서 전체 열람). 네비게이션에 "API 명세" 링크 추가(3개 페이지), 모바일에서 1열로 접히는 반응형.
+4. **버그 발견·수정(중요)**: post_settings/spec_execute가 JSONResponse를 직접 반환하면 _client_for가 주입된 response에 심은 새 세션 쿠키(Set-Cookie)가 유실됨 — 새 브라우저가 첫 요청으로 곧바로 POST하면 로그인한 세션에 다시는 접근 불가(지금까지는 페이지 로드 시 GET이 먼저 호출돼 우연히 동작). dict 반환 + response.status_code 방식으로 수정하고 주석으로 이유를 남김.
+5. **검증**: spec_browser 단위 검증(트리/타임스탬프 제거/OAuth 코드 없음/경로조작 None) → 서버 기동 후 HTTP 검증(3개 페이지 200, tree/detail/OAuth/경로조작 404/미로그인 401) → 실제 config.py 앱키로 로그인 후 SSQM1801(보유주식 조회, 조회 전용) 실제 호출 성공(resultCode 200, "정상적으로 조회되었습니다") → 기존 웹/UI 회귀 테스트 스위트 전부 통과.
+
+---
+
+### Q: (웹 UI 개선 4건 + 공통 1건) ① 검색 결과 클릭 시에도 그 종목만 목록에 남기기(코드 삽입 유지) ② 확인 프롬프트 — 버튼을 메시지와 같은 줄에, 단일 명령이면 "1." 번호 제거(main/terminal도 동일), 실행/취소 이모지 제거 + KB 가이드 버튼 ③ API 명세 — 최초 진입 시 첫 API를 펼쳐서 표시하고, 다른 페이지 갔다 와도 직전 보던 명세 유지 ④ 홈 레이아웃 — 사용방법을 좌측 사이드바로, 우측에 명령 실행(위, 크게)+종목 검색(아래, 접이식).
+
+### A: 5건 전부 완료.
+
+1. **번호 제거(공통)**: `CommandPendingExecution.get_confirmation_message()`(command_executor.py)에서 명령이 1개면 번호 없이 백틱 명령만 표시 — 세 클라이언트(터미널/텔레그램/웹)가 같은 메서드를 쓰므로 한 곳 수정으로 전부 반영. 복수 명령은 기존대로 번호 유지. 기존 회귀 테스트(부분 문자열 assert) 전부 통과.
+2. **웹 확인 UI**: app.js 버튼 라벨에서 ✅/❌ 이모지 제거("실행"/"취소"), 취소는 신규 `button.ghost`(테두리형, KB 뉴트럴) 스타일. `#pending.confirm`을 flex row로 바꿔 메시지(flex:1)와 버튼을 같은 줄에 배치(선택형 세션은 기존 세로 배치 유지).
+3. **검색 클릭 동작**: `collapseToActive()`를 `collapseToItem(item)`으로 일반화해 Enter 선택과 클릭이 같은 함수를 쓰도록 — 클릭 시 명령 입력창 코드 삽입 + 그 종목만 목록에 남김.
+4. **API 명세 상태 유지**: 트리 렌더링 시 전체 파일 인덱스(`fileIndex`: 파일/DOM/조상 details 체인)를 수집, `localStorage("kbsec_spec_last_path")`에 마지막 선택 경로 저장. 진입 시 저장된 경로가 있으면 트리를 그 위치까지 펼치고 자동 선택(scrollIntoView), 없으면(최초 방문) 첫 번째 API를 자동 선택. 명세 문서 details는 선택 시 항상 펼쳐서 표시.
+5. **홈 레이아웃**: index.html을 `main.home-layout`(grid 350px+1fr)로 재구성 — 좌측 sticky 사이드바(사용 방법, 카드 1열), 우측 `home-main`에 명령 실행(위, output min-height 380px로 확대) + 종목 검색(아래, `details.stock-collapse`로 접이식, 기본 펼침). 960px 이하에서 1열로 접히는 반응형.
+6. **검증**: 단일/복수 확인 메시지 출력 확인, 기존 UI/웹 회귀 테스트 스위트 전부 통과, 서버 기동 후 3개 페이지 200 + home-layout 마크업 반영 확인, node --check로 app.js/apidoc.js 문법 검증. README 종목 검색 설명 갱신.
+
+---
+
+### Q: (웹 UI 3차 개선) ① 사용방법 접을 때 아래→위가 아니라 우→좌(옆으로)로 접히게 ② 명령실행/종목검색 우측에 API RQ/RP 로그 뷰(터미널 로그처럼) — 접으면 오른쪽으로 접힘 ③ 명령실행/종목검색/API로그 전부 접기 가능 + 우측하단 마우스 드래그로 크기 조절 ④ 확인 프롬프트를 Enter로도 실행("[Enter] 입력 시 실행" 표기), 🔍 이모지 제거 ⑤ 최종 배치: 좌 사용방법 / 가운데 명령실행+종목검색 / 우 API 로그.
+
+### A: 전부 구현.
+
+1. **API 로그 인프라**: `api_logger.py`에 인메모리 링버퍼(deque 300, threading.Lock, 증가 seq) 추가 — log_api_request/response/error가 콘솔 출력과 동시에 버퍼에도 쌓는다. 버퍼 내용도 콘솔과 동일한 마스킹(_masked_body — access_token/clientSecret 앞 8자만)을 거쳐 시크릿 원문이 브라우저로 가지 않음을 단위 테스트로 확인. `GET /api/apilog?since=N`(app.py)으로 증분 폴링. 프로세스 전역 버퍼라 웹 다중 사용자 간 로그가 공유된다는 제약을 코드 주석+화면 힌트에 명시.
+2. **3컬럼 레이아웃**: `main.home-layout`을 `auto minmax(0,1fr) auto` 그리드로 — 좌 사용방법(350px)/가운데 명령실행+종목검색/우 API 로그(400px). 1100px 이하에서 1열 반응형.
+3. **가로 접힘(side-panel)**: 좌우 사이드 패널에 `.collapsed` 토글 — width 350→46px 전환(transition 0.25s), 본문 숨기고 세로쓰기(writing-mode: vertical-rl) 레일 버튼만 남김(클릭 시 펼침). 접힘 상태는 localStorage(kbsec_side_*)에 기억. 사용방법의 기존 세로 접힘(details)은 가로 접힘으로 대체.
+4. **세로 접힘 + 리사이즈**: 명령실행/종목검색을 `details.v-collapse`(h2와 동일한 모양의 summary)로 통일해 접기 가능, 패널에 CSS `resize: both; overflow: auto`로 우측하단 네이티브 드래그 핸들 제공(사이드 패널 포함, 접힌 상태에서는 resize 비활성).
+5. **API 로그 렌더링(app.js)**: 2.5초 증분 폴링 + 명령/확인 실행 직후 즉시 1회 폴링. 터미널 형식 그대로 — `[API 요청] 매수주문 (SSAM1802)` + POST URL + dataBody JSON(노랑), `[API 응답] status_code=200` + body JSON(초록), `[API 오류]`(빨강), 타임스탬프. 스크롤이 바닥 근처일 때만 자동 추적.
+6. **Enter 확인 실행**: 확인 프롬프트가 떠 있고 명령 입력창이 비어 있으면 Enter=실행(y), Esc=취소(n). 프롬프트 제목 옆에 "[Enter] 입력 시 실행 · [Esc] 취소" 배지 표시. `get_confirmation_message()`의 🔍 이모지는 공유 메서드에서 제거(터미널/텔레그램/웹 공통).
+7. **검증**: api_logger 링버퍼 마스킹/증분 단위 테스트, node --check JS 문법, 서버 기동 후 실제 로그인+SSQM1801 실행 → `/api/apilog`에 요청/응답 4건(토큰발급 RQ/RP + SSQM1801 RQ/RP)이 dataBody 원문과 함께 잡히고 증분 폴링이 빈 배열을 반환함을 확인. 기존 회귀 테스트 전부 통과.
+
+---
+
+### Q: (웹 UI 4차 개선) ① [Enter] 힌트를 "다음 명령어를 실행할까요?" 바로 오른쪽에 + API 로그 새 항목 시 항상 자동 스크롤 ② AI 인식/API 응답 대기 중 처리 인디케이터 표시 ③ 명령 실행 패널을 드래그로 키우면 결과 출력창이 함께 늘어나게 ④ API 로그를 드래그로 키울 때 왼쪽이 아니라 오른쪽/아래로 늘어나게 ⑤ run-web.* load의 첫 화면을 /settings.html이 아니라 /(실행)로.
+
+### A: 5건 전부 반영.
+
+1. **[Enter] 힌트 위치**: renderPending confirm에서 메시지를 첫 줄("다음 명령어를 실행할까요?")과 본문(`\n` 이후)으로 분리 — 첫 줄 오른쪽에 힌트 배지, 명령 본문은 아래 줄(mono)로 구조화(.pending-head/.pending-rest).
+2. **API 로그 자동 스크롤**: "바닥 근처일 때만 추적" 조건을 제거하고 새 항목마다 항상 맨 아래로 스크롤.
+3. **처리 인디케이터**: setBusy(true) 시 출력창에 회전 스피너(CSS border 애니메이션)+"처리 중입니다..." 엔트리를 추가하고 완료 시 제거 — AI 변환/확인 실행/KB API 응답 대기 전 구간에서 표시(sendCommand/sendAnswer 공용 경로).
+4. **명령 실행 출력창 가변 확장**: .cmd-panel → details.v-collapse[open] → #output까지 flex 체인(display:flex, flex:1, min-height:0)으로 높이를 전달 — 패널 우측하단 드래그로 키우면 하단 여백이 아니라 결과 출력창이 늘어난다(max-height 캡 제거).
+5. **API 로그 우측/하단 확장**: home-layout 그리드의 가운데 컬럼에 minmax(560px,1fr) 최소폭을 지정 — 로그 패널을 드래그로 키우면 가운데가 560px 이하로 짜부라지는 대신 그리드가 화면 오른쪽 밖으로 넘치며 가로 스크롤 생성(= 오른쪽으로 확장). 로그 패널 내부도 flex 체인으로 .api-log가 패널 크기를 따라 늘어나고 max-height 캡 제거(하단 확장). max-width:1720px 중앙정렬을 margin 24px 전폭 레이아웃으로 변경.
+6. **부가 수정**: side-panel의 width transition 제거(네이티브 리사이즈 드래그가 굼떠 보이는 문제), 접기 시 드래그가 남긴 인라인 width/height를 제거해 .collapsed(46px)가 항상 적용되도록 처리. run-web load의 자동 오픈/안내 URL을 "/"로 변경(자동 로그인되므로 설정 화면 경유 불필요).
+7. **검증**: node --check, 서버 기동 후 style.css/app.js 신규 규칙 서빙 확인, 웹 회귀 테스트 통과.
+
+---
+
+### Q: (웹 UI 5차 개선) ① 명령 실행 패널을 드래그로 늘리면 검은 출력창이 그만큼 커지고, 입력창/인식된 종목 칸은 항상 패널 하단에 붙어 있어야 함. 실행 결과가 쌓일 때는 패널이 늘어나지 말고 출력창 안에서 자동 스크롤 ② API 로그도 검은 창 고정 + 내부 자동 스크롤로.
+
+### A: 원인 — 출력창/로그창이 flex-basis auto라 내용을 따라 자동으로 커지는 구조였음. "고정 높이 컨테이너 + flex-basis 0 내부 채움" 구조로 전환.
+
+1. **명령 실행 패널**: `.cmd-panel`에 기본 높이 640px(드래그로 조절 가능), `#output`을 `flex: 1 1 0; min-height: 0`으로 — 출력창이 패널의 남는 공간을 정확히 채우고 내용이 넘치면 내부 스크롤(appendOutput의 항상-바닥 자동 스크롤이 이제 체감됨). 입력창(.cmd-row)/인식된 종목(.stock-detect)/확인 프롬프트(#pending)는 flex 0 고정이라 출력창이 커져도 항상 패널 하단에 붙어 있음.
+2. **API 로그 패널**: `.log-side`에 기본 높이 `calc(100vh - 110px)`, `.api-log`를 `flex: 1 1 0; min-height: 0`으로 — 로그가 쌓여도 패널은 고정되고 검은 창 내부에서 자동 스크롤(appendLogEntry의 항상-바닥 스크롤).
+3. **접힘과의 상호작용**: `.resizable:has(> details.v-collapse:not([open])) { height: auto !important }`(명령 실행/종목 검색 공용), `.side-panel.collapsed { height: auto !important }` — author !important가 드래그가 남긴 인라인 height보다 우선하므로, 크게 늘려놓고 접어도 요약 줄만 남는다.
+4. 검증: 서버 기동 후 신규 CSS 규칙 6종 서빙 확인.
+
+---
+
+### Q: (웹 UI 6차 개선) 명령 실행 패널 — 검은 화면/입력칸/종목 인식칸이 패널에 꽉 차야 하고, 결과가 쌓여도 검은 화면이 늘어나지 않고 내부 스크롤+자동 추적, 크기는 우측하단 드래그로만 변해야 함 (5차 개선이 실제로 동작하지 않았음).
+
+### A: 5차가 동작하지 않은 **근본 원인 규명** — `<details>` 요소는 브라우저가 display를 블록으로 강제해 flex 컨테이너가 되지 못한다. `.cmd-panel > details[open] { display:flex }`가 무시되면서 #output까지의 높이 전달 체인이 끊겨 있었다.
+
+1. 명령 실행 패널의 접기를 details에서 **일반 div 구조 + JS 토글**로 교체: `h2.v-head`(클릭 토글, 화살표 회전) + `div.v-body`(flex column, flex:1, min-height:0). 이제 패널(640px 고정, 드래그 조절) → .v-body → #output(flex 1 1 0)의 flex 체인이 확실히 동작 — 검은 화면이 패널의 남는 공간을 꽉 채우고, 입력창/인식된 종목 칸은 항상 하단 고정, 결과는 내부 스크롤+자동 추적.
+2. 접힘(.v-collapsed): 제목 줄만 남김(height auto !important + resize 비활성), 접기 직전 드래그가 남긴 인라인 크기를 JS에서 제거. 종목 검색 패널은 flex 체인이 필요 없어 details 유지.
+3. index.html에 details를 쓰면 안 되는 이유를 주석으로 명시(재발 방지). 검증: node --check + 서버 기동 후 HTML/CSS/JS 신규 마크업·규칙 서빙 확인.
+
+---
+
+### Q: 웹에서 "하이닉스 10 주 사줘"를 입력하면 인식된 종목 칩에 "이닉스 452400·KOSDAQ"이 표시된다(터미널은 buy 000660 10으로 정상 변환). 이유 확인 후 수정.
+
+### A: 두 화면의 "인식"은 서로 다른 메커니즘 — 실제 명령 변환은 웹도 정상이고, 웹 전용 미리보기 칩(detect_in_text)만 오탐이었다.
+
+1. **원인 규명**: 터미널의 변환은 Claude AI + stock_resolver 경로(웹의 실제 실행도 동일)라 정상. 문제는 웹 입력창 아래 칩이 쓰는 `detect_in_text`(로컬 미리보기 전용) — "종목명이 문장의 부분 문자열인가"만 검사해서, 실제 종목 "이닉스"(452400)가 "하'이닉스'" 단어 중간에 매칭되는 오탐. 또한 "하이닉스"⊂"SK하이닉스" 같은 역방향(토큰이 종목명의 일부) 매칭이 없어서 SK하이닉스를 찾지 못함.
+2. **수정(stock_master.detect_in_text 재작성)**: (a) 단어 경계 검사 — 이름 매칭 위치 바로 앞 글자가 한글/영숫자면 단어 중간이므로 거부(`_name_at_word_boundary`, "이닉스" 오탐 차단. "이닉스 5주 사줘"처럼 단어 시작이면 여전히 인식). (b) 폴백 매칭 추가 — 정확 매칭이 하나도 없으면 토큰(2자+, 숫자 제외)이 종목명에 포함되는 종목을 이름 짧은 순(토큰과 근접한 순)으로 반환: "하이닉스" → SK하이닉스가 1순위, 관련 ETF가 뒤. (c) 정확 매칭이 있으면 폴백은 보여주지 않아 기존 케이스의 잡음 없음.
+3. **검증 10개 시나리오**: 하이닉스→SK하이닉스(이닉스 소멸), SK하이닉스/삼성전자/삼성전자우(긴이름 우선)/005930/kb금융/IONQ/아이온큐/이닉스(진짜 이닉스는 인식)/하이닉스 단독 — 전부 기대대로. 웹 회귀 테스트 통과.
+
+---
+
+### Q: run-web.* 실행 파라미터를 "load"에서 "token"으로 변경(기능은 동일).
+
+### A: `src/run/web.py`의 argv 매칭 문자열을 "load"→"token"으로 변경, 관련 주석/README/launcher 스크립트 사용법 문구 전부 동기화.
+
+1. `src/run/web.py`: docstring 사용법, `any(arg.strip().lower() == "token" ...)`, 콘솔 경고 문구("token 모드: ...") 갱신. 내부 구현(환경변수 `KBSEC_WEB_AUTOLOAD`, `_client_for`의 `AUTOLOAD` 플래그, `_autoload_from_config` 함수명)은 사용자가 보지 않는 내부 식별자라 변경하지 않음 — CLI로 노출되는 파라미터 이름만 교체.
+2. `src/web/app.py`: 주석 2곳의 `run-web.* load` 언급을 `run-web.* token`으로.
+3. `run-web.bat`/`run-web.sh`: 이미 `%*`/`"$@"`로 인자를 그대로 전달하는 구조라 스크립트 로직은 무변경, 사용법 주석만 `[token]`으로.
+4. `README.md`: "로컬 1인 사용 편의 — `load` 옵션" 절을 `token` 옵션으로 갱신하면서, 이전 세션에서 착지 URL을 `/settings.html`→`/`로 바꿨던 것이 README에는 반영이 안 돼 있던 것도 같이 바로잡음(스테일 문서 수정).
+5. 검증: argv 파싱 단위 테스트(`token`→True, 대문자 `TOKEN`→True, 옛 `load`→더 이상 트리거 안 됨), 실제로 `uv run python -m src.run.web token`으로 서버를 띄워 `/api/settings`가 `logged_in:true, env:운영환경`을 반환함을 확인(실제 config.py 앱키로 진짜 로그인). 웹 회귀 테스트 통과.
+---
+
+### Q: run-web.*으로 실행하면 `INFO: 127.0.0.1:... "GET /api/notifications HTTP/1.1" 200 OK` 로그가 계속 찍히는 이유가 뭐야?
+
+### A: 웹 화면이 알림(5초)·API 로그(2.5초) 폴링을 계속 보내고, uvicorn 기본 `log_level="info"`가 요청 단위 access log를 전부 출력하기 때문 — 오류가 아니라 정상 폴링이며, 조용하게 하려면 log_level 하향 등의 옵션이 있음을 안내.
+
+---
+
+### Q: log_level="warning" 으로 해줘.
+
+### A: `src/run/web.py`의 `uvicorn.run(...)`에 `log_level="warning"` 적용(이유 주석 포함) — 시작/종료 안내는 그대로 나오고 요청 단위 access log만 사라짐. 서버 기동 후 폴링 엔드포인트 3종이 200으로 동작하면서 access log가 출력되지 않음을 확인, 웹 회귀 테스트 통과.
+
+---
+
+### Q: mst/origin/ 원본만 가져다 놓으면 관련 문서(docs/mst/xlsx의 openapi_mst_*.xlsx, docs/mst/md의 openapi_mst_*.md)를 모두 갱신하고 mst/api/에 openapi_field_foren-us.mst·openapi_field_kospi-kosdaq.mst를 생성하는 파이썬 코드를 src/manage/에 만들어줘. api-list.md를 참조해 실제 사용하는 항목만 추리고, 중간 파일(openapi_mtsjname.mst 등) 없이 직접 생성할 수 있으면 그 방향으로.
+
+### A: `src/manage/generate_mst.py` 단일 파이프라인 신설(중간 파일 없이 원본→최종 직접 생성) + **기존 파이프라인의 필드 라벨 오류를 공식 명세 기준으로 전면 교정**.
+
+1. **오류 발견(핵심)**: KB 공식 필드 명세(`docs/mst/xlsx/mst_*.xlsx`)와 실데이터 전수 스캔을 대조한 결과, 기존 선별표/생성기가 타 증권사 레이아웃을 가정한 채 필드를 해석하고 있었음 — 코스피 순번12 '현금증거금율구분'(B030=30%)을 '매매수량단위코드(D040=1주)'로, 순번26 '소수점매매상태'(0:정상/3:매수·매도불가)를 '주문유형'(0:불가/3:가능)으로 **의미가 정반대**로 해석. 미국은 순번8 SEDOL코드를 '거래정지여부'로, 순번10 종목타입을 '거래가능여부'로, 순번25 'ETF 데이터 기준일자'를 '소수점매매가능'으로 오인(수수께끼였던 '20260630' 날짜값의 정체). 진짜 소수점매매대상여부는 순번33(decimalyn). 원본 인코딩도 EUC-KR→UTF-8로 바뀌어 있어 구 스크립트는 이제 크래시.
+2. **파이프라인 설계**: 공식 명세 xlsx(순번/한글명/비고 코드표)를 읽고, 스크립트 안 `CURATION` 표(사용/참조용 선별 + 용도, 단일 소스)와 결합 → ① `docs/mst/xlsx/openapi_mst_*.xlsx` 선별표 ② `docs/mst/md/openapi_mst_*.md`(선별표 + openapi_field 변환 규칙표) ③ `mst/api/openapi_field_*.mst`(원본에서 직접, 중간 파일 없음)를 한 번에 생성. 용도 문구의 API 코드는 `docs/api/api-list.md` 실존 여부를 실행 시 검증, CURATION 순번이 공식 명세에 없으면 즉시 실패(KB 레이아웃 변경 감지). 코드표 밖 값은 추측 없이 `{코드}(참조표 미등재)` — 이번 실행 결과 미등재 0건. 코스피 증권그룹ID 'EN'은 공식표 누락이지만 ETP상품구분코드(순번8)=3(ETN) 상관(381/384)으로 ETN 확정, 미국 매매구분 '0'은 SELL ONLY 구분 필드 성격상 '제한없음'으로 확정(각각 근거 주석).
+3. **런타임 스키마 교체**: 국내 `시장구분|종목코드|종목명|종목구분|관리종목여부|거래정지여부|매수주문단위|소수점매매가능여부|소수점매매상태`, 미국 `거래소코드|거래소명|종목코드|종목명_한글|종목명_영문|통화코드|종목타입|매매구분|매수거래단위|매도거래단위|소수점매매가능여부`(거래소코드는 krx_cd로 그대로 전달되므로 계속 원본 유지). `stock_master.py` 데이터클래스/로더, `stcd_command.py` 표시 필드, 웹 `/api/stock/*` JSON(`web/app.py`)·검색 결과 칩(`app.js`)을 새 스키마로 갱신.
+4. **구 산출물 폐지**: `mst/create_openapi_mst.py`, `mst/api/generate_field_reference_mst.py`, 중간 산출물 3종(openapi_mtsjname/mtsoutjname/FORENMST_US), `docs/mst/md/convert_xlsx_to_md.py`(옛 경로 하드코딩 스크립트) 삭제.
+5. **검증**: 파이프라인 실행(KOSPI 2,472+KOSDAQ 1,820+미국 12,510종목, sanity check — 삼성전자=주식·AAPL=주식) / 종목검색·정확일치·detect(하이닉스→SK하이닉스)·/stcd 표시·웹 검색/칩 엔드포인트 / 웹 회귀 테스트 7종 전부 통과.
+6. 문서 갱신: CLAUDE.md(mst 항목 재작성 + src/manage 항목 추가), README(종목마스터 갱신 파이프라인 절), docs/prompt/개발환경.md(종목마스터 파이프라인 절), 본 기록.
+---
+
+### Q: /init — 코드베이스를 분석해 CLAUDE.md를 만들어줘 (이미 있으면 개선).
+
+### A: 기존 CLAUDE.md가 최신 상태(트리플 클라이언트/필수 규칙/생성 파이프라인 반영)라 전면 재작성 대신 표준 형식·누락 항목만 보강.
+
+1. Claude Code 표준 머리말("This file provides guidance...") + 프로젝트 한 줄 소개 추가.
+2. "자주 쓰는 명령어" 섹션 신설: 클라이언트 3종 실행(-m 모듈 실행), 재생성 파이프라인 3종(generate_api_list/generate_api_client/generate_mst), 검증 방법(테스트 스위트 없음 — compileall/node --check/터미널 직접 호출, 운영환경 실거래 주의).
+3. 최초 셋업(config.example.py → config.py 복사)과 시크릿 무노출 원칙(GitHub 공개 예정) 명시.
+4. Cursor/Copilot 규칙 파일은 없음 확인. 기존 구조 설명·필수 규칙 6단계·코드 생성 규칙은 정확해 그대로 유지.
+
+---
+
+### Q: 계정 전체(모든 프로젝트)에 적용되는 agent와 이 프로젝트에 적용되는 agent를 같은 이름·같은 역할로 2개 만들어줘. (역할 질문에 "문서/커밋 정리 도우미" 선택) 파일명은 `agent-docs-commit-helper.md`로 하고, 앞으로 agent를 만들 때는 항상 `agent-*` 접두사를 붙이는 것을 강력한 생성 규칙으로 만들어 모든 세션에서 이어지게 해줘.
+
+### A: 동일 내용의 agent 2개 생성 + `agent-*` 접두사 규칙 영구화.
+
+1. **계정용 agent**: `C:\Users\kbsc\.claude\agents\agent-docs-commit-helper.md` — 모든 프로젝트에서 사용 가능. frontmatter `name: agent-docs-commit-helper`, tools: Read/Grep/Glob/Edit/Write/Bash. 역할: 문서 갱신(코드 기준으로 문서 교정, 자동 생성 파일은 직접 수정 금지)과 커밋 메시지 작성(diff 직접 확인, 프로젝트 커밋 스타일 준수, 명시 요청 시에만 실제 커밋).
+2. **프로젝트용 agent**: `.claude/agents/agent-docs-commit-helper.md` — 계정용과 동일 내용. 같은 이름의 agent가 양쪽에 있으면 프로젝트 것이 우선 적용된다.
+3. **agent-* 접두사 규칙 영구화**: ① 계정 공통 `C:\Users\kbsc\.claude\CLAUDE.md` 신설 — "agent 파일명과 name:에 반드시 `agent-` 접두사" 규칙 명시(모든 프로젝트·세션에 로드됨) ② Claude 영구 메모리의 기존 `agent-file-naming` 항목에 계정용 CLAUDE.md 기록 사실을 보강(중복 생성했던 메모리 파일은 정리).
+---
+
+### Q: 신규로 GitHub에서 받은 경우 개발환경 전체를 저절로 설치하는 install-project.bat(Windows)/install-project.sh(macOS·Linux)를 만들어줘. Python 미설치면 설치 링크 안내, Python만 있으면 나머지는 전부 자동 설치되어 run-*.bat가 바로 실행되게.
+
+### A: 루트에 `install-project.bat`/`install-project.sh` 신규 작성 — Python 확인 → uv 자동 설치 → `uv sync` → `config/config.py` 템플릿 생성(→ sh는 run-*.sh chmod까지)의 원샷 멱등 스크립트.
+
+1. **Python 검사**: 없으면 https://www.python.org/downloads/ 안내 후 종료(Windows는 "Add python.exe to PATH" 체크 안내 포함, MS Store 별칭 stub도 미설치 판정). 있으면 버전 출력.
+2. **uv 자동 설치**: Windows는 winget 우선 + 공식 PowerShell 인스톨러 폴백, 설치 직후 현재 세션 PATH에 후보 경로 추가(재확인 실패 시 "새 터미널에서 재실행" 안내). macOS/Linux는 curl→wget 폴백으로 공식 인스톨러 + `$HOME/.local/bin` PATH.
+3. **의존성**: `uv sync` — uv.lock 기준 전체 설치, `.python-version`(3.14)이 시스템에 없으면 uv가 자동 다운로드.
+4. **config**: `config/config.py` 없으면 `config.example.py` 복사 생성, 있으면 보존(재실행 안전). 완료 메시지에 "실제 키 입력 → run-terminal/main/web 실행" 다음 단계 안내.
+5. 메시지 언어는 기존 관례대로 `.bat` 영문(cp949 콘솔 깨짐 방지)/`.sh` 한글. 검증: `bash -n` + Git Bash에서 sh 실제 실행, cmd로 bat 실제 실행 — 둘 다 기설치 환경 통과 경로 확인(uv sync/config 보존/안내 출력 정상).
+6. 문서: README "시작하기"에 "0. 원클릭 설치(권장)" 절 추가, 개발환경.md에 "설치 스크립트" 절 추가.
