@@ -602,6 +602,9 @@ details.v-collapse summary::after {
 }
 details.v-collapse:not([open]) summary::after { transform: rotate(-90deg); }
 details.v-collapse > *:nth-child(2) { margin-top: 12px; }
+/* 종목 검색처럼 summary 안에 입력창을 함께 배치하는 경우 — 제목은 고정 폭, 입력창이 남는 폭을 채움 */
+details.v-collapse summary .v-title { flex-shrink: 0; white-space: nowrap; }
+details.v-collapse summary #stock-search { flex: 1; min-width: 0; }
 
 /* 우측 하단 드래그로 크기 조절 */
 .resizable { resize: both; overflow: auto; min-width: 280px; min-height: 56px; }

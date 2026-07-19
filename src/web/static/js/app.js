@@ -150,6 +150,7 @@ function addPendingButton(label, value, cls) {
 async function sendAnswer(value) {
   setBusy(true);
   renderPending(null);
+  invalidateDetect(); // 확인/선택/취소로 명령이 마무리되는 시점 — 인식된 종목 칩도 정리
   try {
     const r = await apiPost("/api/answer", { value: value });
     if (r.response) appendOutput(r.response);
@@ -182,7 +183,7 @@ async function sendCommand() {
   historyIndex = -1;
   historyDraft = "";
   input.value = "";
-  renderDetect(null);
+  invalidateDetect(); // 전송 시점 — 인식 요청이 아직 응답 전이면 그 결과가 늦게 도착해 칩을 되살리지 않도록 무효화
   appendOutput(">>> " + text, "cmd-echo");
   setBusy(true);
   try {
@@ -249,6 +250,8 @@ document.querySelectorAll(".guide-card code").forEach((el) => {
 //   - 없으면 → 입력값 정확일치(exact=1) 검색으로 재조회 ("삼성전자"+Enter → 삼성전자만)
 const stockSearchInput = document.getElementById("stock-search");
 const stockResults = document.getElementById("stock-results");
+// 입력창이 <summary> 안에 있어(제목 옆 배치) 클릭이 그대로 두면 접기/펼치기 토글로도 번진다 — 막는다.
+stockSearchInput.addEventListener("click", (e) => e.stopPropagation());
 let searchTimer = null;
 let searchSeq = 0; // 응답 역전 방지 — 마지막 요청의 결과만 렌더링
 let resultItems = []; // 현재 렌더링된 행 [{el, item}] — 키보드 내비게이션용
@@ -431,6 +434,14 @@ function renderDetect(stocks) {
     detectBox.appendChild(chip);
   });
   detectBox.classList.remove("hidden");
+}
+
+// 명령이 전송/확인/취소로 마무리되는 시점에 호출 — 진행 중인 인식 요청의 seq를 무효화해
+// 늦게 도착한 응답이 renderDetect(r.stocks)를 호출해 칩을 되살리는 것을 막는다.
+function invalidateDetect() {
+  clearTimeout(detectTimer);
+  detectSeq += 1;
+  renderDetect(null);
 }
 
 input.addEventListener("input", () => {
