@@ -4,7 +4,7 @@ KB증권 API 텔레그램 봇.
 운영: 텔레그램 폴링 기반 봇. 개발/테스트는 src/run/terminal.py를 사용하세요.
 
 사용법:
-  uv run python -m src.run.main   (또는 run-main.bat / run-main.sh)
+  uv run python -m src.run.main   (또는 manage/run/run-main.bat / manage/run/run-main.sh)
 """
 
 import sys
@@ -13,8 +13,8 @@ import time
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
-from src.messenger.telegram.tel_send import send_message, send_message_with_buttons, answer_callback_query
-from src.messenger.telegram.tel_receive import get_updates, parse_message, parse_callback_query
+from src.msgr.telegram.tel_send import send_message, send_message_with_buttons, answer_callback_query
+from src.msgr.telegram.tel_receive import get_updates, parse_message, parse_callback_query
 from src.commands.login_command import handle_login, handle_status
 from src.commands.srch_command import handle_srch
 from src.commands.buy_command import handle_buy
@@ -42,7 +42,7 @@ from src.commands.gdcrs_command import handle_gdcrs
 from src.commands.trst_command import handle_trst
 from src.commands.investor_command import handle_investor
 from src.commands.api_command import handle_api
-from src.messenger.telegram.tel_send import send_document, send_photo
+from src.msgr.telegram.tel_send import send_document, send_photo
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils.session import SessionManager
 import schedule as schedule_lib

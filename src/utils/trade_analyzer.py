@@ -2,13 +2,11 @@
 
 import csv
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from anthropic import Anthropic
 
 from config.config import claude_api_key, claude_model
-
-_LOGS_DIR = Path(__file__).resolve().parent.parent.parent / "logs"
+from src.paths import LOGS_DIR as _LOGS_DIR
 
 _ANALYSIS_PROMPT = """당신은 주식 자동매매 시스템의 거래 내역을 분석하는 전문가입니다.
 

@@ -1,5 +1,5 @@
 # 자동 생성 파일 — 수동 수정 금지.
-# docs/api/generate_api_client.py 재실행으로 갱신하세요.
+# manage/generate/generate_api_client.py 재실행으로 갱신하세요.
 
 """API 코드 -> 함수 매핑 (CLI 등에서 코드로 함수를 동적으로 찾을 때 사용)."""
 

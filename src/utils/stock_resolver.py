@@ -10,7 +10,7 @@ IVU10140), 그 외(예: "IONQ")면 mst/api/openapi_field_foren-us.mst에 등록�
 확인해 해외(SKAM2101/GSS10030)로 분기하기 때문이다.
 
 Claude(ai_command_converter.py)는 사용자가 종목명으로 말한 경우 코드로 추측하지 않고
-종목명을 그대로 남겨두도록 지시되어 있다(docs/command_guide.md 참고) — 실제 종목코드
+종목명을 그대로 남겨두도록 지시되어 있다(docs/command_guide_for_ai.md 참고) — 실제 종목코드
 변환은 여기서 mst/api 로컬 파일 검색으로 처리해, AI가 존재하지 않거나 틀린 코드를
 만들어내는 위험을 없앤다. rsv에 중첩된 명령(예: "rsv 10:00 buy 005930 5")은 예약 재실행
 시 AI/이 리졸버를 거치지 않고 바로 실행되므로 대상에서 제외한다(기존처럼 Claude가

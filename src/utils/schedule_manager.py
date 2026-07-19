@@ -1,10 +1,9 @@
 """명령 예약 관리 (브로커 무관)."""
 
 import json
-from pathlib import Path
 from datetime import datetime
 
-SCHEDULES_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "data" / "schedules.json"
+from src.paths import SCHEDULES_JSON as SCHEDULES_PATH
 
 
 class ScheduleManager:

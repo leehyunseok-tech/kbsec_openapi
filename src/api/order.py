@@ -1,5 +1,5 @@
 # 자동 생성 파일 — 수동 수정 금지.
-# docs/api/generate_api_client.py 재실행으로 갱신하세요.
+# manage/generate/generate_api_client.py 재실행으로 갱신하세요.
 
 """국내 주식 매매주문 (매도/매수/정정/취소, 소수점 포함)
 

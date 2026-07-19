@@ -31,14 +31,16 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 | **인증(토큰 발급) 로직**                           | [src/api/auth.py](src/api/auth.py)                                                                                                |
 | **공통 요청 봉투(dataHeader/dataBody) 구성**       | [src/api/client.py](src/api/client.py)                                                                                            |
 | **앱키/시크릿 설정**                               | [config/config.py](config/config.py) (없으면 `config.example.py` 복사)                                                  |
-| **터미널에서 바로 테스트**                         | [src/run/terminal.py](src/run/terminal.py) (또는 `run-terminal.bat`/`run-terminal.sh`로 바로 실행)                                      |
-| **텔레그램 Agent 원클릭 실행**                     | `run-main.bat`(Windows) / `run-main.sh`(macOS·Linux)                                                                     |
-| **웹 브라우저에서 사용**                           | `run-web.bat`/`run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)              |
-| **코드 생성 방법/규칙**                            | [docs/api/generate_api_client.py](docs/api/generate_api_client.py), [docs/api/README.md](docs/api/README.md)               |
-| **개발 환경(uv 등) 안내**                          | [docs/prompt/개발환경.md](docs/prompt/개발환경.md)                                                                        |
+| **터미널에서 바로 테스트**                         | [src/run/terminal.py](src/run/terminal.py) (또는 `manage/run/run-terminal.bat`/`manage/run/run-terminal.sh`로 바로 실행)                                      |
+| **텔레그램 Agent 원클릭 실행**                     | `manage/run/run-main.bat`(Windows) / `manage/run/run-main.sh`(macOS·Linux)                                                                     |
+| **웹 브라우저에서 사용**                           | `manage/run/run-web.bat`/`manage/run/run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)              |
+| **코드 생성 방법/규칙**                            | [manage/generate/generate_api_client.py](manage/generate/generate_api_client.py), [docs/api/README.md](docs/api/README.md)               |
+| **개발 환경(uv 등) 안내**                          | [docs/개발환경/개발환경.md](docs/개발환경/개발환경.md)                                                                        |
+| **슬래시(`/`) 명령어 요약/예시**                    | [docs/개발환경/command_summary.md](docs/개발환경/command_summary.md)                                                        |
+| **운영/관리 스크립트(`manage/`) 설명·실행 시점** | [docs/개발환경/manage.md](docs/개발환경/manage.md)                                                                  |
 | **텔레그램 Agent 명령어 전체 목록**                | [src/run/main.py](src/run/main.py)의 `HELP_TEXT`, 또는 Agent/CLI에서 `help` 입력                                                      |
 | **명령 핸들러 구현체**                             | [src/commands/](src/commands/) — 파일 1개 = 명령 1개                                                           |
-| **AI 자연어 → 명령어 변환 규칙**                  | [docs/command_guide.md](docs/command_guide.md) (런타임에 실제로 참조되는 문서)                                            |
+| **AI 자연어 → 명령어 변환 규칙**                  | [docs/command_guide_for_ai.md](docs/command_guide_for_ai.md) (런타임에 실제로 참조되는 문서)                                            |
 | **자동매매 전략(폴링 모니터) 구현체**              | [src/utils/monitor_base.py](src/utils/monitor_base.py) + `src/utils/*_monitor.py`                                                   |
 | **전체 기능 목록/현황**                            | [docs/features.md](docs/features.md)                                                                                      |
 | **다른 코딩 에이전트용 Agent Skill 패키지**        | [agent-skill/](agent-skill/) — Claude Code/Codex 등이 KB증권 Open API를 바로 쓰도록 만든 별도 배포용 패키지(장기적으로 별도 공개 저장소로 분리 예정), 자체 문서(`agent-skill/README.md`) 참고 |
@@ -70,11 +72,11 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 GitHub에서 처음 받은 상태라면 설치 스크립트 하나로 개발환경 전체(uv 설치 → 의존성 설치 → `config/config.py` 템플릿 생성)가 준비됩니다. **Python만 미리 설치되어 있으면 됩니다** — 없으면 스크립트가 [python.org 다운로드 링크](https://www.python.org/downloads/)를 안내하고 종료합니다.
 
 ```bash
-install-project.bat      # Windows
-./install-project.sh     # macOS / Linux (최초 1회: chmod +x install-project.sh)
+manage\install\install-project.bat      # Windows
+./manage/install/install-project.sh     # macOS / Linux (최초 1회: chmod +x manage/install/install-project.sh)
 ```
 
-설치가 끝나면 `config/config.py`에 실제 키만 채우고 `run-*.bat`/`run-*.sh`로 바로 실행할 수 있습니다. 이미 설치된 환경에서 다시 실행해도 안전합니다(있는 것은 건너뜀). 수동으로 설치하려면 아래 1~2단계를 따르세요.
+설치가 끝나면 `config/config.py`에 실제 키만 채우고 `manage/run/run-*.bat`/`manage/run/run-*.sh`로 바로 실행할 수 있습니다. 이미 설치된 환경에서 다시 실행해도 안전합니다(있는 것은 건너뜀). 수동으로 설치하려면 아래 1~2단계를 따르세요.
 
 ### 1. 사전 요구사항
 
@@ -140,34 +142,36 @@ uv run python -m src.run.web
 
 매번 `uv run python ...`를 치기 번거로우면 아래 스크립트를 사용하세요 — 내부에서 동일하게 `uv run python`을 호출하므로 가상환경을 미리 활성화할 필요가 없습니다.
 
+모든 실행/설치 스크립트는 `manage/` 아래(운영 스크립트 폴더, 자세한 구조는 [docs/개발환경/manage.md](docs/개발환경/manage.md) 참고)에 모여 있습니다.
+
 | 스크립트 | 대상 OS | 역할 | 실행 대상 |
 |---|---|---|---|
-| `run-terminal.bat` | Windows 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `run-main.bat` | Windows 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
-| `run-web.bat` | Windows 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
-| `run-terminal.sh` | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `run-main.sh` | macOS·Linux 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
-| `run-web.sh` | macOS·Linux 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
+| `manage/run/run-terminal.bat` | Windows 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
+| `manage/run/run-main.bat` | Windows 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
+| `manage/run/run-web.bat` | Windows 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
+| `manage/run/run-terminal.sh` | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
+| `manage/run/run-main.sh` | macOS·Linux 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
+| `manage/run/run-web.sh` | macOS·Linux 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
 
 ```bash
 # Windows (탐색기에서 더블클릭해도 됨)
-run-terminal.bat
-run-main.bat
-run-web.bat
+manage\run\run-terminal.bat
+manage\run\run-main.bat
+manage\run\run-web.bat
 
 # macOS / Linux
-./run-terminal.sh
-./run-main.sh
-./run-web.sh
+./manage/run/run-terminal.sh
+./manage/run/run-main.sh
+./manage/run/run-web.sh
 ```
 
-> 처음 한 번은 `chmod +x run-terminal.sh run-main.sh run-web.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux). Windows에서는 필요 없습니다.
+> 처음 한 번은 `chmod +x manage/run/run-terminal.sh manage/run/run-main.sh manage/run/run-web.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux, `install-project.sh`를 실행했다면 이미 부여되어 있습니다). Windows에서는 필요 없습니다.
 
 ---
 
 ## 🌐 웹 클라이언트 사용법
 
-`run-web.*`(또는 `uv run python -m src.run.web`)을 실행하고 브라우저에서 http://localhost:8000 에 접속합니다.
+`manage/run/run-web.*`(또는 `uv run python -m src.run.web`)을 실행하고 브라우저에서 http://localhost:8000 에 접속합니다.
 프론트엔드는 프레임워크 없이 **순수 HTML + CSS + JS(fetch)**, 백엔드는 FastAPI JSON API로만 구성되어 있습니다 (`src/web/`).
 
 - **다중 사용자**: 브라우저(쿠키)마다 독립 세션이 만들어져, 여러 사람이 같은 서버에 접속해 **각자 자기 앱키로** 로그인/매매할 수 있습니다.
@@ -180,7 +184,7 @@ run-web.bat
 - **API 명세 탐색/테스트 (`/api.html`)**: `docs/api/md`의 업무구분 폴더 구조(OAuth/국내주식/해외주식 → 계좌잔고/기본시세/...)를 그대로 트리로 탐색하면서 명세 문서를 웹에서 읽고, INPUT 파라미터가 기본값으로 채워진 폼을 수정해 **실제 KB API를 테스트 호출**하고 원본 JSON 응답을 확인할 수 있습니다. `dataHeader`(ipAddr/macAddr)는 일반 주문/조회와 동일하게 서버가 자동 구성합니다. ⚠️ 운영환경(실거래)이므로 주문 계열(SSAM/SKAM) API는 전송 전에 확인 대화상자와 경고가 표시됩니다.
 - **주의(서버 공용 데이터)**: 로그인/토큰/자동매매 모니터 스레드는 사용자별로 분리되지만, 설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록(`config/data/settings.json`)은 **서버 전체 공용**입니다. 여러 사람이 쓸 때는 자동매매 기능 사용을 조율하세요.
 - **호스트/포트 변경**: 환경변수 `KBSEC_WEB_HOST`(기본 `127.0.0.1` — 로컬 전용) / `KBSEC_WEB_PORT`(기본 `8000`). 같은 네트워크의 다른 기기나 클라우드 배포 시 `KBSEC_WEB_HOST=0.0.0.0`으로 실행하되, 반드시 신뢰할 수 있는 네트워크(VPN 등)나 인증 프록시 뒤에서만 노출하세요 — 웹 화면 자체에는 접근 인증이 없습니다.
-- **로컬 1인 사용 편의 — `token` 옵션**: `run-web.bat token`(Windows) / `./run-web.sh token`(macOS·Linux)으로 실행하면 `config/config.py`의 앱키(client_key/client_secret)와 선택 항목(Claude API 키, 텔레그램 토큰)으로 새 브라우저 세션이 자동으로 설정·로그인되고, 브라우저가 실행 화면(`/`)으로 자동으로 열립니다 — 매번 값을 다시 입력할 필요가 없습니다. 다만 이 옵션은 "설정 화면에서 각자 자기 키를 입력"하는 다중 사용자 원칙의 예외라서, **접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동 로그인됩니다** — 반드시 로컬(`127.0.0.1`)에서 혼자 쓸 때만 사용하고, `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출된 상태에서는 절대 켜지 마세요. 자동 설정 후에도 설정 화면의 입력칸 자체에는 시크릿 원문이 표시되지 않습니다(다중 사용자 모드와 동일하게, 응답으로 시크릿을 절대 돌려주지 않는 설계를 그대로 유지) — 로그인 상태만 즉시 반영됩니다.
+- **로컬 1인 사용 편의 — `token` 옵션**: `manage\run\run-web.bat token`(Windows) / `./manage/run/run-web.sh token`(macOS·Linux)으로 실행하면 `config/config.py`의 앱키(client_key/client_secret)와 선택 항목(Claude API 키, 텔레그램 토큰)으로 새 브라우저 세션이 자동으로 설정·로그인되고, 브라우저가 실행 화면(`/`)으로 자동으로 열립니다 — 매번 값을 다시 입력할 필요가 없습니다. 다만 이 옵션은 "설정 화면에서 각자 자기 키를 입력"하는 다중 사용자 원칙의 예외라서, **접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동 로그인됩니다** — 반드시 로컬(`127.0.0.1`)에서 혼자 쓸 때만 사용하고, `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출된 상태에서는 절대 켜지 마세요. 자동 설정 후에도 설정 화면의 입력칸 자체에는 시크릿 원문이 표시되지 않습니다(다중 사용자 모드와 동일하게, 응답으로 시크릿을 절대 돌려주지 않는 설계를 그대로 유지) — 로그인 상태만 즉시 반영됩니다.
 
 ---
 
@@ -193,7 +197,7 @@ run-web.bat
 
 ### 기본 흐름
 
-`run-terminal.*`/`run-main.*`은 시작하자마자 **운영환경으로 자동 로그인**합니다 (KB증권 모의투자가
+`manage/run/run-terminal.*`/`manage/run/run-main.*`은 시작하자마자 **운영환경으로 자동 로그인**합니다 (KB증권 모의투자가
 아직 없어 `login`을 직접 입력할 필요가 없습니다 — 실패하면 결과 메시지가 표시되니 그때 `/login real`로
 재시도하면 됩니다).
 
@@ -252,7 +256,7 @@ IONQ  시장가(현재가 $12.34 기준)  10주 ...
 번호를 그대로 입력해 바로 선택할 수 있습니다(터미널 기준). 텔레그램에서는 같은 상황에
 인라인 버튼이 붙어서 나와 탭으로 확인/선택합니다.
 
-자연어 → 명령어 변환 규칙은 [docs/command_guide.md](docs/command_guide.md)에 정리되어 있으며, Claude API가 이 문서를
+자연어 → 명령어 변환 규칙은 [docs/command_guide_for_ai.md](docs/command_guide_for_ai.md)에 정리되어 있으며, Claude API가 이 문서를
 그대로 참조합니다. **명령어를 추가/변경하면 이 문서도 함께 갱신해야** AI가 올바르게 변환합니다.
 
 ### 자동매매 전략 시작하기
@@ -291,7 +295,7 @@ IONQ  시장가(현재가 $12.34 기준)  10주 ...
 
 ### 사용 예시 — 기본 흐름
 
-`run-terminal.*`로 실행하면 자동 로그인이 이미 되어 있으니 바로 명령을 입력하면 됩니다:
+`manage/run/run-terminal.*`로 실행하면 자동 로그인이 이미 되어 있으니 바로 명령을 입력하면 됩니다:
 
 ```
 >>> /info SZQM0771
@@ -419,25 +423,33 @@ docs/api/xlsx/*.xlsx  ──convert_xlsx_to_md.py──▶  docs/api/md/*.md
                                                       │
                     ┌─────────────────────────────────┤
                     ▼                                 ▼
-        generate_api_list.py               generate_api_client.py
-     (api-list.md / api-list.json)        (src/api/*.py + registry.py)
+  manage/generate/generate_api_list.py     manage/generate/generate_api_client.py
+     (api-list.md / api-list.json)              (src/api/*.py + registry.py)
 ```
 
+**위 3개 스크립트는 전부 `docs/api/`가 아니라 `manage/generate/`에 있습니다**(순수 관리
+스크립트라 프로젝트 루트의 `manage/` 폴더에 둠 — 상세는 [docs/개발환경/manage.md](docs/개발환경/manage.md) 참고).
 KB에서 새 명세를 받았거나 기존 명세가 바뀌면:
 
 ```bash
-uv run python docs/api/convert_xlsx_to_md.py "docs/api/xlsx/"   # xlsx → md 변환
-uv run python docs/api/generate_api_list.py                     # 목록 갱신
-uv run python docs/api/generate_api_client.py                   # 호출 코드 재생성
+uv run python -m manage.generate.convert_xlsx_to_md "docs/api/xlsx/"   # xlsx → md 변환
+uv run python -m manage.generate.generate_api_list                     # 목록 갱신
+uv run python -m manage.generate.generate_api_client                   # 호출 코드 재생성
 ```
 
-새 API를 추가할 땐 `docs/api/generate_api_client.py`의 `CODE_TO_MODULE` 딕셔너리에 코드→모듈 배정을 추가해야 합니다 (누락 시 경고 출력 후 건너뜀).
+(`manage/generate/generate_api_docs.py`는 위 세 단계 중 xlsx→md 변환과 목록 갱신 두 단계를 한 번에 실행하는 통합 스크립트입니다 — `uv run python -m manage.generate.generate_api_docs`.)
+
+⚠️ **`docs/api/xlsx/`에 새 명세를 추가할 때는 반드시 TR 성격에 맞는 업무구분 폴더**(예:
+`국내주식/계좌잔고/`)**안에 넣으세요** — 이 폴더 구조가 그대로 웹 "API 명세"(`/api.html`)
+화면의 트리 분류로 표시됩니다.
+
+새 API를 추가할 땐 `manage/generate/generate_api_client.py`의 `CODE_TO_MODULE` 딕셔너리에 코드→모듈 배정을 추가해야 합니다 (누락 시 경고 출력 후 건너뜀).
 
 ### 종목마스터 갱신 (mst)
 
 ```
 mst/origin/*.mst (KB 배포 원본)  ──┐
-docs/mst/xlsx/mst_*.xlsx (공식 필드 명세) ──┤── src/manage/generate_mst.py ──▶
+docs/mst/xlsx/mst_*.xlsx (공식 필드 명세) ──┤── manage/generate/generate_mst.py ──▶
 docs/api/api-list.md (API 코드 검증) ──┘
     ├─ docs/mst/xlsx/openapi_mst_*.xlsx   (사용/참조 필드 선별표)
     ├─ docs/mst/md/openapi_mst_*.md       (선별표 md + 코드→라벨 변환 규칙)
@@ -447,7 +459,7 @@ docs/api/api-list.md (API 코드 검증) ──┘
 KB에서 새 종목마스터(`mtsjname.mst`/`mtsoutjname.mst`/`FORENMST_US.MST`)를 받았으면 `mst/origin/`에 덮어쓰고 한 번만 실행합니다:
 
 ```bash
-uv run python -m src.manage.generate_mst
+uv run python -m manage.generate.generate_mst
 ```
 
 ---
@@ -470,7 +482,7 @@ HTTP는 성공했지만 KB 쪽 처리 결과(`dataHeader.resultCode`)가 실패�
 모든 생성 함수는 `extra` 인자를 지원합니다: `ssam1801(..., extra={"hts_pwd": "..."})`. 명세의 "요청 예시"에는 있지만 INPUT 표에 없는 필드(주문류 API에 흔함)를 보낼 때 사용하세요.
 
 **Q. `src/api/order.py`를 직접 고쳤는데 사라졌어요.**
-`src/api/` 아래 생성 파일은 `generate_api_client.py` 재실행 시 덮어써집니다. 공통 로직 수정은 `src/api/client.py`, 생성 방식 수정은 `docs/api/generate_api_client.py`에서 하세요.
+`src/api/` 아래 생성 파일은 `generate_api_client.py` 재실행 시 덮어써집니다. 공통 로직 수정은 `src/api/client.py`, 생성 방식 수정은 `manage/generate/generate_api_client.py`에서 하세요.
 
 **Q. 자연어로 말했는데 "Claude API 키가 설정되지 않았습니다"라고 나와요.**
 `config/config.py`의 `claude_api_key`를 실제 발급받은 키로 채우세요. 자연어 변환은 선택 기능이며, 키가 없어도 `/`로 시작하는 정식 명령어는 그대로 사용할 수 있습니다.
@@ -479,7 +491,7 @@ HTTP는 성공했지만 KB 쪽 처리 결과(`dataHeader.resultCode`)가 실패�
 KB API에는 실시간 웹소켓이 없어 REST 폴링 방식입니다 — 전략별로 15~30초 주기로 확인하며, 장 시간(09:00~15:30, 평일)에만 동작합니다. 정확한 주기는 `docs/features.md` 참고.
 
 **Q. 새 명령어를 추가하려면?**
-`CLAUDE.md`의 "필수 규칙" 섹션을 따르세요 — 명령 핸들러, `src/run/main.py`/`src/run/terminal.py` 등록, `docs/command_guide.md` 갱신을 모두 함께 해야 합니다.
+`CLAUDE.md`의 "필수 규칙" 섹션을 따르세요 — 명령 핸들러, `src/run/main.py`/`src/run/terminal.py` 등록, `docs/command_guide_for_ai.md` 갱신을 모두 함께 해야 합니다.
 
 ---
 

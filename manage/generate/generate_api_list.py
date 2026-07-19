@@ -2,8 +2,8 @@
 ================================================================================
 API 명세 목록 생성 스크립트 (업무구분 포함, 폴더 재귀 스캔)
 ================================================================================
-이 스크립트가 위치한 폴더 하위의 md/ 폴더를 재귀적으로 스캔하여 전체 API
-목록을 api-list.md(표 형태)와 api-list.json(배열)으로 생성합니다.
+docs/api/md/ 폴더를 재귀적으로 스캔하여 전체 API 목록을 docs/api/api-list.md
+(표 형태)와 docs/api/api-list.json(배열)으로 생성합니다.
 
 md/ 폴더 구조가 `<업무1>/<업무2>/<파일>.md`(예: `국내주식/계좌잔고/SSQM0004-...md`)
 형태이므로, md 루트 기준 파일의 상위 폴더 경로를 " > "로 이어붙여 "업무구분"
@@ -13,18 +13,23 @@ md/ 폴더 구조가 `<업무1>/<업무2>/<파일>.md`(예: `국내주식/계좌
 export) 파일명의 타임스탬프가 가장 최신인 파일 하나만 대표로 사용합니다.
 
 사용법:
-  uv run python generate_api_list.py   (이 폴더에서 실행)
+  uv run python -m manage.generate.generate_api_list
+
+관련 스크립트: manage/generate/generate_api_client.py(SPEC_DIR/collect_entries/dedupe를
+import해 재사용), manage/generate/generate_api_docs.py(convert_xlsx_to_md.py + 이
+스크립트를 한 번에 실행하는 통합 스크립트) — 둘 다 이 모듈을
+`from manage.generate.generate_api_list import ...`로 참조한다.
 ================================================================================
 """
 
 import json
 import re
+import sys
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-SPEC_DIR = BASE_DIR / "md"
-OUT_MD = BASE_DIR / "api-list.md"
-OUT_JSON = BASE_DIR / "api-list.json"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
+sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths import가 풀리도록
+from src.paths import API_SPEC_MD_DIR as SPEC_DIR, API_LIST_MD as OUT_MD, API_LIST_JSON as OUT_JSON  # noqa: E402
 
 # 파일명 형식: <코드?>-<이름>-YYYYMMDD-HHMMSS.md  (코드가 없는 경우도 있음, 예: "토큰 발급-...")
 FILENAME_RE = re.compile(r"^(?P<title>.+)-(?P<date>\d{8})-(?P<time>\d{6})$")
@@ -123,7 +128,7 @@ def write_md(entries):
         "# KB증권 OpenAPI 목록",
         "",
         "`md` 폴더(업무구분별 하위 폴더) 내 개별 API 명세서를 스캔하여 자동 생성된 "
-        "목록입니다. (생성 스크립트: `generate_api_list.py`)",
+        "목록입니다. (생성 스크립트: `manage/generate/generate_api_list.py`)",
         "",
         f"총 {len(entries)}개 API",
         "",

@@ -52,7 +52,7 @@ from src.commands.gdcrs_command import handle_gdcrs
 from src.commands.trst_command import handle_trst
 from src.commands.investor_command import handle_investor
 from src.commands.api_command import handle_api
-from src.messenger.telegram.tel_send import send_document, send_photo
+from src.msgr.telegram.tel_send import send_document, send_photo
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils.session import SessionManager
 from src.utils.ai_command_converter import convert_natural_to_commands

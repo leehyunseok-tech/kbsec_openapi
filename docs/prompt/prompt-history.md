@@ -734,3 +734,88 @@
 2. **② "봇"→"Agent" 리브랜딩 문서 반영**: 런타임 문자열(HELP_TEXT/배너/시스템 프롬프트/HTML title·h1)은 이미 Agent로 변경돼 있었음. 이번에 `README.md`(H1 제목 포함, 파일가이드 표, 사전요구사항, 설정 예시 주석, 실행 안내, 실행 스크립트 표, 명령어 사용법 섹션 제목), `docs/features.md`(개요 문장), `CLAUDE.md`(자주 쓰는 명령어 주석), `docs/command_guide.md`(제목, 본문 자기지시 2곳), `docs/prompt/개발환경.md`(소제목, 본문 3곳, 실행 스크립트 절)까지 "이 프로젝트 자기 자신을 가리키는 봇" 표현만 골라 Agent로 통일. 반대로 Telegram 플랫폼 고유 용어(`텔레그램 봇 토큰`, `@BotFather`, `config.example.py`의 "텔레그램 봇 토큰/채팅방 ID" 주석)는 그대로 유지 — 판단 기준은 "이 프로젝트 자신을 가리키는 문맥인가"였음. `docs/prompt/prompt-history.md`의 과거 기록·`docs/api/md`의 KB 명세 원본은 손대지 않음(역사 기록/명세 원문 보존).
 3. **③ `agent-skill/` 언급 추가**: 서브 프로젝트 자체 문서(`SKILL.md`/`README.md`/`PUBLISHING.md`)는 그대로 두고, `kbsec_api` 루트 문서에만 존재를 짧게 링크 — `docs/features.md` 개요 문단에 안내 추가, `README.md` 파일가이드 표에 "다른 코딩 에이전트용 Agent Skill 패키지" 행 추가.
 4. **커밋 분할 제안**: 성격이 다른 두 변경(① 세션 버튼 기능 + 봇→Agent 리브랜딩 문서 정리, ② `agent-skill/` 신규 추가)을 커밋 2개로 분리 제안 — 실제 `git add`/`git commit`은 실행하지 않음(사용자 명시 요청 시에만 진행).
+---
+
+### Q: (두 작업) ① /stcd, /buy 처럼 슬래시+커맨드로 실행하는 명령어만 다룬 command_summary.md를 docs/개발환경 폴더에 생성, docs/prompt/개발환경.md도 docs/개발환경 폴더로 이동. ② 프로그램 전반에서 docs/api/api-list.json이 실제로 쓰이는지 확인하고, docs 하단에 .py 파일이 있으면 정리해서 docs/개발환경/docs_python.md에 삭제 가능 여부까지 작성.
+
+### A: docs/개발환경/ 아래 문서 3종(command_summary.md 신규, 개발환경.md 이동, docs_python.md 신규) 정리 완료.
+
+1. **command_summary.md**: main.py HELP_TEXT·command_guide.md·각 command 핸들러의 사용법 문자열을 대조해 `/`로 시작하는 슬래시 명령어 전체(인증/조회/매매/설정/예약·기록/API 직접호출(`/api`,`/call`,`/info`,`/list`)/자동매매 6종/기타(`/help`,`/power`))를 기능·상세설명·예시 형태로 정리. command_guide.md(AI 런타임 참조용, `/` 없는 형태)와 목적이 다름을 문서 서두에 명시.
+2. **개발환경.md 이동**: `docs/prompt/개발환경.md` → `docs/개발환경/개발환경.md` (git mv). CLAUDE.md의 "개발환경 문서 갱신 규칙" 경로와 README.md 파일 가이드 표의 링크를 새 경로로 갱신, command_summary.md 링크도 표에 추가. grep으로 구경로 참조 전수 확인(prompt-history.md의 과거 기록 제외 전부 정리됨).
+3. **api-list.json 사용처 조사**: 산출물(generate_api_list.py/generate_api_docs.py)이면서 동시에 런타임에서도 읽힘 — `src/utils/api_spec.py`(_load_api_list, mtime 캐싱 단일 진입점) → `api_command.py`(/api list)·`terminal.py`(/list)·`api_resolver.py`(자연어 api{이름} 코드 매칭)·`ai_command_converter.py`(_build_api_name_list, Claude 프롬프트 삽입용 API 이름 동적 구성) 전부 경유. `src/web/spec_browser.py`는 의도적으로 미사용(폴더 구조 그대로 탐색) — docstring에 명시된 설계 확인.
+4. **docs/*.py 전수 조사**: `docs/` 재귀 스캔 결과 `.py`는 docs/api/ 4개뿐(convert_xlsx_to_md.py/generate_api_list.py/generate_api_client.py/generate_api_docs.py, 이 중 generate_api_docs.py는 이전 세션에서 추가된 통합 스크립트로 처음 확인함) — docs/mst/에는 mst 파이프라인이 src/manage/generate_mst.py로 통합되며 이미 없음. 4개 전부 상호 import 의존 관계(generate_api_docs.py가 나머지 둘을, generate_api_client.py가 generate_api_list.py를 재사용)이자 docs/api/README.md에 문서화된 활성 스크립트라 **전부 삭제 불가**로 결론.
+5. docs_python.md에 스크립트별 역할/호출관계/삭제가능여부 표 + api-list.json 런타임 사용처 표를 작성. 검증: compileall 통과, 구경로 참조 0건.
+---
+
+### Q: docs/api/generate_api_list.py를 src/manage 위치로 옮기고 관련 문서/소스도 수정. docs/개발환경에는 src/manage 폴더에 있는(운영을 위해 생성해야 하는) 파이썬 프로그램들을 상세 설명하는 md 파일도 신규 작성(언제 실행해야 하는지 포함).
+
+### A: `generate_api_list.py`를 `src/manage/generate_api_list.py`로 이동, 의존 스크립트 2종의 import 경로 수정, 관련 문서 5곳 갱신, `docs/개발환경/src_manage.md` 신규 작성.
+
+1. **이동 + 경로 재계산**: `BASE_DIR = Path(__file__).resolve().parent`(자기 자신이 docs/api에 있다고 가정) → `PROJECT_ROOT = ....parent.parent.parent` 기반으로 `DOCS_API_DIR`/`SPEC_DIR`/`OUT_MD`/`OUT_JSON`을 명시적으로 재계산(generate_mst.py와 동일한 패턴). 실행 방식도 `uv run python generate_api_list.py`(파일 직접 실행)에서 `uv run python -m src.manage.generate_api_list`(모듈 실행)로 변경 — src/manage/에 이미 `__init__.py`가 있어 패키지로 동작.
+2. **의존 스크립트 수정**: `docs/api/generate_api_client.py`(`sys.path.insert(0, str(DOCS_API_DIR)); from generate_api_list import ...` → `sys.path.insert(0, str(PROJECT_ROOT)); from src.manage.generate_api_list import ...`), `docs/api/generate_api_docs.py`(동일 패턴, `import generate_api_list` → `from src.manage import generate_api_list`).
+3. **검증**: `-m src.manage.generate_api_list` 단독 실행, `docs/api/generate_api_docs.py`(xlsx→md+목록 통합) 실행, `docs/api/generate_api_client.py`(src/api/*.py 재생성) 실행 — 3개 전부 정상 동작하고 `api-list.json`/`src/api/*`는 바이트 단위로 무변화, `api-list.md`는 "생성 스크립트" credit 줄 1곳만 새 경로로 갱신됨을 diff로 확인.
+4. **문서 갱신**: `docs/api/README.md`(파이프라인 다이어그램·설명 경로), `CLAUDE.md`(자주 쓰는 명령어 + src/manage 항목 + docs/개발환경 항목), `README.md`(코드 생성 파이프라인 절 + 파일가이드 표 2행 추가), `docs/개발환경/개발환경.md`(API 명세 목록 생성 절), `docs/개발환경/docs_python.md`(docs/api/ 남은 3개로 목록 갱신 + 이동 사실 안내 박스 + 사용처 정리 문구 수정).
+5. **신규 문서**: `docs/개발환경/src_manage.md` — `generate_mst.py`/`generate_api_list.py` 각각의 "무엇을 만드는가/실행 명령/언제 실행해야 하는가/산출물 손대지 말 것" + api-list.json 런타임 사용처 요약 + 두 스크립트를 함께 돌려야 할 때의 실행 순서(generate_api_docs → generate_mst → generate_api_client, mst가 api-list.md를 검증에 쓰므로 순서 중요)까지 정리.
+
+---
+
+### Q: docs/ 폴더 하단에 있는 python 프로그램들을 src/manage/ 위치로 옮기고, 관련된 소스와 문서들을 수정해줘. src/manage 하단에 있는 python들의 역할이 무엇인지·지워도 되는지·만들어진 파일들은 무엇이고 어디에서 사용하는지 등에 대해서 docs/개발환경 하단에 manage.md 파일을 만들고 상세하게 작성해줘(docs_python.md도 참조, 그 내용도 포함시켜 작성). docs_python.md가 더 이상 필요없다면 삭제. (+ 중간에: manage.md에 docs/api/xlsx에 명세서를 넣을 때 TR 성격에 맞게 폴더를 구분해서 넣어야 하고, 그 폴더 구조가 그대로 웹 API 명세 페이지에도 반영된다는 내용 추가 요청)
+
+### A: docs/api/에 남아있던 마지막 3개 스크립트(convert_xlsx_to_md.py, generate_api_client.py, generate_api_docs.py)를 전부 src/manage/로 이동 — 이제 docs/ 아래에는 .py 파일이 하나도 없다. docs/개발환경/manage.md 신규 작성(기존 docs_python.md + src_manage.md 통합) 후 두 파일 삭제.
+
+1. **이동(git mv) + 경로 재계산**: 세 스크립트 모두 `Path(__file__).resolve().parent`(자기 위치가 docs/api라는 가정)를 쓰고 있었는데, `PROJECT_ROOT = ....parent.parent.parent` 기반(src/manage → src → root)으로 명시적 재계산하도록 고침(generate_mst.py와 동일 패턴). `docs/api/xxx` import를 `src.manage.xxx`로, 사용법 안내를 전부 `uv run python -m src.manage.<이름>`(모듈 실행) 형태로 통일. convert_xlsx_to_md.py는 자체 경로 의존이 없어 usage 문구(23곳 일괄 치환)만 갱신.
+2. **검증**: 다섯 스크립트(generate_mst/convert_xlsx_to_md/generate_api_list/generate_api_client/generate_api_docs) 전부 실제 실행 — `docs/api/api-list.md`(76개 API)는 credit 줄만, `src/api/*.py` 11개 파일은 자동생성 헤더 주석 1줄(경로 표기)만 바뀌고 기능 완전 동일함을 `git diff`로 확인(sanity check: 삼성전자=주식, AAPL=주식, 참조표 미등재 0건, KOSPI 2472+KOSDAQ 1820+미국 12510종목).
+3. **코드/문서 경로 전수 갱신**: `src/utils/ai_command_converter.py`, `src/utils/api_spec.py`, `src/manage/generate_api_list.py` 자체 문서, `.claude/agents/agent-api-spec-pipeline.md`, `docs/features.md`, `docs/api/README.md`(파이프라인 다이어그램 포함 전면 재작성), `CLAUDE.md`, `README.md`, `docs/개발환경/개발환경.md`(과거 마이그레이션 서술은 역사적 사실이라 보존하되 "이후 src/manage로 재이동" 각주만 추가) — grep으로 옛 경로(`docs/api/generate_api_*`, `docs/api/convert_xlsx_to_md`) 잔존 여부 최종 확인, 남은 건 의도된 역사적 서술 1곳뿐임을 확인.
+4. **docs/개발환경/manage.md 신규 작성**: src/manage/의 5개 스크립트(generate_mst, convert_xlsx_to_md, generate_api_list, generate_api_client, generate_api_docs) 각각 "무엇을 만드는가 / 실행 명령 / 언제 실행해야 하는가 / 산출물 런타임 사용처 / 삭제 가능 여부(전부 ❌ 불가, 근거 명시)"를 정리 + docs_python.md의 "api-list.json 런타임 사용처" 표(api_spec.py/api_command.py/terminal.py/api_resolver.py/ai_command_converter.py/command_pipeline.py 6곳)를 그대로 포함 + src_manage.md의 "실행 순서(generate_api_docs→generate_mst→generate_api_client)" 절 포함.
+5. **신규 추가(TR 분류 → 웹 반영)**: `src/web/spec_browser.py`의 `build_tree()`를 직접 읽어 확인 — api-list.json이 아니라 `docs/api/md`의 실제 디렉터리 구조를 그대로 재귀 순회해 트리를 만든다는 사실을 코드로 검증. manage.md에 "⚠️ TR 성격별 폴더 분류 → 웹 API 명세 트리에 그대로 반영됨" 절을 신설해, xlsx를 엉뚱한 업무구분 폴더에 넣으면 코드 생성은 정상 동작해도 웹 화면 분류와 api-list의 category 컬럼이 잘못된다는 실패 시나리오를 명시. 동일 경고를 `docs/api/README.md`·`README.md`·`CLAUDE.md`에도 짧게 추가.
+6. **정리**: `docs/개발환경/docs_python.md`, `docs/개발환경/src_manage.md` 삭제, 두 파일에 대한 잔존 참조 0건 확인(grep).
+
+---
+
+### Q: (세 작업, 세션 제한으로 중간에 끊겼다가 재개) ① src/manage/ 하단 전체를 manage/generate/로 이동(src/가 아닌 프로젝트 루트) ② run-*로 시작하는 모든 bat/실행 파일을 manage/run/으로 이동 ③ install-*로 시작하는 모든 bat/실행 파일을 manage/install/로 이동. 각각 관련 소스/문서 모두 수정.
+
+### A: `src/manage/` 전체와 루트의 `run-*.bat/sh`(6개)·`install-project.bat/sh`(2개)를 프로젝트 루트의 새 `manage/` 폴더(생성/실행/설치 스크립트 전용, `src/`도 `docs/`도 아닌 독립 폴더) 하위 `generate/`·`run/`·`install/`로 재배치하고 관련 소스·문서 전부 갱신.
+
+1. **manage/generate/ (구 src/manage/)**: `git mv`로 5개 스크립트 이동(1개는 미추적 파일이라 `mv`로 보완) + `manage/__init__.py`(신규, manage/ 전체 안내) + `manage/generate/__init__.py`(기존 내용 경로만 갱신). 경로 깊이가 `src/manage/xxx.py`(src→manage 2단계)에서 `manage/generate/xxx.py`(manage→generate 2단계)로 **동일하게 유지**되어 `PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent` 계산식 자체는 손댈 필요 없었음 — 스크립트 내부의 `src.manage`/`src/manage` 문자열(모듈 실행 경로, import문, GENERATED_HEADER/api-list.md credit 줄, 상호 참조 주석)만 `manage.generate`/`manage/generate`로 치환. 실행: `uv run python -m manage.generate.<파일명>`으로 전부 통일.
+2. **manage/run/ (구 루트의 run-main/run-terminal/run-web .bat+.sh)**: `git mv`로 6개 이동. 프로젝트 루트에서 두 단계 아래로 옮겨졌으므로 각 스크립트의 `cd` 로직을 `cd /d "%~dp0"`(bat)/`cd "$(dirname "${BASH_SOURCE[0]}")"`(sh) → `cd /d "%~dp0..\.."`/`cd "$(dirname "${BASH_SOURCE[0]}")/../.."`로 수정(프로젝트 루트까지 두 단계 되짚음). `cmd /c "cd /d ...\manage\run\..\.. && cd"`와 Git Bash 서브셸로 각각 실측해 프로젝트 루트로 정확히 resolve됨을 확인.
+3. **manage/install/ (구 루트의 install-project.bat+.sh)**: `git mv`로 2개 이동, 동일하게 `cd` 두 단계 상향 수정. 안내 문구(다음 단계 실행법)와 `.sh`의 `chmod +x` 대상 경로를 전부 `manage/run/run-*.*`로 갱신.
+4. **코드 내 참조 갱신**: `src/utils/stock_master.py`/`ai_command_converter.py`/`api_spec.py`(주석), `src/run/main.py`/`terminal.py`/`web.py`(사용법 docstring), `src/utils/terminal_ui.py`, `src/web/app.py`(주석 3곳) — 전부 `run-*.bat/sh`, `src.manage`류 문자열을 새 경로로.
+5. **문서 갱신**: `CLAUDE.md`(자주 쓰는 명령어, 소스 레이아웃 서술, `manage/` 신규 항목 — mst/generate 설명을 하나로 통합해 재작성, 코드 생성 규칙), `README.md`(파일가이드 표, 원클릭 설치, 실행 스크립트 표+명령어, 웹 클라이언트 사용법, 텔레그램/터미널 사용법, 코드 생성 파이프라인 다이어그램, mst 파이프라인 다이어그램, FAQ), `docs/api/README.md`(파이프라인 설명 전면 갱신), `docs/features.md`, `docs/개발환경/개발환경.md`(설치 스크립트·실행 스크립트 절에 "원래 루트에 있었으나 이동함" 안내 박스 추가, 역사적 서술은 보존하되 현재 사실 진술만 갱신), `docs/개발환경/manage.md`(제목을 `manage/generate/`에서 `manage/`로 승격, 상단에 `manage/run/`·`manage/install/` 소개 섹션 신설 + 본문 전체 `src.manage`→`manage.generate` 일괄 치환), `.claude/agents/agent-api-spec-pipeline.md`(description+본문).
+6. **검증**: `compileall`로 `src`/`manage` 전체 문법 확인. `run-web.bat`/`run-web.sh`를 새 위치에서 실제 실행해 `http://localhost:8781(8782)/`에 200 응답 확인 후 프로세스 종료(PowerShell `Get-CimInstance Win32_Process`로 정리). `install-project.bat`를 새 위치에서 실제 실행해 Python/uv 감지·`uv sync`·config 보존·`manage\run\run-*.bat` 안내 문구까지 전부 정상 확인. 나머지 3개 `.sh`는 `bash -n` 문법 검사. 전체 저장소 재검색으로 "src.manage/src/manage", "run-main/terminal/web without manage/ prefix", "install-project without manage/install prefix" 잔존 0건(단, 의도된 역사적 서술·일반 명사 언급은 정상 유지) 확인.
+
+---
+
+### Q: src/messenger 폴더의 이름을 src/msgr 로 변경해줘, 관련 소스 및 문서들 모두 수정해줘.
+
+### A: `git mv src/messenger src/msgr`로 폴더 리네임 후 import·문서 4곳 갱신, 나머지는 의도적으로 역사적 서술로 보존.
+
+1. **폴더 이동**: `git mv src/messenger src/msgr` — 하위 `telegram/` 패키지와 `tel_send.py`/`tel_receive.py` 파일명은 그대로, 바깥쪽 총괄 폴더 이름만 변경.
+2. **코드 갱신**: `src/run/main.py`(3곳, `from src.messenger.telegram...` → `from src.msgr.telegram...`, replace_all), `src/web/client.py`(1곳) — grep으로 `src.messenger`/`src/messenger` 전체 재검색해 남은 `.py` 참조 0건 확인.
+3. **문서 갱신**: `CLAUDE.md`는 현재 상태 설명 문서라 두 줄(소스 레이아웃 임포트 예시, `src/msgr/telegram/` 구조 설명 + 리네임 각주) 전부 갱신. `docs/개발환경/개발환경.md`는 과거 마이그레이션을 서술하는 히스토리 문서라 "`telegram/` → `src/messenger/`로 개명한 이유(python-telegram-bot 패키지명 충돌 회피)"나 "`commands/`를 `messenger/`에서 분리" 절의 `messenger` 표기는 그 시점 사실이므로 그대로 두고, 대신 새 절 "후속 리네임: `src/messenger/` → `src/msgr/`"을 추가해 현재 경로를 명시. 현재-사실을 진술하는 임포트 예시 한 줄만 `src.msgr`로 바꾸고 괄호로 리네임 사실을 덧붙임.
+4. **검증**: `compileall` 통과, `from src.msgr.telegram.tel_send import send_message` 등 실제 import 스모크 테스트 통과, 전체 저장소 재검색(`.venv`의 무관한 서드파티 라이브러리 2건 제외) 결과 남은 `messenger` 언급은 전부 위 2개 파일의 의도된 역사적 서술뿐임을 확인.
+
+---
+
+### Q: (직전에 "AI 자연어 주문 시 참조 문서가 command_guide.md와 api-list.json이 맞냐"는 질문에 command_guide.md만 AI가 실제로 읽고 api-list.json은 api 명령 전용이며 종목코드 확정은 mst 파일 별도 단계라고 답변한 뒤) docs/command_guide.md 파일의 이름을 command_guide_for_ai.md 로 변경하고 관련된 프로그램들 모두 수정해줘.
+
+### A: `git mv docs/command_guide.md docs/command_guide_for_ai.md`로 리네임 후 런타임 로드 경로 3곳(핵심)과 문서 8곳을 전부 갱신.
+
+1. **파일 이동**: `git mv docs/command_guide.md docs/command_guide_for_ai.md`.
+2. **런타임 코드(가장 중요)**: `src/utils/ai_command_converter.py`의 `_GUIDE_PATH`(시스템 프롬프트에 삽입할 파일을 실제로 읽는 경로) + docstring 2곳을 새 파일명으로 갱신 — 이걸 놓치면 AI가 규칙을 하나도 못 읽는 심각한 회귀였음. `src/utils/api_resolver.py`, `src/utils/stock_resolver.py`의 참고 주석도 갱신.
+3. **가이드 파일 자체**: 헤더에 `_for_ai` 접미사가 붙은 이유(사람이 읽는 설명서가 아니라 AI 시스템 프롬프트에 그대로 들어가는 런타임 입력임을 명시) 설명과, 사람이 읽는 슬래시 명령어 요약은 `docs/개발환경/command_summary.md`를 보라는 안내를 추가.
+4. **문서 갱신**: `.claude/agents/agent-command-consistency.md`, `CLAUDE.md`, `docs/features.md`, `docs/개발환경/command_summary.md`, `docs/개발환경/manage.md`, `docs/개발환경/개발환경.md`, `README.md`(3곳, 마크다운 링크 `[docs/command_guide.md](docs/command_guide.md)` 포함) — 전부 새 파일명으로 일괄 치환.
+5. **검증**: `compileall` 통과, `_load_command_guide()`로 실제 파일 로드(6605자) 확인, `_build_system_prompt()`로 실제 시스템 프롬프트 생성 시 가이드 내용("기본 규칙")이 포함되는지 종단 테스트, 전체 저장소 재검색 결과(`docs/prompt/prompt-history.md` 제외) 옛 파일명 잔존 0건 확인.
+
+---
+
+## 2026-07-19
+
+### Q: (흩어진 런타임 참조 문서들을 ref/ 폴더로 물리 통합하는 게 어떤지 상담한 데 대해, "경로 정의 통합"이 낫다는 답변을 듣고) 두 가지 작업을 해줘. 첫째, src/paths.py를 만들어 14개 모듈을 일괄 전환하고, 이게 뭔지·장점·참조구조 변경 시 절차를 설명하는 문서를 docs/개발환경에 작성. 둘째, mermaid 등으로 프로젝트 전체 구조와 흐름을 알 수 있는 문서와, 프로그램 초보자도 이해할 수 있는 상세 설명 문서를 docs/개발환경에 작성. 문서를 신규로 만들지/기존에 추가할지/병합할지는 최선의 방법으로 선택.
+
+### A: `src/paths.py` 경로 상수 모듈을 신설해 14개 모듈을 전환하고, 신규 문서 3개(paths.md/프로젝트구조.md/초보자가이드.md)를 작성.
+
+1. **src/paths.py 신설**: 프로젝트 루트 기준 런타임 참조 경로 전부를 상수로 정의 — config/data 3종(settings/schedules/cooldown_log), logs/, command_guide_for_ai.md, docs/api 5종(xlsx/md/api-list.md/json/src/api), mst 4종(origin/api/docs xlsx·md), src/web/static. 각 상수에 사용처 주석 포함.
+2. **src/ 10개 모듈 전환**: api_spec, ai_command_converter, cooldown_log, schedule_manager, settings_manager, stock_master, trade_logger, trade_analyzer, log_command, web/app — 각자의 `Path(__file__).resolve().parent...` 루트 계산을 제거하고 `from src.paths import ... as <기존이름>` 별칭 import로 교체(사용처 코드는 무변경). trade_logger는 타입 힌트용 `Path` import만 복원. spec_browser는 api_spec에서 DOCS_API_DIR을 재수입하던 기존 구조 그대로 동작.
+3. **manage/generate 4개 전환**: generate_api_list/api_client/api_docs/mst — 파일 직접 실행 지원용 sys.path 부트스트랩(`PROJECT_ROOT` 계산 + insert)만 남기고 경로 조합은 전부 src.paths 상수로. generate_api_client에서 실수로 빠뜨릴 뻔한 DOCS_API_DIR 사용처(149행)도 grep으로 잡아 import에 추가.
+4. **검증**: compileall 통과, 스모크 테스트(종목마스터 2472+1820+12510건 로드, command_guide 6769자, api-list 74건, settings 8키, 삼성전자→005930 검색), generate_api_list 실제 실행(멱등 확인 — 이전 폴더 이동 때 반영 안 됐던 생성 스크립트 경로 표기 한 줄만 갱신됨), 나머지 3종 import 확인.
+5. **문서**: `docs/개발환경/paths.md`(배경/장점/상수·사용처 표/변경 절차 4종/금지 사항), `docs/개발환경/프로젝트구조.md`(mermaid 8종 — 트리플 클라이언트, 폴더 구조, 명령 처리 흐름, 로그인 시퀀스, 자동매매 폴링, API 명세·종목마스터 파이프라인, 웹 구조), `docs/개발환경/초보자가이드.md`(용어 6개, 폴더 비유, 자연어 주문 처리 7단계, 첫 실행 순서, 금지 사항). 신규 3개 파일로 분리하되 개발환경.md에 "경로 상수 모듈"/"구조·입문 문서" 절을 추가해 연결 — 기존 문서들이 주제별 1파일 체계(command_summary/manage)라 병합보다 분리가 일관적이라고 판단. CLAUDE.md에도 src/paths.py 항목(새 경로 하드코딩 금지 규칙)과 docs/개발환경 문서 목록을 갱신.

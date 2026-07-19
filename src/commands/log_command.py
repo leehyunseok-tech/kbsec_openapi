@@ -1,9 +1,8 @@
 """log 명령 처리 - 체결 내역 CSV 파일 전송 (브로커 무관)."""
 
 from datetime import datetime, timedelta
-from pathlib import Path
 
-_LOGS_DIR = Path(__file__).resolve().parent.parent.parent / "logs"
+from src.paths import LOGS_DIR as _LOGS_DIR
 
 
 def _resolve_log_path(days_ago: int):

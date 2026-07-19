@@ -7,11 +7,11 @@ KB증권 OpenAPI 명세서(xlsx)를 AI가 이해하기 쉬운 Markdown 파일로
 --------------------------------------------------------------------------------
 사용법 요약
 --------------------------------------------------------------------------------
-  python convert_xlsx_to_md.py "파일.xlsx"           # 단일 파일 변환
-  python convert_xlsx_to_md.py "폴더/"               # 폴더 일괄 변환
-  python convert_xlsx_to_md.py "폴더/" --recursive   # 하위 폴더 포함 변환
-  python convert_xlsx_to_md.py "폴더/" "출력폴더/"   # 출력 폴더 지정
-  python convert_xlsx_to_md.py --help                # 도움말
+  uv run python -m manage.generate.convert_xlsx_to_md "파일.xlsx"           # 단일 파일 변환
+  uv run python -m manage.generate.convert_xlsx_to_md "폴더/"               # 폴더 일괄 변환
+  uv run python -m manage.generate.convert_xlsx_to_md "폴더/" --recursive   # 하위 폴더 포함 변환
+  uv run python -m manage.generate.convert_xlsx_to_md "폴더/" "출력폴더/"   # 출력 폴더 지정
+  uv run python -m manage.generate.convert_xlsx_to_md --help                # 도움말
 
 --------------------------------------------------------------------------------
 사용법 상세
@@ -22,16 +22,16 @@ KB증권 OpenAPI 명세서(xlsx)를 AI가 이해하기 쉬운 Markdown 파일로
    특정 xlsx 파일 하나를 markdown으로 변환합니다.
 
    기본 사용법:
-     python convert_xlsx_to_md.py <xlsx_파일_경로>
+     uv run python -m manage.generate.convert_xlsx_to_md <xlsx_파일_경로>
 
    출력 경로 지정:
-     python convert_xlsx_to_md.py <xlsx_파일_경로> <출력_md_경로>
+     uv run python -m manage.generate.convert_xlsx_to_md <xlsx_파일_경로> <출력_md_경로>
 
    예시:
-     python convert_xlsx_to_md.py "명세/GSA10020-체결-20260709-155752.xlsx"
+     uv run python -m manage.generate.convert_xlsx_to_md "명세/GSA10020-체결-20260709-155752.xlsx"
      → 결과: 명세/GSA10020-체결-20260709-155752.md (같은 폴더에 생성)
 
-     python convert_xlsx_to_md.py "명세/GSA10020-체결-20260709-155752.xlsx" "output/체결API.md"
+     uv run python -m manage.generate.convert_xlsx_to_md "명세/GSA10020-체결-20260709-155752.xlsx" "output/체결API.md"
      → 결과: output/체결API.md (지정한 경로에 생성)
 
 2. 폴더 일괄 변환
@@ -39,16 +39,16 @@ KB증권 OpenAPI 명세서(xlsx)를 AI가 이해하기 쉬운 Markdown 파일로
    폴더 내 모든 xlsx 파일을 한번에 markdown으로 변환합니다.
 
    기본 사용법:
-     python convert_xlsx_to_md.py <폴더_경로>/
+     uv run python -m manage.generate.convert_xlsx_to_md <폴더_경로>/
 
    출력 폴더 지정:
-     python convert_xlsx_to_md.py <폴더_경로>/ <출력_폴더_경로>/
+     uv run python -m manage.generate.convert_xlsx_to_md <폴더_경로>/ <출력_폴더_경로>/
 
    예시:
-     python convert_xlsx_to_md.py "명세/"
+     uv run python -m manage.generate.convert_xlsx_to_md "명세/"
      → 결과: 명세/ 폴더 내 모든 xlsx가 같은 폴더에 md로 변환
 
-     python convert_xlsx_to_md.py "명세/" "output/"
+     uv run python -m manage.generate.convert_xlsx_to_md "명세/" "output/"
      → 결과: 명세/ 폴더 내 모든 xlsx가 output/ 폴더에 md로 변환
 
    주의: 폴더 경로는 반드시 '/'로 끝나야 합니다.
@@ -58,10 +58,10 @@ KB증권 OpenAPI 명세서(xlsx)를 AI가 이해하기 쉬운 Markdown 파일로
    폴더 및 하위 폴더의 모든 xlsx 파일을 변환합니다.
 
    사용법:
-     python convert_xlsx_to_md.py <폴더_경로>/ --recursive
+     uv run python -m manage.generate.convert_xlsx_to_md <폴더_경로>/ --recursive
 
    예시:
-     python convert_xlsx_to_md.py "명세/" --recursive
+     uv run python -m manage.generate.convert_xlsx_to_md "명세/" --recursive
      → 결과: 명세/ 및 하위 폴더의 모든 xlsx를 각각 같은 위치에 md로 변환
 
 --------------------------------------------------------------------------------
@@ -378,24 +378,24 @@ Excel API 명세서 → Markdown 변환 스크립트
 
 사용법:
   1. 단일 파일 변환
-     python convert_xlsx_to_md.py <xlsx_파일_경로> [출력_md_경로]
+     uv run python -m manage.generate.convert_xlsx_to_md <xlsx_파일_경로> [출력_md_경로]
 
      예시:
-       python convert_xlsx_to_md.py "명세/GSA10020-체결.xlsx"
-       python convert_xlsx_to_md.py "명세/GSA10020-체결.xlsx" "output/체결.md"
+       uv run python -m manage.generate.convert_xlsx_to_md "명세/GSA10020-체결.xlsx"
+       uv run python -m manage.generate.convert_xlsx_to_md "명세/GSA10020-체결.xlsx" "output/체결.md"
 
   2. 폴더 일괄 변환 (폴더 경로는 '/'로 끝나야 함)
-     python convert_xlsx_to_md.py <폴더_경로>/ [출력_폴더_경로/]
+     uv run python -m manage.generate.convert_xlsx_to_md <폴더_경로>/ [출력_폴더_경로/]
 
      예시:
-       python convert_xlsx_to_md.py "명세/"
-       python convert_xlsx_to_md.py "명세/" "output/"
+       uv run python -m manage.generate.convert_xlsx_to_md "명세/"
+       uv run python -m manage.generate.convert_xlsx_to_md "명세/" "output/"
 
   3. 하위 폴더 포함 일괄 변환
-     python convert_xlsx_to_md.py <폴더_경로>/ --recursive
+     uv run python -m manage.generate.convert_xlsx_to_md <폴더_경로>/ --recursive
 
      예시:
-       python convert_xlsx_to_md.py "명세/" --recursive
+       uv run python -m manage.generate.convert_xlsx_to_md "명세/" --recursive
 
 옵션:
   --recursive, -r    하위 폴더 포함 일괄 변환

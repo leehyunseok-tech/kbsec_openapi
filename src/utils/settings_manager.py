@@ -5,10 +5,8 @@ SettingsManager는 순수 정적 메서드만 제공한다 — 인스턴스화�
 """
 
 import json
-from pathlib import Path
 
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "config" / "data"
-SETTINGS_PATH = DATA_DIR / "settings.json"
+from src.paths import CONFIG_DATA_DIR as DATA_DIR, SETTINGS_JSON as SETTINGS_PATH
 
 DEFAULTS = {
     "market_hours": {"start_time": "09:00", "end_time": "15:30", "description": "한국 정규 거래시간"},

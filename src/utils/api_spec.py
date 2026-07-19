@@ -2,7 +2,7 @@
 docs/api/md 명세를 런타임에 직접 파싱해, 코드만 알면 임의의 KB증권 API를
 바로 호출할 수 있게 해주는 유틸 ("API 직접호출" 기능의 핵심).
 
-src/api/*.py + registry.py(docs/api/generate_api_client.py 자동 생성)는
+src/api/*.py + registry.py(manage/generate/generate_api_client.py 자동 생성)는
 CODE_TO_MODULE을 수동으로 갱신해야 새 API가 반영되지만, 이 모듈은
 docs/api/api-list.json + docs/api/md/*.md를 그때그때 직접 읽으므로 명세
 문서만 최신이면 코드 재생성 없이 곧바로 "/api {코드}"로 실행할 수 있다.
@@ -21,10 +21,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from src.api.client import call_business_api
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DOCS_API_DIR = PROJECT_ROOT / "docs" / "api"
-API_LIST_JSON = DOCS_API_DIR / "api-list.json"
+from src.paths import DOCS_API_DIR, API_LIST_JSON  # noqa: F401 — DOCS_API_DIR은 spec_browser.py가 여기서 재수입
 
 _LENGTH_RE = re.compile(r"\((\d+)\)")
 # "1:오프라인 2:온라인", "01-매도, 02-매수", "1: 외화기준, 2: 원화기준" 등

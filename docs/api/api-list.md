@@ -1,6 +1,6 @@
 # KB증권 OpenAPI 목록
 
-`md` 폴더(업무구분별 하위 폴더) 내 개별 API 명세서를 스캔하여 자동 생성된 목록입니다. (생성 스크립트: `generate_api_list.py`)
+`md` 폴더(업무구분별 하위 폴더) 내 개별 API 명세서를 스캔하여 자동 생성된 목록입니다. (생성 스크립트: `manage/generate/generate_api_list.py`)
 
 총 76개 API
 

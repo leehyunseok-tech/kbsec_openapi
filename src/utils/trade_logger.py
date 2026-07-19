@@ -10,7 +10,7 @@ import threading
 from datetime import datetime
 from pathlib import Path
 
-_LOGS_DIR = Path(__file__).resolve().parent.parent.parent / "logs"
+from src.paths import LOGS_DIR as _LOGS_DIR
 _CSV_HEADER = ["체결시간", "종목코드", "종목명", "매수/매도", "체결가", "수량", "전략", "잔여수량"]
 
 _lock = threading.Lock()

@@ -4,7 +4,7 @@
 종목마스터 파이프라인 — mst/origin/*.mst 원본만 갈아 놓으면 문서와 런타임 데이터를 전부 재생성.
 
 실행:
-    uv run python -m src.manage.generate_mst
+    uv run python -m manage.generate.generate_mst
 
 입력:
     mst/origin/mtsjname.mst / mtsoutjname.mst / FORENMST_US.MST  (KB 배포 원본, UTF-8)
@@ -49,12 +49,15 @@ import openpyxl
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-XLSX_DIR = ROOT / "docs" / "mst" / "xlsx"
-MD_DIR = ROOT / "docs" / "mst" / "md"
-ORIGIN_DIR = ROOT / "mst" / "origin"
-OUT_DIR = ROOT / "mst" / "api"
-API_LIST_MD = ROOT / "docs" / "api" / "api-list.md"
+ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
+sys.path.insert(0, str(ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths import가 풀리도록
+from src.paths import (  # noqa: E402
+    DOCS_MST_XLSX_DIR as XLSX_DIR,
+    DOCS_MST_MD_DIR as MD_DIR,
+    MST_ORIGIN_DIR as ORIGIN_DIR,
+    MST_RUNTIME_DIR as OUT_DIR,
+    API_LIST_MD,
+)
 
 
 # ── 코드 → 라벨 참조표 (근거: docs/mst/xlsx/mst_*.xlsx 비고 컬럼) ────────────
@@ -366,7 +369,7 @@ def write_openapi_md(key, official):
         "",
         "KB증권 OpenAPI에서 실제 사용하는 종목마스터 필드 선별표입니다.",
         "",
-        "> 자동 생성 문서 — `uv run python -m src.manage.generate_mst` 재실행으로만 갱신하세요.",
+        "> 자동 생성 문서 — `uv run python -m manage.generate.generate_mst` 재실행으로만 갱신하세요.",
         f"> 필드 순번/코드표의 근거는 공식 명세 `docs/mst/xlsx/{market['source_xlsx']}`입니다.",
         "",
         "## 파일 정보",
@@ -407,7 +410,7 @@ def write_openapi_md(key, official):
         f"- 공식 필드 명세(전체): `docs/mst/xlsx/{market['source_xlsx']}`",
         f"- 선별표(엑셀): `docs/mst/xlsx/{market['out_xlsx']}`",
         "- API 목록: `docs/api/api-list.md`",
-        "- 생성 스크립트: `src/manage/generate_mst.py`",
+        "- 생성 스크립트: `manage/generate/generate_mst.py`",
         "",
     ]
     path = MD_DIR / market["out_md"]

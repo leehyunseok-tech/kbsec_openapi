@@ -3,7 +3,7 @@
 API명으로 결정적으로 해석한다 (src/utils/stock_resolver.py와 동일한 패턴).
 
 AI(ai_command_converter.py)는 API 코드를 직접 추측하지 않고 docs/api/md 파일명에 있는
-한글 API명을 그대로 사용하도록 지시되어 있다(docs/command_guide.md 참고) — 실제 코드
+한글 API명을 그대로 사용하도록 지시되어 있다(docs/command_guide_for_ai.md 참고) — 실제 코드
 변환은 여기서 docs/api/api-list.json 로컬 조회로 처리해, AI가 존재하지 않거나 틀린
 코드를 만들어내는 위험을 없앤다.
 """

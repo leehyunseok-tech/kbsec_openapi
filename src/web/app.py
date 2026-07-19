@@ -10,16 +10,15 @@ FastAPI 웹 백엔드 — 순수 JSON API + 정적 파일 서빙.
     "저장" 하면 곧바로 KB 토큰 발급(로그인)까지 이뤄진다.
   - 사용자가 입력한 키는 해당 WebClient의 메모리에만 있고 디스크에 저장하지 않는다.
     응답으로도 원문을 되돌려주지 않는다(마스킹된 상태 정보만 반환).
-  - 예외(로컬 편의 기능): `run-web.* token`으로 실행하면 KBSEC_WEB_AUTOLOAD=1이 설정되고,
+  - 예외(로컬 편의 기능): `manage/run/run-web.* token`으로 실행하면 KBSEC_WEB_AUTOLOAD=1이 설정되고,
     이때 새로 생기는 모든 세션은 config/config.py의 앱키로 자동 로그인된다
     (_autoload_from_config 참고) — 다중 사용자 원칙에서 벗어나는 예외이므로 로컬
     단일 운영자 용도로만 쓴다(src/run/web.py의 경고 참고).
 
-실행은 src/run/web.py (또는 run-web.bat / run-web.sh) 참고.
+실행은 src/run/web.py (또는 manage/run/run-web.bat / manage/run/run-web.sh) 참고.
 """
 
 import os
-from pathlib import Path
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, JSONResponse
@@ -27,12 +26,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from config import config as app_config
+from src.paths import WEB_STATIC_DIR as STATIC_DIR
 from src.web.session_store import COOKIE_NAME, get_or_create
 from src.web import spec_browser
 from src.utils import stock_master
 from src.utils.api_spec import execute_api_call, load_api_spec
-
-STATIC_DIR = Path(__file__).resolve().parent / "static"
 AUTOLOAD = os.environ.get("KBSEC_WEB_AUTOLOAD") == "1"
 
 app = FastAPI(title="kbsec_api web", docs_url=None, redoc_url=None)
@@ -49,7 +47,7 @@ def _configured(value):
 
 
 def _autoload_from_config(client):
-    """`run-web.* token` 전용 — 새 세션을 config.py 값으로 자동 설정/로그인한다.
+    """`manage/run/run-web.* token` 전용 — 새 세션을 config.py 값으로 자동 설정/로그인한다.
 
     ⚠️ 로컬 단일 운영자 편의 기능. 이 함수가 호출되는 동안(AUTOLOAD=True) 서버가
     외부에 노출되면 접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동

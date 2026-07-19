@@ -8,18 +8,18 @@ docs/api/xlsx/ 하위(업무구분별 폴더 구조: OAuth, 국내주식/..., �
   1. 대상 xlsx 파일(들)을 docs/api/md/ 아래 동일한 상대 경로에 md로 변환
      (convert_xlsx_to_md.py 재사용 — 폴더 구조는 docs/api/xlsx와 동일하게 유지)
   2. docs/api/md/ 전체를 재스캔해 docs/api/api-list.json / api-list.md를
-     최신 상태로 재생성 (generate_api_list.py 재사용 — 업무구분 컬럼 자동 포함)
+     최신 상태로 재생성 (manage/generate/generate_api_list.py 재사용 — 업무구분 컬럼 자동 포함)
 
 --------------------------------------------------------------------------------
 사용법
 --------------------------------------------------------------------------------
-  uv run python docs/api/generate_api_docs.py
+  uv run python -m manage.generate.generate_api_docs
       → docs/api/xlsx/ 전체를 재변환 + api-list 재생성
 
-  uv run python docs/api/generate_api_docs.py "국내주식/계좌잔고"
+  uv run python -m manage.generate.generate_api_docs "국내주식/계좌잔고"
       → docs/api/xlsx/국내주식/계좌잔고/ 폴더만 재변환 + api-list 재생성
 
-  uv run python docs/api/generate_api_docs.py "국내주식/계좌잔고/SSQM0004-예수금내역-20260717-191349.xlsx"
+  uv run python -m manage.generate.generate_api_docs "국내주식/계좌잔고/SSQM0004-예수금내역-20260717-191349.xlsx"
       → 해당 파일 하나만 재변환 + api-list 재생성
 
 경로는 docs/api/xlsx 기준 상대경로 또는 절대경로 모두 허용합니다. api-list는
@@ -34,13 +34,11 @@ docs/api/xlsx/ 하위(업무구분별 폴더 구조: OAuth, 국내주식/..., �
 import sys
 from pathlib import Path
 
-DOCS_API_DIR = Path(__file__).resolve().parent
-XLSX_DIR = DOCS_API_DIR / "xlsx"
-MD_DIR = DOCS_API_DIR / "md"
-
-sys.path.insert(0, str(DOCS_API_DIR))
-from convert_xlsx_to_md import convert_single_file  # noqa: E402
-import generate_api_list  # noqa: E402
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
+sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths/manage.generate import가 풀리도록
+from src.paths import API_SPEC_XLSX_DIR as XLSX_DIR, API_SPEC_MD_DIR as MD_DIR  # noqa: E402
+from manage.generate.convert_xlsx_to_md import convert_single_file  # noqa: E402
+from manage.generate import generate_api_list  # noqa: E402
 
 
 def resolve_target(arg: str | None) -> Path:

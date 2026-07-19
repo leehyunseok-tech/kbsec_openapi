@@ -2,9 +2,8 @@
 
 import json
 from datetime import datetime, timedelta
-from pathlib import Path
 
-LOG_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "data" / "cooldown_log.json"
+from src.paths import COOLDOWN_LOG_JSON as LOG_PATH
 
 
 def _load():

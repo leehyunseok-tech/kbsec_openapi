@@ -2,7 +2,7 @@
 
 KB증권 OpenAPI에서 실제 사용하는 종목마스터 필드 선별표입니다.
 
-> 자동 생성 문서 — `uv run python -m src.manage.generate_mst` 재실행으로만 갱신하세요.
+> 자동 생성 문서 — `uv run python -m manage.generate.generate_mst` 재실행으로만 갱신하세요.
 > 필드 순번/코드표의 근거는 공식 명세 `docs/mst/xlsx/mst_해외주식_FORENMST_US.xlsx`입니다.
 
 ## 파일 정보
@@ -70,4 +70,4 @@ KB증권 OpenAPI에서 실제 사용하는 종목마스터 필드 선별표입�
 - 공식 필드 명세(전체): `docs/mst/xlsx/mst_해외주식_FORENMST_US.xlsx`
 - 선별표(엑셀): `docs/mst/xlsx/openapi_mst_해외주식_FORENMST_US.xlsx`
 - API 목록: `docs/api/api-list.md`
-- 생성 스크립트: `src/manage/generate_mst.py`
+- 생성 스크립트: `manage/generate/generate_mst.py`

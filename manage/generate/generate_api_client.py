@@ -11,7 +11,7 @@ src/api/ 디렉토리에 카테고리별 파이썬 모듈(함수 1개 = API 1개
 명세(md)가 추가/변경되면 이 스크립트를 다시 실행해 갱신하세요.
 
 사용법:
-  uv run python docs/api/generate_api_client.py
+  uv run python -m manage.generate.generate_api_client
 ================================================================================
 """
 
@@ -21,12 +21,10 @@ import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
-DOCS_API_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = DOCS_API_DIR.parent.parent
-API_DIR = PROJECT_ROOT / "src" / "api"
-
-sys.path.insert(0, str(DOCS_API_DIR))
-from generate_api_list import SPEC_DIR, collect_entries, dedupe  # noqa: E402
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
+sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths/manage.generate import가 풀리도록
+from src.paths import DOCS_API_DIR, SRC_API_DIR as API_DIR  # noqa: E402
+from manage.generate.generate_api_list import SPEC_DIR, collect_entries, dedupe  # noqa: E402
 
 # INPUT 표는 "### 요청 예시"(구형 md) 또는 "---"(신형 md, 요청 예시 없음) 앞에서 끝난다.
 # "\n\n###"만 가정하면 요청 예시가 없는 md에서 표 전체를 못 찾아 파라미터가 전부
@@ -88,7 +86,7 @@ MODULE_LABELS = {
 
 GENERATED_HEADER = (
     "# 자동 생성 파일 — 수동 수정 금지.\n"
-    "# docs/api/generate_api_client.py 재실행으로 갱신하세요.\n"
+    "# manage/generate/generate_api_client.py 재실행으로 갱신하세요.\n"
 )
 
 

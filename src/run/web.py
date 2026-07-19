@@ -6,10 +6,10 @@ main.py(텔레그램)/terminal.py(터미널)와 동일한 src/commands/*.py 핸�
 전부 src/web/ 아래에 있고, 이 파일은 실행만 담당한다.
 
 사용법:
-  uv run python -m src.run.web        (또는 run-web.bat / run-web.sh)
+  uv run python -m src.run.web        (또는 manage/run/run-web.bat / manage/run/run-web.sh)
   → 브라우저에서 http://localhost:8000 접속
 
-  uv run python -m src.run.web token   (또는 run-web.bat token / run-web.sh token)
+  uv run python -m src.run.web token   (또는 manage/run/run-web.bat token / manage/run/run-web.sh token)
   → config/config.py의 앱키(client_key/client_secret) 및 선택 항목(Claude API 키,
     텔레그램 토큰)으로 새 브라우저 세션을 자동 설정/로그인하고, 브라우저를
     http://localhost:8000/ 로 자동으로 연다 — 로컬에서 혼자 쓸 때 설정 화면에

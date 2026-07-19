@@ -1,20 +1,18 @@
 """
 Claude AI로 자연어를 명령어로 변환 (브로커 무관).
 
-docs/command_guide.md를 시스템 프롬프트에 그대로 삽입해 변환 규칙의 단일 소스로 삼는다.
-명령어를 추가/변경할 때는 반드시 docs/command_guide.md도 함께 갱신해야 한다
+docs/command_guide_for_ai.md를 시스템 프롬프트에 그대로 삽입해 변환 규칙의 단일 소스로 삼는다.
+명령어를 추가/변경할 때는 반드시 docs/command_guide_for_ai.md도 함께 갱신해야 한다
 (CLAUDE.md의 필수 규칙 참고).
 """
 
 import json
-from pathlib import Path
 from typing import List, Tuple
 
 from anthropic import Anthropic
 
 from config.config import claude_api_key, claude_model
-
-_GUIDE_PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "command_guide.md"
+from src.paths import COMMAND_GUIDE_FOR_AI as _GUIDE_PATH
 
 
 def _load_command_guide() -> str:
@@ -28,9 +26,9 @@ def _build_api_name_list() -> str:
     """
     docs/api/api-list.json 기반 'api {한글이름}' 자연어 인식용 전체 목록.
 
-    command_guide.md에 하드코딩하지 않고 여기서 매 호출 시 api-list.json을 읽어
+    command_guide_for_ai.md에 하드코딩하지 않고 여기서 매 호출 시 api-list.json을 읽어
     동적으로 만든다 — API 명세가 추가/변경돼도 이 목록이 따로 손보지 않아도 항상
-    최신 상태를 유지한다 (docs/api/generate_api_docs.py 재실행만으로 반영됨).
+    최신 상태를 유지한다 (manage/generate/generate_api_docs.py 재실행만으로 반영됨).
     """
     try:
         from src.utils.api_spec import search_api_entries

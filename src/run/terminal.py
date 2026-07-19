@@ -6,7 +6,7 @@ TerminalClient — 텔레그램 없이 터미널에서 봇 명령어를 그대�
 추가로 API 코드 기반 저수준 직접 호출(call/info/list)도 제공한다.
 
 사용법:
-  uv run python -m src.run.terminal   (또는 run-terminal.bat / run-terminal.sh)
+  uv run python -m src.run.terminal   (또는 manage/run/run-terminal.bat / manage/run/run-terminal.sh)
 
 실행하면 배너 출력 → 자동 로그인 → `>>> ` 프롬프트 순서로 시작한다. 자동 로그인은
 운영환경(`real`) 고정이다 — KB증권 개발환경(모의투자)이 아직 제공되지 않기 때문

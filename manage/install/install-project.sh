@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # 신규 클론 환경 원샷 설치 스크립트 (macOS / Linux).
 # Python 확인 → uv 설치(없으면) → 의존성 전체 설치(uv sync) → config/config.py 템플릿 생성
-# → run-*.sh 실행 권한 부여까지 한 번에 처리한다.
-cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+# → manage/run/run-*.sh 실행 권한 부여까지 한 번에 처리한다.
+cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1
 
 echo "============================================================"
 echo " KB증권 자동매매 봇 - 프로젝트 설치"
@@ -61,8 +61,8 @@ else
 fi
 
 # -- 5) 실행 스크립트 권한 ------------------------------------
-chmod +x run-main.sh run-terminal.sh run-web.sh 2>/dev/null
-echo "[OK] run-*.sh 실행 권한 부여"
+chmod +x manage/run/run-main.sh manage/run/run-terminal.sh manage/run/run-web.sh 2>/dev/null
+echo "[OK] manage/run/run-*.sh 실행 권한 부여"
 
 echo
 echo "============================================================"
@@ -71,7 +71,7 @@ echo "============================================================"
 echo "  1. config/config.py 를 열어 실제 키를 입력하세요"
 echo "     (real_client_key / real_client_secret 은 필수)"
 echo "  2. 아래 중 하나로 실행:"
-echo "       ./run-terminal.sh   # 터미널 클라이언트 (가장 빠른 시작)"
-echo "       ./run-main.sh       # 텔레그램 봇"
-echo "       ./run-web.sh        # 웹 클라이언트 (http://localhost:8000)"
+echo "       ./manage/run/run-terminal.sh   # 터미널 클라이언트 (가장 빠른 시작)"
+echo "       ./manage/run/run-main.sh       # 텔레그램 봇"
+echo "       ./manage/run/run-web.sh        # 웹 클라이언트 (http://localhost:8000)"
 echo

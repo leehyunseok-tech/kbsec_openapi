@@ -2,9 +2,9 @@
 종목마스터 로컬 조회 (코스피/코스닥/해외주식).
 
 openapi_field_*.mst 파일이 이미 로컬에 있으므로 API 호출 없이 파일을 읽어 조회한다.
-런타임 데이터 위치는 프로젝트 루트의 mst/api/ — src/manage/generate_mst.py 파이프라인이
+런타임 데이터 위치는 프로젝트 루트의 mst/api/ — manage/generate/generate_mst.py 파이프라인이
 mst/origin/ 원본과 공식 명세(docs/mst/xlsx/mst_*.xlsx)로부터 생성한 파일을 그대로 읽는다.
-원본이 갱신되면 `uv run python -m src.manage.generate_mst` 재실행으로만 갱신한다.
+원본이 갱신되면 `uv run python -m manage.generate.generate_mst` 재실행으로만 갱신한다.
 
 파일 형식(파이프 구분, UTF-8, 첫 줄은 헤더):
   openapi_field_kospi-kosdaq.mst (코스피+코스닥 통합)
@@ -23,9 +23,8 @@ sell_command.py/srch_command.py가 이 값을 KB 주문/시세 API의 krx_cd 파
 
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
-MST_DIR = Path(__file__).resolve().parent.parent.parent / "mst" / "api"
+from src.paths import MST_RUNTIME_DIR as MST_DIR
 
 
 @dataclass(frozen=True)

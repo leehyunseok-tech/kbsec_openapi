@@ -1,5 +1,5 @@
 # 자동 생성 파일 — 수동 수정 금지.
-# docs/api/generate_api_client.py 재실행으로 갱신하세요.
+# manage/generate/generate_api_client.py 재실행으로 갱신하세요.
 
 """시장/거시 정보 (세계지수/환율/증시주변자금동향/장운영상태/해외시세분석)
 

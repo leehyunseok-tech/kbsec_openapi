@@ -1,8 +1,8 @@
 @echo off
 REM One-shot dev environment installer for a fresh clone (Windows).
 REM Checks Python, installs uv if missing, installs all dependencies (uv sync),
-REM and creates config\config.py from the template so run-*.bat scripts work.
-cd /d "%~dp0"
+REM and creates config\config.py from the template so manage\run\run-*.bat scripts work.
+cd /d "%~dp0..\.."
 
 echo ============================================================
 echo  KB Securities auto-trading bot - project installer
@@ -73,8 +73,8 @@ echo ============================================================
 echo   1. Edit config\config.py and fill in your real keys
 echo      ^(real_client_key / real_client_secret are required^)
 echo   2. Run one of:
-echo        run-terminal.bat   - terminal client ^(fastest way to start^)
-echo        run-main.bat       - Telegram bot
-echo        run-web.bat        - web client ^(http://localhost:8000^)
+echo        manage\run\run-terminal.bat   - terminal client ^(fastest way to start^)
+echo        manage\run\run-main.bat       - Telegram bot
+echo        manage\run\run-web.bat        - web client ^(http://localhost:8000^)
 echo.
 pause
