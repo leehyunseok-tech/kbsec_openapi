@@ -1,0 +1,6103 @@
+[
+  {
+    "code": null,
+    "name": "토큰발급",
+    "category": "OAuth",
+    "endpoint": "/oauth2/token",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {}
+  },
+  {
+    "code": null,
+    "name": "토큰폐기",
+    "category": "OAuth",
+    "endpoint": "/oauth2/revoke",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {}
+  },
+  {
+    "code": "GSA10020",
+    "name": "체결",
+    "category": "해외주식 > 기본시세",
+    "endpoint": "/api/v1/gsa10020",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드 KRX_CD",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드 IS_CD",
+        "length": 16,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "rcrd_c",
+        "name_kr": "레코드수 RCRD_C",
+        "length": 3,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이C5",
+      "clsfP": "구분자_C2",
+      "msg": "메시지_C80",
+      "RecordSize": "레코드길이",
+      "krx_cd": "거래소코드 KRX_CD",
+      "is_cd": "종목코드 IS_CD",
+      "mrkt_prc_clsf": "시세구분 MRKT_PRC_CLSF",
+      "rcrd_c": "레코드수 RCRD_C",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "bsnss_dt": "영업일자 BSNSS_DT",
+      "dt": "일자 DT",
+      "tm": "시간 TM",
+      "kor_dt": "한국일자 KOR_DT",
+      "kor_tm": "한국시간 KOR_TM",
+      "now_prc_p4": "현재가P4 NOW_PRC_P4",
+      "bdy_cmpr_ccd": "전일대비구분코드 BDY_CMPR_CCD",
+      "bdy_cmpr_p4": "전일대비P4 BDY_CMPR_P4",
+      "up_dwn_r_p2": "등락율P2 UP_DWN_R_P2",
+      "ccls_q": "체결수량 CCLS_Q",
+      "vlm": "거래량 VLM",
+      "s_askprc_p4": "매도호가P4 S_ASKPRC_P4",
+      "s_rv": "매도잔량 S_RV",
+      "b_askprc_p4": "매수호가P4 B_ASKPRC_P4",
+      "b_rv": "매수잔량 B_RV",
+      "now_prc_krw_p2": "현재가원화P2 NOW_PRC_KRW_P2",
+      "bdy_cmpr_krw_p2": "전일대비원화P2 BDY_CMPR_KRW_P2",
+      "ccls_clsf": "체결구분 CCLS_CLSF",
+      "mkt_clsf": "시장구분 MKT_CLSF",
+      "mkt_aft_ccls_prc_p4": "장후체결가P4 MKT_AFT_CCLS_PRC_P4",
+      "mkt_aft_ccls_prc_krw_p2": "장후체결가원화P2 MKT_AFT_CCLS_PRC_KRW_P2",
+      "mkt_aft_cmpr_ccd": "장후대비구분코드 MKT_AFT_CMPR_CCD",
+      "mkt_aft_cmpr_p4": "장후대비P4 MKT_AFT_CMPR_P4",
+      "mkt_aft_up_dwn_r_p2": "장후등락율P2 MKT_AFT_UP_DWN_R_P2",
+      "mkt_aft_cmpr_krw_p2": "장후대비원화P2 MKT_AFT_CMPR_KRW_P2"
+    }
+  },
+  {
+    "code": "GSA10150",
+    "name": "거래량상위",
+    "category": "해외주식 > 시세분석",
+    "endpoint": "/api/v1/gsa10150",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "std_dy",
+        "name_kr": "기준일",
+        "length": 2,
+        "required": false,
+        "description": "01: 전일,05:5일,10:10일, 20:20일, 60:60일, 90:90일",
+        "choices": []
+      },
+      {
+        "name_en": "vlm",
+        "name_kr": "거래량",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_cnt",
+        "name_kr": "종목건수",
+        "length": 5,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이C5",
+      "clsfP": "구분자_C2",
+      "msg": "메시지_C80",
+      "RecordSize": "레코드길이",
+      "mrkt_prc_clsf": "시세구분 MRKT_PRC_CLSF",
+      "is_cnt": "종목건수 IS_CNT",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "krx_cd": "거래소코드 KRX_CD",
+      "is_cd": "종목코드 IS_CD",
+      "hngl_is_nm": "한글종목명 HNGL_IS_NM",
+      "eng_is_nm": "영문종목명 ENG_IS_NM",
+      "now_prc_p4": "현재가P4 NOW_PRC_P4",
+      "bdy_cmpr_ccd": "전일대비구분코드 BDY_CMPR_CCD",
+      "bdy_cmpr_p4": "전일대비P4 BDY_CMPR_P4",
+      "up_dwn_r_p2": "등락율P2 UP_DWN_R_P2",
+      "thdy_vlm": "당일거래량 THDY_VLM",
+      "avr_vlm": "평균거래량 AVR_VLM",
+      "avr_cmpr_p4": "평균대비P4 AVR_CMPR_P4",
+      "s_askprc_p4": "매도호가P4 S_ASKPRC_P4",
+      "b_askprc_p4": "매수호가P4 B_ASKPRC_P4"
+    }
+  },
+  {
+    "code": "GSA10170",
+    "name": "시가총액상위",
+    "category": "해외주식 > 시세분석",
+    "endpoint": "/api/v1/gsa10170",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드 KRX_CD",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "is_cnt",
+        "name_kr": "종목건수 IS_CNT",
+        "length": 5,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이C5",
+      "clsfP": "구분자_C2",
+      "msg": "메시지_C80",
+      "RecordSize": "레코드길이",
+      "is_cnt": "종목건수 IS_CNT",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "krx_cd": "거래소코드 KRX_CD",
+      "is_cd": "종목코드 IS_CD",
+      "hngl_is_nm": "한글종목명 HNGL_IS_NM",
+      "eng_is_nm": "영문종목명 ENG_IS_NM",
+      "cls_prc_now_prc_p4": "종가현재가P4 CLS_PRC_NOW_PRC_P4",
+      "bdy_cmpr_ccd": "전일대비구분코드 BDY_CMPR_CCD",
+      "bdy_cmpr_p4": "전일대비P4 BDY_CMPR_P4",
+      "up_dwn_r_p2": "등락율P2 UP_DWN_R_P2",
+      "vlm": "거래량 VLM",
+      "opn_prc_tl_amt": "시가총액 OPN_PRC_TL_AMT"
+    }
+  },
+  {
+    "code": "GSA10600",
+    "name": "해외시세분석",
+    "category": "해외주식 > 시세분석",
+    "endpoint": "/api/v1/gsa10600",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "frex_clsf",
+        "name_kr": "해외거래소구분",
+        "length": 2,
+        "required": false,
+        "description": "AA:미국전체 AB:나스닥 AC:뉴욕 AD:아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "clsf",
+        "name_kr": "구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전일대비 2: 시가총액 3:거래량 4:52주 신고가 5:52주 신저가 6:PER 7:EPS, 8:배당수익률, a:거래대금",
+        "choices": []
+      },
+      {
+        "name_en": "rnk",
+        "name_kr": "순위",
+        "length": 1,
+        "required": false,
+        "description": "1:상위 2:하위",
+        "choices": []
+      },
+      {
+        "name_en": "is_cnt",
+        "name_kr": "종목건수",
+        "length": 5,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "is_cnt": "종목건수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "krx_cd": "거래소코드",
+      "is_cd": "종목코드",
+      "hngl_is_nm": "한글종목명",
+      "eng_is_nm": "영문종목명",
+      "now_prc_p4": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_p4": "전일대비",
+      "up_dwn_r_p2": "등락율",
+      "opn_prc_p4": "시가",
+      "hgh_prc_p4": "고가",
+      "lw_prc_p4": "저가",
+      "sprc_p4": "기준가",
+      "dl_tw_amt": "거래대금",
+      "wk52_max_prc_p4": "52주간최고가",
+      "wk52_min_prc_p4": "52주간최저가",
+      "per_p4": "PER",
+      "eps_p4": "EPS",
+      "opn_prc_tl_amt": "시가총액",
+      "opn_prc_tl_amt_krw": "시가총액원화",
+      "dl_spsn_ccd": "거래정지구분코드",
+      "vlm": "거래량",
+      "mrkt_prc_clsf": "시세구분",
+      "bdy_vlm": "전일거래량",
+      "wk1_bfr_cls_prc_p4": "1주전종가",
+      "mms1_bfr_cls_prc_p4": "1개월전종가",
+      "mms6_bfr_cls_prc_p4": "6개월전종가",
+      "yr1_bfr_cls_prc_p4": "1년전종가",
+      "tsyr_first_bsnss_dt_cls_prc_p4": "금년처음영업일자종가",
+      "mkt_clsf": "시장구분",
+      "mkt_aft_ccls_prc_p4": "장후체결가",
+      "mkt_aft_cmpr_ccd": "장후대비구분코드",
+      "mkt_aft_cmpr_p4": "장후대비",
+      "mkt_aft_up_dwn_r_p2": "장후등락율",
+      "is_dvdnd_yld_p4": "종목배당수익율",
+      "crncy": "통화"
+    }
+  },
+  {
+    "code": "GSC10060",
+    "name": "통합차트",
+    "category": "해외주식 > 기본시세",
+    "endpoint": "/api/v1/gsc10060",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드 KRX_CD",
+        "length": 3,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드 IS_CD",
+        "length": 16,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "chrt_clsf",
+        "name_kr": "차트구분 CHRT_CLSF",
+        "length": 1,
+        "required": false,
+        "description": "1:틱 2:분 3:일 4:주 5:월 6:년",
+        "choices": []
+      },
+      {
+        "name_en": "bndl",
+        "name_kr": "묶음 BNDL",
+        "length": 4,
+        "required": false,
+        "description": "묶음틱 개수",
+        "choices": []
+      },
+      {
+        "name_en": "mdfy_stk_prc_use_f",
+        "name_kr": "수정주가사용여부 MDFY_STK_PRC_USE_F",
+        "length": 1,
+        "required": false,
+        "description": "0:수정주가 미사용 1:수정주가사용",
+        "choices": []
+      },
+      {
+        "name_en": "rcrd_c",
+        "name_kr": "레코드수 RCRD_C",
+        "length": 4,
+        "required": false,
+        "description": "최대요청개수:5000",
+        "choices": []
+      },
+      {
+        "name_en": "srch_strt_dy",
+        "name_kr": "검색시작일 SRCH_STRT_DY",
+        "length": 8,
+        "required": false,
+        "description": "과거일자 검색용",
+        "choices": []
+      },
+      {
+        "name_en": "clsf",
+        "name_kr": "구분 CLSF",
+        "length": 1,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이C5",
+      "clsfP": "구분자_C2",
+      "msg": "메시지_C80",
+      "RecordSize": "레코드길이",
+      "rcrd_c": "레코드수 RCRD_C",
+      "krx_cd": "거래소코드 KRX_CD",
+      "is_cd": "종목코드 IS_CD",
+      "chrt_clsf": "차트구분 CHRT_CLSF",
+      "hngl_is_nm": "한글종목명 HNGL_IS_NM",
+      "eng_is_nm": "영문종목명 ENG_IS_NM",
+      "fnl_bndl_tck_c_c": "최종묶음틱개수 FNL_BNDL_TCK_C_C",
+      "mrkt_prc_clsf": "시세구분 MRKT_PRC_CLSF",
+      "sprc_p4": "기준가P4 SPRC_P4",
+      "now_prc_p4": "현재가P4 NOW_PRC_P4",
+      "bdy_cmpr_ccd": "전일대비구분코드 BDY_CMPR_CCD",
+      "bdy_cmpr_p4": "전일대비P4 BDY_CMPR_P4",
+      "up_dwn_r_p2": "등락율P2 UP_DWN_R_P2",
+      "opn_prc_p4": "시가P4 OPN_PRC_P4",
+      "hgh_prc_p4": "고가P4 HGH_PRC_P4",
+      "lw_prc_p4": "저가P4 LW_PRC_P4",
+      "s_askprc_p4": "매도호가P4 S_ASKPRC_P4",
+      "b_askprc_p4": "매수호가P4 B_ASKPRC_P4",
+      "wt_avr_prc_p4": "가중평균가P4 WT_AVR_PRC_P4",
+      "dl_tw_amt": "거래대금 DL_TW_AMT",
+      "vlm": "거래량 VLM",
+      "ulmt_prc_p4": "상한가P4 ULMT_PRC_P4",
+      "llmt_prc_p4": "하한가P4 LLMT_PRC_P4",
+      "bdy_vlm": "전일거래량 BDY_VLM",
+      "clsd_mrkt_f": "휴장여부 CLSD_MRKT_F",
+      "bdy_opn_prc_p4": "전일시가P4 BDY_OPN_PRC_P4",
+      "bdy_hgh_prc_p4": "전일고가P4 BDY_HGH_PRC_P4",
+      "bdy_lw_prc_p4": "전일저가P4 BDY_LW_PRC_P4",
+      "bdy_cls_prc_p4": "전일종가P4 BDY_CLS_PRC_P4",
+      "inq_tm": "조회시간 INQ_TM",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "dt": "일자 DT",
+      "tm": "시간 TM",
+      "cls_prc_p4": "종가P4 CLS_PRC_P4"
+    }
+  },
+  {
+    "code": "GSS10030",
+    "name": "현재가",
+    "category": "해외주식 > 기본시세",
+    "endpoint": "/api/v1/gss10030",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 16,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "krx_cd": "거래소코드",
+      "is_cd": "종목코드",
+      "bsnss_dt": "영업일자",
+      "dt": "일자",
+      "tm": "시간",
+      "kor_dt": "한국일자",
+      "kor_tm": "한국시간",
+      "sprc_p4": "기준가P4",
+      "now_prc_p4": "현재가P4",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_p4": "전일대비P4",
+      "up_dwn_r_p2": "등락율P2",
+      "opn_prc_p4": "시가P4",
+      "hgh_prc_p4": "고가P4",
+      "lw_prc_p4": "저가P4",
+      "s_askprc_p4": "매도호가P4",
+      "b_askprc_p4": "매수호가P4",
+      "wt_avr_prc_p4": "가중평균가P4",
+      "dl_tw_amt": "거래대금",
+      "wk52_max_prc_p4": "52주간최고가P4",
+      "wk52_min_prc_p4": "52주간최저가P4",
+      "dl_crncy": "거래통화",
+      "per_p4": "PERP4 PER_P4",
+      "eps_p4": "EPSP4 EPS_P4",
+      "isng_stk_c": "발행주식수",
+      "opn_prc_tl_amt": "시가총액",
+      "s_askprc_unt_p4": "매도호가단위P4",
+      "b_askprc_unt_p4": "매수호가단위P4",
+      "dl_unt": "거래단위",
+      "dl_spsn_ccd": "거래정지구분코드",
+      "vlm": "거래량",
+      "ulmt_prc_p4": "상한가P4",
+      "llmt_prc_p4": "하한가P4",
+      "mrkt_prc_clsf": "시세구분",
+      "bdy_vlm": "전일거래량",
+      "clsd_mrkt_f": "휴장여부",
+      "bdy_opn_prc_p4": "전일시가P4",
+      "bdy_hgh_prc_p4": "전일고가P4",
+      "bdy_lw_prc_p4": "전일저가P4",
+      "bdy_cls_prc_p4": "전일종가P4",
+      "ntif_exch_r_p4": "고시환율P4",
+      "now_prc_krw_p2": "현재가원화P2",
+      "sprc_krw_p2": "기준가원화P2",
+      "opn_prc_krw_p2": "시가원화P2",
+      "hgh_prc_krw_p2": "고가원화P2",
+      "lw_prc_krw_p2": "저가원화P2",
+      "ulmt_prc_krw_p2": "상한가원화P2",
+      "llmt_prc_krw_p2": "하한가원화P2",
+      "bdy_cmpr_krw_p2": "전일대비원화P2",
+      "vtnm_fgnr_sttn_std_dy_tm": "베트남외국인현황기준일시",
+      "vtnm_fgnr_sttn_tlt_lmt_q": "베트남외국인현황전체한도수량",
+      "vtnm_fgnr_sttn_b_psbl_q": "베트남외국인현황매수가능수량",
+      "vtnm_fgnr_sttn_vnsh_r_p2": "베트남외국인현황소진율P2",
+      "bdy_dl_tw_amt": "전일거래대금",
+      "wk1_bfr_cls_prc_p4": "1주전종가P4",
+      "mms1_bfr_cls_prc_p4": "1개월전종가P4",
+      "mms6_bfr_cls_prc_p4": "6개월전종가P4",
+      "yr1_bfr_cls_prc_p4": "1년전종가P4",
+      "tsyr_first_bsnss_dt_cls_prc_p4": "금년처음영업일자종가P4",
+      "mkt_clsf": "시장구분 (0:장중, 1:장전, 2:장후, 4:미국주간거래)",
+      "mkt_aft_ccls_prc_p4": "장후체결가P4",
+      "mkt_aft_ccls_prc_krw_p2": "장후체결가원화P2",
+      "mkt_aft_cmpr_ccd": "장후대비구분코드",
+      "mkt_aft_cmpr_p4": "장후대비P4",
+      "mkt_aft_up_dwn_r_p2": "장후등락율P2",
+      "mkt_aft_cmpr_krw_p2": "장후대비원화P2",
+      "bfr2_dy_cmpr_ccd": "전전일대비구분코드",
+      "bfr2_dy_cmpr_p4": "전전일대비P4",
+      "bdy_up_dwn_r_p2": "전일등락율P2",
+      "bfr2_dy_cmpr_krw_p2": "전전일대비원화P2",
+      "mkt_spcl_ccd": "시장특이구분코드 (0:해당없음, 1:미국시장 Pre마켓 준비)",
+      "b_acml_ccls_q": "매수누적체결수량",
+      "s_acml_ccls_q": "매도누적체결수량",
+      "ccls_strn_p2": "체결강도P2"
+    }
+  },
+  {
+    "code": "GSS10040",
+    "name": "호가",
+    "category": "해외주식 > 기본시세",
+    "endpoint": "/api/v1/gss10040",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 16,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "krx_cd": "거래소코드",
+      "is_cd": "종목코드",
+      "dt": "일자",
+      "tm": "시간",
+      "kor_dt": "한국일자",
+      "kor_tm": "한국시간",
+      "sprc_p4": "기준가P4",
+      "dcml_pnt_c": "소수점자리수",
+      "b_askprc_tl_q": "매수호가총수량",
+      "s_askprc_tl_q": "매도호가총수량",
+      "b_askprc_tl_cnt": "매수호가총건수",
+      "s_askprc_tl_cnt": "매도호가총건수",
+      "b_rv_chng_sum": "매수잔량변화합계",
+      "s_rv_chng_sum": "매도잔량변화합계",
+      "nt_b_rv": "순매수잔량",
+      "mrkt_prc_clsf": "시세구분",
+      "vcm_ocrnc_clsf": "VCM발생구분",
+      "vcm_rfrnc_prc_p4": "VCM레퍼런스가격P4",
+      "vcm_llmt_prc_p4": "VCM하한가격P4",
+      "vcm_ulmt_prc_p4": "VCM상한가격P4",
+      "cas_ocrnc_clsf": "CAS발생구분",
+      "rfrnc_prc_p4": "레퍼런스가격P4",
+      "ulmt_prc_p4": "상한가P4",
+      "llmt_prc_p4": "하한가P4",
+      "cas_expct_ccls_prc_p4": "CAS예상체결가격P4",
+      "cas_expct_ccls_q": "CAS예상체결수량",
+      "askprc_q": "호가수량",
+      "b_askprc1_p4": "매수호가1P4",
+      "b_askprc_up_dwn_r1_p2": "매수호가등락율1P2",
+      "b_askprc_q1": "매수호가수량1",
+      "b_askprc_cnt1": "매수호가건수1",
+      "b_askprc_rv_chng1": "매수호가잔량변화1",
+      "s_askprc1_p4": "매도호가1P4",
+      "s_askprc_up_dwn_r1_p2": "매도호가등락율1P2",
+      "s_askprc_q1": "매도호가수량1",
+      "s_askprc_cnt1": "매도호가건수1",
+      "s_askprc_rv_chng1": "매도호가잔량변화1",
+      "b_askprc2_p4": "매수호가2P4",
+      "b_askprc_up_dwn_r2_p2": "매수호가등락율2P2",
+      "b_askprc_q2": "매수호가수량2",
+      "b_askprc_cnt2": "매수호가건수2",
+      "b_askprc_rv_chng2": "매수호가잔량변화2",
+      "s_askprc2_p4": "매도호가2P4",
+      "s_askprc_up_dwn_r2_p2": "매도호가등락율2P2",
+      "s_askprc_q2": "매도호가수량2",
+      "s_askprc_cnt2": "매도호가건수2",
+      "s_askprc_rv_chng2": "매도호가잔량변화2",
+      "b_askprc3_p4": "매수호가3P4",
+      "b_askprc_up_dwn_r3_p2": "매수호가등락율3P2",
+      "b_askprc_q3": "매수호가수량3",
+      "b_askprc_cnt3": "매수호가건수3",
+      "b_askprc_rv_chng3": "매수호가잔량변화3",
+      "s_askprc3_p4": "매도호가3P4",
+      "s_askprc_up_dwn_r3_p2": "매도호가등락율3P2",
+      "s_askprc_q3": "매도호가수량3",
+      "s_askprc_cnt3": "매도호가건수3",
+      "s_askprc_rv_chng3": "매도호가잔량변화3",
+      "b_askprc4_p4": "매수호가4P4",
+      "b_askprc_up_dwn_r4_p2": "매수호가등락율4P2",
+      "b_askprc_q4": "매수호가수량4",
+      "b_askprc_cnt4": "매수호가건수4",
+      "b_askprc_rv_chng4": "매수호가잔량변화4",
+      "s_askprc4_p4": "매도호가4P4",
+      "s_askprc_up_dwn_r4_p2": "매도호가등락율4P2",
+      "s_askprc_q4": "매도호가수량4",
+      "s_askprc_cnt4": "매도호가건수4",
+      "s_askprc_rv_chng4": "매도호가잔량변화4",
+      "b_askprc5_p4": "매수호가5P4",
+      "b_askprc_up_dwn_r5_p2": "매수호가등락율5P2",
+      "b_askprc_q5": "매수호가수량5",
+      "b_askprc_cnt5": "매수호가건수5",
+      "b_askprc_rv_chng5": "매수호가잔량변화5",
+      "s_askprc5_p4": "매도호가5P4",
+      "s_askprc_up_dwn_r5_p2": "매도호가등락율5P2",
+      "s_askprc_q5": "매도호가수량5",
+      "s_askprc_cnt5": "매도호가건수5",
+      "s_askprc_rv_chng5": "매도호가잔량변화5",
+      "b_askprc6_p4": "매수호가6P4",
+      "b_askprc_up_dwn_r6_p2": "매수호가등락율6P2",
+      "b_askprc_q6": "매수호가수량6",
+      "b_askprc_cnt6": "매수호가건수6",
+      "b_askprc_rv_chng6": "매수호가잔량변화6",
+      "s_askprc6_p4": "매도호가6P4",
+      "s_askprc_up_dwn_r6_p2": "매도호가등락율6P2",
+      "s_askprc_q6": "매도호가수량6",
+      "s_askprc_cnt6": "매도호가건수6",
+      "s_askprc_rv_chng6": "매도호가잔량변화6",
+      "b_askprc7_p4": "매수호가7P4",
+      "b_askprc_up_dwn_r7_p2": "매수호가등락율7P2",
+      "b_askprc_q7": "매수호가수량7",
+      "b_askprc_cnt7": "매수호가건수7",
+      "b_askprc_rv_chng7": "매수호가잔량변화7",
+      "s_askprc7_p4": "매도호가7P4",
+      "s_askprc_up_dwn_r7_p2": "매도호가등락율7P2",
+      "s_askprc_q7": "매도호가수량7",
+      "s_askprc_cnt7": "매도호가건수7",
+      "s_askprc_rv_chng7": "매도호가잔량변화7",
+      "b_askprc8_p4": "매수호가8P4",
+      "b_askprc_up_dwn_r8_p2": "매수호가등락율8P2",
+      "b_askprc_q8": "매수호가수량8",
+      "b_askprc_cnt8": "매수호가건수8",
+      "b_askprc_rv_chng8": "매수호가잔량변화8",
+      "s_askprc8_p4": "매도호가8P4",
+      "s_askprc_up_dwn_r8_p2": "매도호가등락율8P2",
+      "s_askprc_q8": "매도호가수량8",
+      "s_askprc_cnt8": "매도호가건수8",
+      "s_askprc_rv_chng8": "매도호가잔량변화8",
+      "b_askprc9_p4": "매수호가9P4",
+      "b_askprc_up_dwn_r9_p2": "매수호가등락율9P2",
+      "b_askprc_q9": "매수호가수량9",
+      "b_askprc_cnt9": "매수호가건수9",
+      "b_askprc_rv_chng9": "매수호가잔량변화9",
+      "s_askprc9_p4": "매도호가9P4",
+      "s_askprc_up_dwn_r9_p2": "매도호가등락율9P2",
+      "s_askprc_q9": "매도호가수량9",
+      "s_askprc_cnt9": "매도호가건수9",
+      "s_askprc_rv_chng9": "매도호가잔량변화9",
+      "b_askprc10_p4": "매수호가10P4",
+      "b_askprc_up_dwn_r10_p2": "매수호가등락율10P2",
+      "b_askprc_q10": "매수호가수량10",
+      "b_askprc_cnt10": "매수호가건수10",
+      "b_askprc_rv_chng10": "매수호가잔량변화10",
+      "s_askprc10_p4": "매도호가10P4",
+      "s_askprc_up_dwn_r10_p2": "매도호가등락율10P2",
+      "s_askprc_q10": "매도호가수량10",
+      "s_askprc_cnt10": "매도호가건수10",
+      "s_askprc_rv_chng10": "매도호가잔량변화10",
+      "b_askprc_krw1_p2": "매수호가원화1P2",
+      "s_askprc_krw1_p2": "매도호가원화1P2",
+      "b_askprc_krw2_p2": "매수호가원화2P2",
+      "s_askprc_krw2_p2": "매도호가원화2P2",
+      "b_askprc_krw3_p2": "매수호가원화3P2",
+      "s_askprc_krw3_p2": "매도호가원화3P2",
+      "b_askprc_krw4_p2": "매수호가원화4P2",
+      "s_askprc_krw4_p2": "매도호가원화4P2",
+      "b_askprc_krw5_p2": "매수호가원화5P2",
+      "s_askprc_krw5_p2": "매도호가원화5P2",
+      "b_askprc_krw6_p2": "매수호가원화6P2",
+      "s_askprc_krw6_p2": "매도호가원화6P2",
+      "b_askprc_krw7_p2": "매수호가원화7P2",
+      "s_askprc_krw7_p2": "매도호가원화7P2",
+      "b_askprc_krw8_p2": "매수호가원화8P2",
+      "s_askprc_krw8_p2": "매도호가원화8P2",
+      "b_askprc_krw9_p2": "매수호가원화9P2",
+      "s_askprc_krw9_p2": "매도호가원화9P2",
+      "b_askprc_krw10_p2": "매수호가원화10P2",
+      "s_askprc_krw10_p2": "매도호가원화10P2",
+      "sprc_krw_p2": "기준가원화P2"
+    }
+  },
+  {
+    "code": "GSS10180",
+    "name": "신고_신저",
+    "category": "해외주식 > 시세분석",
+    "endpoint": "/api/v1/gss10180",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "krx_cd",
+        "name_kr": "거래소코드 KRX_CD",
+        "length": 3,
+        "required": false,
+        "description": "NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스",
+        "choices": []
+      },
+      {
+        "name_en": "clsf",
+        "name_kr": "구분 CLSF (1:신고 2:신저)",
+        "length": 1,
+        "required": false,
+        "description": "0: 신고 1: 신저",
+        "choices": []
+      },
+      {
+        "name_en": "clsf2",
+        "name_kr": "구분2 CLSF2 (1:일시돌파 2:돌파유지)",
+        "length": 1,
+        "required": false,
+        "description": "0: 일시돌파 1: 돌파유지",
+        "choices": []
+      },
+      {
+        "name_en": "std_dy",
+        "name_kr": "기준일 STD_DY (01:전일 05:5일 10:10일)",
+        "length": 2,
+        "required": false,
+        "description": "01: 전일,05:5일,10:10일, 20:20일, 60:60일, 90:90일",
+        "choices": []
+      },
+      {
+        "name_en": "vlm",
+        "name_kr": "거래량 VLM",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_cnt",
+        "name_kr": "종목건수 IS_CNT",
+        "length": 5,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이C5",
+      "clsfP": "구분자_C2",
+      "msg": "메시지_C80",
+      "RecordSize": "레코드길이",
+      "mrkt_prc_clsf": "시세구분 MRKT_PRC_CLSF (0:실시간 1:지연)",
+      "is_cnt": "종목건수 IS_CNT",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "krx_cd": "거래소코드 KRX_CD",
+      "is_cd": "종목코드 IS_CD",
+      "hngl_is_nm": "한글종목명 HNGL_IS_NM",
+      "eng_is_nm": "영문종목명 ENG_IS_NM",
+      "now_prc_p4": "현재가P4 NOW_PRC_P4",
+      "bdy_cmpr_ccd": "전일대비구분코드 BDY_CMPR_CCD",
+      "bdy_cmpr_p4": "전일대비P4 BDY_CMPR_P4",
+      "up_dwn_r_p2": "등락율P2 UP_DWN_R_P2",
+      "vlm": "거래량 VLM",
+      "hgh_prc_p4": "고가P4 HGH_PRC_P4",
+      "lw_prc_p4": "저가P4 LW_PRC_P4",
+      "sprc_p4": "기준가P4 SPRC_P4",
+      "sprc_cmpr_p4": "기준가대비P4 SPRC_CMPR_P4",
+      "cmpr_r_p2": "대비율P2 CMPR_R_P2"
+    }
+  },
+  {
+    "code": "IVA10370",
+    "name": "증시주변자금동향",
+    "category": "국내주식 > 투자정보",
+    "endpoint": "/api/v1/iva10370",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "dt": "일자",
+      "cs_dpst": "고객예탁금",
+      "cs_dpst_cmpr_amt": "고객예탁금대비금액",
+      "rcvamt": "미수금",
+      "rcvamt_cmpr_amt": "미수금대비금액",
+      "crdt_blnc": "신용잔고",
+      "crdt_blnc_cmpr_amt": "신용잔고대비금액",
+      "fts_tfnd": "선물예수금",
+      "fts_tfnd_cmpr_amt": "선물예수금대비금액",
+      "stk_typ_bnf_amt": "주식형수익증권금액",
+      "stk_typ_bnf_cmpr_amt": "주식형수익증권대비금액",
+      "bnd_typ_bnf_amt": "채권형수익증권금액",
+      "bnd_typ_bnf_cmpr_amt": "채권형수익증권대비금액",
+      "mix_typ_bnf_amt": "혼합형수익증권금액",
+      "mix_typ_bnf_cmpr_amt": "혼합형수익증권대비금액",
+      "mmf_amt": "MMF금액",
+      "mmf_cmpr_amt": "MMF대비금액",
+      "dt2": "일자2",
+      "ntl_hsng_typ1_yld_p5": "국민주택1종수익율P5",
+      "ntl_hsng_typ1_yld_cmpr_p5": "국민주택1종수익율대비P5",
+      "msbnd_yr1_yld_p5": "통안채1년수익율P5",
+      "msbnd_yr1_yld_cmpr_p5": "통안채1년수익율대비P5",
+      "msbnd_yr2_yld_p5": "통안채2년수익율P5",
+      "msbnd_yr2_yld_cmpr_p5": "통안채2년수익율대비P5",
+      "ifb_yr1_yld_p5": "산금채1년수익율P5",
+      "ifb_yr1_yld_cmpr_p5": "산금채1년수익율대비P5",
+      "kepco_bnd_yr3_yld_p5": "한전채3년수익율P5",
+      "kepco_bnd_yr3_yld_cmpr_p5": "한전채3년수익율대비P5",
+      "cpbnd_yr3_aa_yld_p5": "회사채3년AA수익율P5",
+      "cpbnd_yr3_aa_yld_cmpr_p5": "회사채3년AA수익율대비P5",
+      "cpbnd_yr3_bbb_yld_p5": "회사채3년BBB수익율P5",
+      "cpbnd_yr3_bbb_yld_cmpr_p5": "회사채3년BBB수익율대비P5",
+      "cd_dy91_thng_yld_p5": "CD91일물수익율P5",
+      "cd_dy91_thng_yld_cmpr_p5": "CD91일물수익율대비P5",
+      "cp_dy91_thng_yld_p5": "CP91일물수익율P5",
+      "cp_dy91_thng_yld_cmpr_p5": "CP91일물수익율대비P5",
+      "ntnbnd_yr1_thng_yld_p5": "국고채1년물수익율P5",
+      "ntnbnd_yr1_thng_yld_cmpr_p5": "국고채1년물수익율대비P5",
+      "ntnbnd_yr3_thng_yld_p5": "국고채3년물수익율P5",
+      "ntnbnd_yr3_thng_yld_cmpr_p5": "국고채3년물수익율대비P5",
+      "ntnbnd_yr5_thng_yld_p5": "국고채5년물수익율P5",
+      "ntnbnd_yr5_thng_yld_cmpr_p5": "국고채5년물수익율대비P5",
+      "ntnbnd_yr10_thng_yld_p5": "국고채10년물수익율P5",
+      "ntnbnd_yr10_thng_yld_cmpr_p5": "국고채10년물수익율대비P5"
+    }
+  },
+  {
+    "code": "IVA60140",
+    "name": "세계지수",
+    "category": "국내주식 > 투자정보",
+    "endpoint": "/api/v1/iva60140",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "lnd_clsf",
+        "name_kr": "대륙구분",
+        "length": 1,
+        "required": false,
+        "description": "S: 아시아, C: 아메라키, E: 유럽",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "inq_cnt": "조회건수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "ntn_nm": "국가명",
+      "is_cd": "종목코드",
+      "is_cd_nm": "종목코드명",
+      "cls_prc_p2": "종가P2",
+      "bdy_cmpr_p2": "전일대비P2",
+      "bdy_cmpr_r_p2": "전일대비율P2",
+      "opn_prc_p2": "시가P2",
+      "hgh_prc_p2": "고가P2",
+      "lw_prc_p2": "저가P2",
+      "bsnss_dy": "영업일",
+      "ttm": "시각"
+    }
+  },
+  {
+    "code": "IVA60190",
+    "name": "환율종합",
+    "category": "국내주식 > 투자정보",
+    "endpoint": "/api/v1/iva60190",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "inq_cnt": "조회건수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "crncy_cd": "통화코드",
+      "ntn_nm": "국가명",
+      "crncy_cd_nm": "통화코드명",
+      "cls_prc_p4": "종가P4",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_p4": "전일대비P4",
+      "bdy_cmpr_r_p2": "전일대비율P2",
+      "opn_prc_p4": "시가P4",
+      "hgh_prc_p4": "고가P4",
+      "lw_prc_p4": "저가P4",
+      "mms1_bfr_cmpr_p4": "1개월전대비P4",
+      "mms3_bfr_cmpr_p4": "3개월전대비P4",
+      "fnl_rcp_tm": "최종수신시간"
+    }
+  },
+  {
+    "code": "IVM10050",
+    "name": "기업개요",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivm10050",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "cptl_amt": "자본금",
+      "lstng_stk_c": "상장주식수",
+      "pr_vl_prc_p3": "액면가P3",
+      "opn_prc_tl_amt": "시가총액",
+      "brwg_blnc_q": "대차잔고수량",
+      "crdt_blnc_stk_c": "신용잔고주수",
+      "crdt_blnc_rt_p2": "신용잔고비율P2",
+      "dvdnd_yld_p2": "배당수익율P2",
+      "per": "PER PER",
+      "pbr_p2": "PBRP2 PBR_P2",
+      "eps_p2": "EPSP2 EPS_P2",
+      "bps_p2": "BPSP2 BPS_P2",
+      "opn_prc_tl_amt_rnk": "시가총액순위",
+      "fgnr_hld_q": "외국인보유수량",
+      "fgnr_hld_sgrvt_p2": "외국인보유비중P2",
+      "indx_nm": "지수명",
+      "dl_tw_amt": "거래대금",
+      "bdy_cls_prc": "전일종가",
+      "wk52_max_prc": "52주간최고가",
+      "wk52_max_dt": "52주간최고일자",
+      "wk52_min_prc": "52주간최저가",
+      "wk52_min_dt": "52주간최저일자",
+      "clsac_mm": "결산월",
+      "sbt_prc": "대용가격"
+    }
+  },
+  {
+    "code": "IVM30010",
+    "name": "업종랭킹",
+    "category": "국내주식 > 투자정보",
+    "endpoint": "/api/v1/ivm30010",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:코스피 2:코스닥",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "indx_id": "지수ID",
+      "indx_nm": "지수명",
+      "now_indx_p2": "현재지수P2",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_p2": "전일대비P2",
+      "up_dwn_r_p2": "등락율P2",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2"
+    }
+  },
+  {
+    "code": "IVS10910",
+    "name": "시가대비등락률 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivs10910",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:KOSPI, 3:KOSDAQ, 4:KOSPI200, 5:KOSDAQ150",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "srt_clsf",
+        "name_kr": "정렬구분",
+        "length": 1,
+        "required": false,
+        "description": "1:상승, 2:하락",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out1_RecordSize": "out1_레코드길이",
+      "out1": "out1",
+      "is_c": "종목수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "rnk": "순위",
+      "is_st": "종목상태",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cls_prc": "전일종가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "lw_prc": "저가",
+      "hgh_prc": "고가",
+      "opn_prc": "시가",
+      "opn_prc_cmpr_r_p2": "시가대비율P2",
+      "vlm": "거래량"
+    }
+  },
+  {
+    "code": "IVS10920",
+    "name": "시가총액 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivs10920",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "rnk": "순위",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "dl_sgrvt_p2": "거래비중P2",
+      "opn_prc_tl_amt": "시가총액",
+      "opn_prc_tl_amt_sgrvt_p2": "시가총액비중P2",
+      "fgnr_sgrvt_p2": "외국인비중P2",
+      "lstng_stk_c": "상장주식수",
+      "dl_tw_amt": "거래대금"
+    }
+  },
+  {
+    "code": "IVS11190",
+    "name": "기간외등락률 순위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivs11190",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:거래소, 3:코스닥",
+        "choices": []
+      },
+      {
+        "name_en": "srt_clsf",
+        "name_kr": "정렬구분",
+        "length": 1,
+        "required": false,
+        "description": "1:상승율, 2:하락율",
+        "choices": []
+      },
+      {
+        "name_en": "thdy_bdy_clsf",
+        "name_kr": "당일전일구분",
+        "length": 1,
+        "required": false,
+        "description": "1:당일, 2:전일",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "is_c": "종목수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "s_rv": "매도잔량",
+      "b_rv": "매수잔량",
+      "s_askprc": "매도호가",
+      "b_askprc": "매수호가",
+      "rgr_mkt_cls_prc": "정규장종가",
+      "rgr_mkt_vlm": "정규장거래량",
+      "dl_tw_amt": "거래대금",
+      "rgr_mkt_up_dwn_r_p2": "정규장등락율P2",
+      "expct_ccls_prc": "예상체결가",
+      "expct_bdy_cmpr_ccd": "예상전일대비구분코드",
+      "expct_bdy_cmpr": "예상전일대비",
+      "expct_up_dwn_r_p2": "예상등락율P2"
+    }
+  },
+  {
+    "code": "IVS11560",
+    "name": "통합차트",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivs11560",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "info_ccd",
+        "name_kr": "정보구분코드",
+        "length": 1,
+        "required": true,
+        "description": "1:원주가 2:수정주가(KOSPI, KOSDAQ 종목만)",
+        "choices": [
+          [
+            "1",
+            "원주가"
+          ],
+          [
+            "2",
+            "수정주가(KOSPI, KOSDAQ 종목만)"
+          ]
+        ]
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": true,
+        "description": "0:KOSPI 1:KOSDAQ",
+        "choices": [
+          [
+            "0",
+            "KOSPI"
+          ],
+          [
+            "1",
+            "KOSDAQ"
+          ]
+        ]
+      },
+      {
+        "name_en": "chrt_clsf",
+        "name_kr": "차트구분",
+        "length": 1,
+        "required": true,
+        "description": "D:일별 W:주별 M:월별 Y:년별(주식) B:분봉 T:틱",
+        "choices": [
+          [
+            "D",
+            "일별"
+          ],
+          [
+            "W",
+            "주별"
+          ],
+          [
+            "M",
+            "월별"
+          ],
+          [
+            "Y",
+            "년별(주식)"
+          ],
+          [
+            "B",
+            "분봉"
+          ],
+          [
+            "T",
+            "틱"
+          ]
+        ]
+      },
+      {
+        "name_en": "minute_tck_indx",
+        "name_kr": "MINUTE틱지수",
+        "length": 4,
+        "required": false,
+        "description": "분, 틱, 일 선택시 조회 주기 표시",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "inq_clsf",
+        "name_kr": "조회구분",
+        "length": 1,
+        "required": true,
+        "description": "1:날짜로 조회 2:데이터수로 조회",
+        "choices": [
+          [
+            "1",
+            "날짜로 조회"
+          ],
+          [
+            "2",
+            "데이터수로 조회"
+          ]
+        ]
+      },
+      {
+        "name_en": "strt_dy",
+        "name_kr": "시작일",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "info_ccd": "정보구분코드",
+      "mkt_clsf": "시장구분",
+      "chrt_clsf": "차트구분",
+      "inq_clsf": "조회구분",
+      "minute_tck_indx": "MINUTE틱지수",
+      "is_cd": "종목코드",
+      "inq_cnt": "조회건수",
+      "nttm_strt_tm": "야간시작시간",
+      "nttm_end_tm": "야간종료시간",
+      "wkly_strt_tm": "주간시작시간",
+      "wkly_end_tm": "주간종료시간",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "dt": "일자",
+      "tm": "시간",
+      "opn_prc_p2": "시가P2",
+      "hgh_prc_p2": "고가P2",
+      "lw_prc_p2": "저가P2",
+      "cls_prc_p2": "종가P2",
+      "vlm": "거래량",
+      "dl_tw_amt": "거래대금",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "mdfy_stk_prc_clsf": "수정주가구분",
+      "mdfy_stk_prc_rt_p2": "수정주가비율P2",
+      "nstmt_agr_q": "미결제약정수량",
+      "bdy_cls_prc_p2": "전일종가P2"
+    }
+  },
+  {
+    "code": "IVSA0070",
+    "name": "시장종합",
+    "category": "국내주식 > 투자정보",
+    "endpoint": "/api/v1/ivsa0070",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "inq_dy_tm": "조회일시",
+      "kspi_ulmt_is_c": "코스피상한종목수",
+      "kspi_up_is_c": "코스피상승종목수",
+      "kspi_unchng_is_c": "코스피보합종목수",
+      "kspi_dwn_is_c": "코스피하락종목수",
+      "kspi_llmt_is_c": "코스피하한종목수",
+      "ksdq_ulmt_is_c": "코스닥상한종목수",
+      "ksdq_up_is_c": "코스닥상승종목수",
+      "ksdq_unchng_is_c": "코스닥보합종목수",
+      "ksdq_dwn_is_c": "코스닥하락종목수",
+      "ksdq_llmt_is_c": "코스닥하한종목수",
+      "mprft_nt_b": "차익순매수",
+      "nmp_nt_b": "비차익순매수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "indx_id": "지수ID",
+      "indx_nm": "지수명",
+      "now_indx_p2": "현재지수P2",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_p2": "전일대비P2",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "dl_tw_amt": "거래대금",
+      "out3_RecordSize": "out3_레코드길이",
+      "out3": "out3",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc_p2": "현재가P2",
+      "nstmt_agr_q": "미결제약정수량",
+      "out4_RecordSize": "out4_레코드길이",
+      "out4": "out4",
+      "symbl_cd": "심볼코드",
+      "symbl_nm": "심볼명",
+      "now_prc": "현재가",
+      "dt_tm": "일자시간",
+      "out5_RecordSize": "out5_레코드길이",
+      "out5": "out5",
+      "invstr_cd": "투자자코드",
+      "invstr_clsf_nm": "투자자구분명",
+      "kspi_nt_b": "코스피순매수",
+      "ksdq_nt_b": "코스닥순매수",
+      "fts_nt_b": "선물순매수",
+      "call_opt_nt_b": "콜옵션순매수",
+      "put_opt_nt_b": "풋옵션순매수",
+      "star_fts_nt_b": "스타선물순매수",
+      "stk_fts_nt_b": "주식선물순매수",
+      "RecordSize_5": "레코드길이",
+      "dt_5": "일자 DT",
+      "cs_dpst_5": "고객예탁금 CS_DPST",
+      "cs_dpst_cmpr_amt_5": "고객예탁금대비금액 CS_DPST_CMPR_AMT",
+      "rcvamt_5": "미수금 RCVAMT",
+      "rcvamt_cmpr_amt_5": "미수금대비금액 RCVAMT_CMPR_AMT",
+      "crdt_blnc_5": "신용잔고 CRDT_BLNC",
+      "crdt_blnc_cmpr_amt_5": "신용잔고대비금액 CRDT_BLNC_CMPR_AMT",
+      "fts_tfnd_5": "선물예수금 FTS_TFND",
+      "fts_tfnd_cmpr_amt_5": "선물예수금대비금액 FTS_TFND_CMPR_AMT",
+      "cs_dpst_bdy_cmpr_5": "고객예탁금전일대비 CS_DPST_BDY_CMPR",
+      "cs_dpst_up_dwn_r_p2_5": "고객예탁금등락율P2 CS_DPST_UP_DWN_R_P2",
+      "rcvamt_bdy_cmpr_5": "미수금전일대비 RCVAMT_BDY_CMPR",
+      "rcvamt_up_dwn_r_p2_5": "미수금등락율P2 RCVAMT_UP_DWN_R_P2",
+      "crdt_blnc_bdy_cmpr_5": "신용잔고전일대비 CRDT_BLNC_BDY_CMPR",
+      "crdt_blnc_up_dwn_r_p2_5": "신용잔고등락율P2 CRDT_BLNC_UP_DWN_R_P2",
+      "fts_tfnd_bdy_cmpr_5": "선물예수금전일대비 FTS_TFND_BDY_CMPR",
+      "fts_tfnd_up_dwn_r_p2_5": "선물예수금등락율P2 FTS_TFND_UP_DWN_R_P2"
+    }
+  },
+  {
+    "code": "IVU10020",
+    "name": "매매 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10020",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "0:거래소, 1:코스닥, 2:전체",
+        "choices": []
+      },
+      {
+        "name_en": "invstr_ccd",
+        "name_kr": "투자자구분코드",
+        "length": 1,
+        "required": false,
+        "description": "0:외국인 1:기관 2:외국인+기관 3:증권 4:보험 5:투신 6:사모펀드 7:은행 8:종금 9:기금 A:기타 B:국가지자체 C:개인 D:기타외국인",
+        "choices": []
+      },
+      {
+        "name_en": "prd_clsf",
+        "name_kr": "기간구분",
+        "length": 1,
+        "required": false,
+        "description": "0:전일 1:1주 2:1달 3:3달 4:6달 5:1년 6:연초",
+        "choices": []
+      },
+      {
+        "name_en": "rnk_clsf",
+        "name_kr": "순위구분",
+        "length": 1,
+        "required": false,
+        "description": "0:순매수 1:순매도 2:지분증가 3:지분감소 4:연속순매수 5:연속순매도",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "shrt_is_cd": "단축종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr": "전일대비",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr_r_p2": "전일대비율P2",
+      "vlm": "거래량",
+      "nt_b_s_q": "순매수매도수량",
+      "nt_b_s_clsf": "순매수매도구분",
+      "cn_dy_c": "연속일수",
+      "invstr_prd_nt_b_dy_c": "투자자기간순매수일수",
+      "invstr_prd_nt_s_dy_c": "투자자기간순매도일수",
+      "hld_rt_p2": "보유비율P2",
+      "hld_rt_incrs_dcrs_r_p2": "보유비율증감율P2",
+      "ordr_psbl_q": "주문가능수량",
+      "vnsh_r_p4": "소진율P4",
+      "is_lmt_rt_p4": "종목한도비율P4",
+      "prd_avr_vlm_p2": "기간평균거래량P2",
+      "prd_cmpr_clsf_cd": "기간대비구분코드",
+      "prd_cmpr_prc": "기간대비가",
+      "prd_cmpr_up_r_p2": "기간대비상승율P2",
+      "prd_up_dy_c": "기간상승일수",
+      "tl_bsnss_dy_c": "총영업일수"
+    }
+  },
+  {
+    "code": "IVU10070",
+    "name": "호가",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10070",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 9,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ovtm_mkt_clsf",
+        "name_kr": "시간외장구분",
+        "length": 1,
+        "required": false,
+        "description": "0:정규장, 1:시간외",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "opn_prc": "시가",
+      "hgh_prc": "고가",
+      "lw_prc": "저가",
+      "bdy_cls_prc": "전일종가",
+      "now_prc": "현재가",
+      "ulmt_prc": "상한가",
+      "llmt_prc": "하한가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "expct_ccls_excg_cd": "예상체결거래소코드",
+      "expct_ccls_prc": "예상체결가",
+      "expct_ccls_q": "예상체결수량",
+      "vlm": "거래량",
+      "hgh_prc_tm": "고가시간",
+      "lw_prc_tm": "저가시간",
+      "indx_id": "지수ID",
+      "ovtm_s_rv": "시간외매도잔량",
+      "ovtm_b_rv": "시간외매수잔량",
+      "up_dwn_r_p2": "등락율P2",
+      "wt_avr_prc": "가중평균가격",
+      "sprc": "기준가",
+      "prmtv_rghts_doc_isng_strt_dy": "신주인수권증서발행시작일",
+      "prmtv_rghts_doc_isng_end_dy": "신주인수권증서발행종료일",
+      "krx_mkoprt_ccd": "한국거래소장운영구분코드",
+      "nxtd_mkoprt_ccd": "넥스트레이드장운영구분코드",
+      "s1_aprc": "매도1호가",
+      "b1_aprc": "매수1호가",
+      "s2_aprc": "매도2호가",
+      "b2_aprc": "매수2호가",
+      "s3_aprc": "매도3호가",
+      "b3_aprc": "매수3호가",
+      "s4_aprc": "매도4호가",
+      "b4_aprc": "매수4호가",
+      "s5_aprc": "매도5호가",
+      "b5_aprc": "매수5호가",
+      "s6_aprc": "매도6호가",
+      "b6_aprc": "매수6호가",
+      "s7_aprc": "매도7호가",
+      "b7_aprc": "매수7호가",
+      "s8_aprc": "매도8호가",
+      "b8_aprc": "매수8호가",
+      "s9_aprc": "매도9호가",
+      "b9_aprc": "매수9호가",
+      "s10_aprc": "매도10호가",
+      "b10_aprc": "매수10호가",
+      "s_pstn_s1_aprc_q": "매도위치매도1호가수량",
+      "s_pstn_b1_aprc_q": "매도위치매수1호가수량",
+      "s_pstn_s1_jbfr_cmpr_q": "매도위치매도1직전대비수량",
+      "s_pstn_b1_jbfr_cmpr_q": "매도위치매수1직전대비수량",
+      "s_pstn_s2_aprc_q": "매도위치매도2호가수량",
+      "s_pstn_b2_aprc_q": "매도위치매수2호가수량",
+      "s_pstn_s2_jbfr_cmpr_q": "매도위치매도2직전대비수량",
+      "s_pstn_b2_jbfr_cmpr_q": "매도위치매수2직전대비수량",
+      "s_pstn_s3_aprc_q": "매도위치매도3호가수량",
+      "s_pstn_b3_aprc_q": "매도위치매수3호가수량",
+      "s_pstn_s3_jbfr_cmpr_q": "매도위치매도3직전대비수량",
+      "s_pstn_b3_jbfr_cmpr_q": "매도위치매수3직전대비수량",
+      "s_pstn_s4_aprc_q": "매도위치매도4호가수량",
+      "s_pstn_b4_aprc_q": "매도위치매수4호가수량",
+      "s_pstn_s4_jbfr_cmpr_q": "매도위치매도4직전대비수량",
+      "s_pstn_b4_jbfr_cmpr_q": "매도위치매수4직전대비수량",
+      "s_pstn_s5_aprc_q": "매도위치매도5호가수량",
+      "s_pstn_b5_aprc_q": "매도위치매수5호가수량",
+      "s_pstn_s5_jbfr_cmpr_q": "매도위치매도5직전대비수량",
+      "s_pstn_b5_jbfr_cmpr_q": "매도위치매수5직전대비수량",
+      "s_pstn_s6_aprc_q": "매도위치매도6호가수량",
+      "s_pstn_b6_aprc_q": "매도위치매수6호가수량",
+      "s_pstn_s6_jbfr_cmpr_q": "매도위치매도6직전대비수량",
+      "s_pstn_b6_jbfr_cmpr_q": "매도위치매수6직전대비수량",
+      "s_pstn_s7_aprc_q": "매도위치매도7호가수량",
+      "s_pstn_b7_aprc_q": "매도위치매수7호가수량",
+      "s_pstn_s7_jbfr_cmpr_q": "매도위치매도7직전대비수량",
+      "s_pstn_b7_jbfr_cmpr_q": "매도위치매수7직전대비수량",
+      "s_pstn_s8_aprc_q": "매도위치매도8호가수량",
+      "s_pstn_b8_aprc_q": "매도위치매수8호가수량",
+      "s_pstn_s8_jbfr_cmpr_q": "매도위치매도8직전대비수량",
+      "s_pstn_b8_jbfr_cmpr_q": "매도위치매수8직전대비수량",
+      "s_pstn_s9_aprc_q": "매도위치매도9호가수량",
+      "s_pstn_b9_aprc_q": "매도위치매수9호가수량",
+      "s_pstn_s9_jbfr_cmpr_q": "매도위치매도9직전대비수량",
+      "s_pstn_b9_jbfr_cmpr_q": "매도위치매수9직전대비수량",
+      "s_pstn_s10_aprc_q": "매도위치매도10호가수량",
+      "s_pstn_b10_aprc_q": "매도위치매수10호가수량",
+      "s_pstn_s10_jbfr_cmpr_q": "매도위치매도10직전대비수량",
+      "s_pstn_b10_jbfr_cmpr_q": "매도위치매수10직전대비수량",
+      "b_pstn_s1_aprc_q": "매수위치매도1호가수량",
+      "b_pstn_b1_aprc_q": "매수위치매수1호가수량",
+      "b_pstn_s1_jbfr_cmpr_q": "매수위치매도1직전대비수량",
+      "b_pstn_b1_jbfr_cmpr_q": "매수위치매수1직전대비수량",
+      "b_pstn_s2_aprc_q": "매수위치매도2호가수량",
+      "b_pstn_b2_aprc_q": "매수위치매수2호가수량",
+      "b_pstn_s2_jbfr_cmpr_q": "매수위치매도2직전대비수량",
+      "b_pstn_b2_jbfr_cmpr_q": "매수위치매수2직전대비수량",
+      "b_pstn_s3_aprc_q": "매수위치매도3호가수량",
+      "b_pstn_b3_aprc_q": "매수위치매수3호가수량",
+      "b_pstn_s3_jbfr_cmpr_q": "매수위치매도3직전대비수량",
+      "b_pstn_b3_jbfr_cmpr_q": "매수위치매수3직전대비수량",
+      "b_pstn_s4_aprc_q": "매수위치매도4호가수량",
+      "b_pstn_b4_aprc_q": "매수위치매수4호가수량",
+      "b_pstn_s4_jbfr_cmpr_q": "매수위치매도4직전대비수량",
+      "b_pstn_b4_jbfr_cmpr_q": "매수위치매수4직전대비수량",
+      "b_pstn_s5_aprc_q": "매수위치매도5호가수량",
+      "b_pstn_b5_aprc_q": "매수위치매수5호가수량",
+      "b_pstn_s5_jbfr_cmpr_q": "매수위치매도5직전대비수량",
+      "b_pstn_b5_jbfr_cmpr_q": "매수위치매수5직전대비수량",
+      "b_pstn_s6_aprc_q": "매수위치매도6호가수량",
+      "b_pstn_b6_aprc_q": "매수위치매수6호가수량",
+      "b_pstn_s6_jbfr_cmpr_q": "매수위치매도6직전대비수량",
+      "b_pstn_b6_jbfr_cmpr_q": "매수위치매수6직전대비수량",
+      "b_pstn_s7_aprc_q": "매수위치매도7호가수량",
+      "b_pstn_b7_aprc_q": "매수위치매수7호가수량",
+      "b_pstn_s7_jbfr_cmpr_q": "매수위치매도7직전대비수량",
+      "b_pstn_b7_jbfr_cmpr_q": "매수위치매수7직전대비수량",
+      "b_pstn_s8_aprc_q": "매수위치매도8호가수량",
+      "b_pstn_b8_aprc_q": "매수위치매수8호가수량",
+      "b_pstn_s8_jbfr_cmpr_q": "매수위치매도8직전대비수량",
+      "b_pstn_b8_jbfr_cmpr_q": "매수위치매수8직전대비수량",
+      "b_pstn_s9_aprc_q": "매수위치매도9호가수량",
+      "b_pstn_b9_aprc_q": "매수위치매수9호가수량",
+      "b_pstn_s9_jbfr_cmpr_q": "매수위치매도9직전대비수량",
+      "b_pstn_b9_jbfr_cmpr_q": "매수위치매수9직전대비수량",
+      "b_pstn_s10_aprc_q": "매수위치매도10호가수량",
+      "b_pstn_b10_aprc_q": "매수위치매수10호가수량",
+      "b_pstn_s10_jbfr_cmpr_q": "매수위치매도10직전대비수량",
+      "b_pstn_b10_jbfr_cmpr_q": "매수위치매수10직전대비수량",
+      "s_askprc_tl_q": "매도호가총수량",
+      "s_askprc_tl_q_jbfr_cmpr": "매도호가총수량직전대비",
+      "b_askprc_tl_q": "매수호가총수량",
+      "b_askprc_tl_q_jbfr_cmpr": "매수호가총수량직전대비",
+      "krx_vit_knd_cd": "한국거래소변동성완화종류코드",
+      "krx_sttc_vit_trggr_expct_up_prc": "한국거래소정적변동성완화발동예상상승가격",
+      "krx_sttc_vit_trggr_expct_cdw_prc": "한국거래소정적변동성완화발동예상하락가격",
+      "krx_mdd_prc": "한국거래소중간가격",
+      "krx_s_mdd_prc_q": "한국거래소매도중간가격수량",
+      "krx_b_mdd_prc_q": "한국거래소매수중간가격수량",
+      "krx_s_mdd_prc_q_sum_jbfr_cmpr": "한국거래소매도중간가격수량합계직전대비",
+      "krx_b_mdd_prc_q_sum_jbfr_cmpr": "한국거래소매수중간가격수량합계직전대비",
+      "nxtd_vit_knd_cd": "넥스트레이드변동성완화종류코드",
+      "nxtd_mdd_prc": "넥스트레이드중간가격",
+      "nxtd_s_mdd_prc_q": "넥스트레이드매도중간가격수량",
+      "nxtd_b_mdd_prc_q": "넥스트레이드매수중간가격수량",
+      "nxtd_s_mdd_prc_q_sum_jbfr_cmpr": "넥스트레이드매도중간가격수량합계직전대비",
+      "nxtd_b_mdd_prc_q_sum_jbfr_cmpr": "넥스트레이드매수중간가격수량합계직전대비",
+      "nxtd_clpr_trd_s_q": "넥스트레이드종가매매매도수량",
+      "nxtd_clpr_trd_b_q": "넥스트레이드종가매매매수수량",
+      "ria_clsf": "국내시장복귀계좌구분"
+    }
+  },
+  {
+    "code": "IVU10080",
+    "name": "체결",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10080",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 9,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ovtm_mkt_clsf",
+        "name_kr": "시간외장구분",
+        "length": 1,
+        "required": false,
+        "description": "0:정규장, 1:시간외",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "ccls_tm": "체결시간",
+      "excg_cd": "거래소코드",
+      "ccls_prc": "체결가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "sell_buy_ccd": "매도매수구분코드",
+      "ccls_q": "체결수량",
+      "acml_vlm": "누적거래량",
+      "ccls_strn_p2": "체결강도P2"
+    }
+  },
+  {
+    "code": "IVU10140",
+    "name": "현재가",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10140",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "shrt_cd",
+        "name_kr": "단축코드",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "acml_vlm": "누적거래량",
+      "bdy_vlm_cmpr_p2": "전일거래량대비P2",
+      "s_sq1_askprc": "매도1차호가",
+      "b_sq1_askprc": "매수1차호가",
+      "fgnr_hld_q": "외국인보유수량",
+      "fgnr_hld_sgrvt_p2": "외국인보유비중P2",
+      "askprc_rcp_tm": "호가수신시간",
+      "s_askprc_tl_q": "매도호가총수량",
+      "s_askprc_tl_q_jbfr_cmpr": "매도호가총수량직전대비",
+      "b_askprc_tl_q": "매수호가총수량",
+      "b_askprc_tl_q_jbfr_cmpr": "매수호가총수량직전대비",
+      "expct_ccls_excg_cd": "예상체결거래소코드",
+      "expct_ccls_prc": "예상체결가",
+      "expct_ccls_q": "예상체결수량",
+      "expct_ccls_bdy_cmpr_ccd": "예상체결전일대비구분코드",
+      "expct_ccls_bdy_cmpr": "예상체결전일대비",
+      "expct_ccls_up_dwn_r_p2": "예상체결등락율P2",
+      "ovtm_s_rv": "시간외매도잔량",
+      "ovtm_b_rv": "시간외매수잔량",
+      "krx_ovtm_mkt_clsf": "한국거래소시간외시장구분",
+      "nxtd_ovtm_mkt_clsf": "넥스트레이드시간외시장구분",
+      "bdy_cls_prc": "전일종가",
+      "sprc": "기준가",
+      "ulmt_prc": "상한가",
+      "llmt_prc": "하한가",
+      "opn_prc": "시가",
+      "hgh_prc": "고가",
+      "lw_prc": "저가",
+      "dl_cst": "거래비용",
+      "pvt": "피봇",
+      "std_ln": "기준라인",
+      "sq1_rstnc": "1차저항",
+      "sq2_rstnc": "2차저항",
+      "sq1_bkng": "1차지지",
+      "sq2_bkng": "2차지지",
+      "d_rstnc": "D저항",
+      "d_bkng": "D지지",
+      "pr_vl_prc_p3": "액면가P3",
+      "pr_vl_crncy_cd": "액면통화코드",
+      "sbt_prc": "대용가격",
+      "opn_prc_tl_amt": "시가총액",
+      "cptl_amt": "자본금",
+      "lstng_stk_q": "상장주식수량",
+      "per_p2": "PERP2 PER_P2",
+      "pbr_p2": "PBRP2 PBR_P2",
+      "dy250_max_prc": "250일최고가",
+      "dy250_max_prc_up_dwn_r_p2": "250일최고가등락율P2",
+      "dy250_max_prc_dt": "250일최고가일자",
+      "dy250_min_prc": "250일최저가",
+      "dy250_min_prc_up_dwn_r_p2": "250일최저가등락율P2",
+      "dy250_min_prc_dt": "250일최저가일자",
+      "clsac_mm": "결산월",
+      "crdt_mgn_rt": "신용증거금비율",
+      "yr_mid_max_prc_dt": "년중최고가일자",
+      "yr_mid_max_prc": "년중최고가격",
+      "yr_mid_max_prc_up_dwn_r_p2": "년중최고가등락율P2",
+      "yr_mid_min_prc_dt": "년중최저가일자",
+      "yr_mid_min_prc": "년중최저가",
+      "yr_mid_min_prc_up_dwn_r_p2": "년중최저가등락율P2",
+      "lmt_vnsh_r_p2": "한도소진율P2",
+      "eps_p2": "EPSP2 EPS_P2",
+      "mkt_clsf_nm": "시장구분명",
+      "indx_nm": "지수명",
+      "etc_info": "기타정보",
+      "bfr_qt_nm": "전분기명",
+      "bfr_qt_sale_amt": "전분기매출액",
+      "bfr_qt_bsnss_prft": "전분기영업이익",
+      "bfr_qt_ordnr_prft": "전분기경상이익",
+      "bfr_qt_nt_prft": "전분기순이익",
+      "bfr_qt_eps_p2": "전분기EPSP2",
+      "bfr_yr_clsac_nm": "전년결산명",
+      "bfr_yr_clsac_sale_amt": "전년결산매출액",
+      "bfr_yr_clsac_bsnss_prft": "전년결산영업이익",
+      "bfr_yr_clsac_ordnr_prft": "전년결산경상이익",
+      "bfr_yr_clsac_nt_prft": "전년결산순이익",
+      "bfr_yr_clsac_eps_p2": "전년결산EPSP2",
+      "sale_amt_incrs_dcrs_r_p2": "매출액증감율P2",
+      "bsnss_prft_incrs_dcrs_r_p2": "영업이익증감율P2",
+      "ordnr_prft_incrs_dcrs_r_p2": "경상이익증감율P2",
+      "nt_prft_incrs_dcrs_r_p2": "순이익증감율P2",
+      "eps_incrs_dcrs_r_p2": "EPS증감율P2",
+      "bfr_qt_per_p2": "전분기PERP2",
+      "bfr_yr_clsac_per_p2": "전년결산PERP2",
+      "per_incrs_dcrs_r_p2": "PER증감율P2",
+      "bdy_vlm": "전일거래량",
+      "bdy_dl_tw_amt": "전일거래대금",
+      "vlm_rvltn_r_p2": "거래량회전율P2",
+      "flw_stk_c": "유동주식수",
+      "wt_avr_prc": "가중평균가격",
+      "opn_prc_cmpr_r_p2": "시가대비율P2",
+      "hgh_prc_cmpr_r_p2": "고가대비율P2",
+      "lw_prc_cmpr_r_p2": "저가대비율P2",
+      "gl_prc": "목표가",
+      "trd_q_unt": "매매수량단위",
+      "crdt_info": "신용정보",
+      "mgn_info": "증거금정보",
+      "bfr_yr_clsac_fv_ebitda": "전년결산FVEBITDA",
+      "bfr_yr_clsac_roe_p2": "전년결산ROEP2",
+      "bfr_prd_lblt_rt_p2": "전기부채비율P2",
+      "bfr_prd_rsvt_rt_p2": "전기유보비율P2",
+      "opn_prc_tm": "시가시간",
+      "hgh_prc_tm": "고가시간",
+      "lw_prc_tm": "저가시간",
+      "crdt_blnc_rt_p2": "신용잔고비율P2",
+      "krx_bdy_clpr": "한국거래소전일종가",
+      "dy2_bdy_cmpr_ccd": "2일전일대비구분코드",
+      "dy2_bdy_cmpr": "2일전일대비",
+      "dy2_bdy_cmpr_udnr_p2": "2일전일대비등락률P2"
+    }
+  },
+  {
+    "code": "IVU10210",
+    "name": "거래대금 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10210",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:KOSPI, 3:KOSDAQ",
+        "choices": []
+      },
+      {
+        "name_en": "thdy_bdy_clsf",
+        "name_kr": "당일전일구분",
+        "length": 1,
+        "required": false,
+        "description": "1:당일, 2:전일",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "srt_clsf",
+        "name_kr": "정렬구분",
+        "length": 1,
+        "required": false,
+        "description": "1:상위, 2:하위",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out1_RecordSize": "out1_레코드길이",
+      "out1": "out1",
+      "is_c": "종목수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "rnk": "순위",
+      "bdy_rnk": "전일순위",
+      "is_st": "종목상태",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "dl_tw_amt": "거래대금",
+      "bdy_dl_tw_amt": "전일거래대금",
+      "dl_tw_amt_bdy_cmpr_p2": "거래대금전일대비P2"
+    }
+  },
+  {
+    "code": "IVU10240",
+    "name": "등락률 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10240",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:KOSPI, 3:KOSDAQ, 4:KOSPI200, 5:KOSDAQ150",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "srt_clsf",
+        "name_kr": "정렬구분",
+        "length": 1,
+        "required": false,
+        "description": "1:상승율, 2:하락율, 3:상승폭, 4:하락폭",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "is_c": "종목수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "rnk": "순위",
+      "is_st": "종목상태",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "s_rv": "매도잔량",
+      "b_rv": "매수잔량",
+      "vlm": "거래량",
+      "dy_c": "일수"
+    }
+  },
+  {
+    "code": "IVU10270",
+    "name": "급등_급락 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10270",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:KOSPI, 3:KOSDAQ",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "up_dwn_ccd",
+        "name_kr": "등락구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:급등, 2:급락",
+        "choices": []
+      },
+      {
+        "name_en": "minute_dy_ccd",
+        "name_kr": "MINUTE일구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:분전, 2:일전",
+        "choices": []
+      },
+      {
+        "name_en": "minute_dy_unt",
+        "name_kr": "MINUTE일단위",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "RecordSize": "레코드길이",
+      "is_c": "종목수",
+      "std_tm": "기준시간",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "is_st": "종목상태",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "dl_tw_amt": "거래대금",
+      "sprc": "기준가",
+      "sprc_cmpr_smbl": "기준가대비기호",
+      "sprc_cmpr": "기준가대비",
+      "sdn_incrs_r_p2": "급증율P2",
+      "bdy_cls_prc": "전일종가"
+    }
+  },
+  {
+    "code": "IVU10280",
+    "name": "거래량 상위",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10280",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "시장구분 : 1:전체, 2:KOSPI, 3:KOSDAQ",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out1_RecordSize": "out1_레코드길이",
+      "out1": "out1",
+      "is_c": "종목수",
+      "out2_RecordSize": "out2_레코드길이",
+      "out2": "out2",
+      "rnk": "순위",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "acml_vlm": "누적거래량",
+      "bdy_vlm_cmpr_r_p2": "전일거래량대비율P2",
+      "vlm_rvltn_r_p2": "거래량회전율P2",
+      "acml_dl_tw_amt": "누적거래대금"
+    }
+  },
+  {
+    "code": "IVU10420",
+    "name": "거래원",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10420",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 6,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "s_scrts_cmpny1": "매도증권사1",
+      "s_scrts_cmpny_nm1": "매도증권사명1",
+      "s_q1": "매도수량1",
+      "s_incrs_dcrs1": "매도증감1",
+      "s_rt1_p2": "매도비율1P2",
+      "b_scrts_cmpny1": "매수증권사1",
+      "b_scrts_cmpny_nm1": "매수증권사명1",
+      "b_q1": "매수수량1",
+      "b_incrs_dcrs1": "매수증감1",
+      "b_rt1_p2": "매수비율1P2"
+    }
+  },
+  {
+    "code": "IVU10430",
+    "name": "투자자",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10430",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "strt_dt",
+        "name_kr": "시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_dt",
+        "name_kr": "종료일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "amt_q_clsf",
+        "name_kr": "금액수량구분",
+        "length": 1,
+        "required": false,
+        "description": "1:금액, 2:수량",
+        "choices": []
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 1,
+        "required": false,
+        "description": "1:순매수, 2:매수, 3:매도",
+        "choices": []
+      },
+      {
+        "name_en": "acml_clsf",
+        "name_kr": "누적구분",
+        "length": 1,
+        "required": false,
+        "description": "0:누적안함, 1:누적",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "mtrl_clsf": "자료구분",
+      "dt": "일자",
+      "cls_prc": "종가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "indv": "개인",
+      "fgnr": "외국인",
+      "ogn": "기관",
+      "scrt": "증권",
+      "insr": "보험",
+      "invst_trst": "투신",
+      "invst_bnk": "종금",
+      "bnk": "은행",
+      "fnd": "기금",
+      "prv_o_fnd": "사모펀드",
+      "etc_corp": "기타법인",
+      "ntn": "국가",
+      "ntv_fgnr": "내외국인",
+      "pgm": "프로그램",
+      "frgn_afflt_dl_orgn_sum": "외국계거래원합계"
+    }
+  },
+  {
+    "code": "IVU10450",
+    "name": "프로그램",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/ivu10450",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "amt_q_clsf",
+        "name_kr": "금액수량구분",
+        "length": 1,
+        "required": false,
+        "description": "금액수량구분 : 1:금액, 2:수량",
+        "choices": []
+      },
+      {
+        "name_en": "prd_clsf",
+        "name_kr": "기간구분",
+        "length": 1,
+        "required": false,
+        "description": "기간구분 : 1:시간별, 2:일별",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "dt": "일자",
+      "tm": "시간",
+      "excg_cd": "거래소코드",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "acml_vlm": "누적거래량",
+      "nt_b_amt": "순매수금액",
+      "nt_b_amt_incrs_dcrs": "순매수금액증감",
+      "s_amt": "매도금액",
+      "b_amt": "매수금액",
+      "nt_b_q": "순매수수량",
+      "nt_b_q_incrs_dcrs": "순매수수량증감",
+      "s_q": "매도수량",
+      "b_q": "매수수량"
+    }
+  },
+  {
+    "code": "IVU10550",
+    "name": "신고_신저",
+    "category": "국내주식 > 시세분석",
+    "endpoint": "/api/v1/ivu10550",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_clsf",
+        "name_kr": "거래소구분",
+        "length": 1,
+        "required": false,
+        "description": "0:통합, 1:KRX, 2:NXT",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_clsf",
+        "name_kr": "시장구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전체, 2:KOSPI, 3:KOSDAQ",
+        "choices": []
+      },
+      {
+        "name_en": "inq_cnt",
+        "name_kr": "조회건수",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nw_stk_lw_ccd",
+        "name_kr": "신고저구분코드",
+        "length": 1,
+        "required": false,
+        "description": ": 1:신고가, 2:신저가",
+        "choices": []
+      },
+      {
+        "name_en": "std_clsf",
+        "name_kr": "기준구분",
+        "length": 1,
+        "required": false,
+        "description": "1:고저기준, 2:종가기준",
+        "choices": []
+      },
+      {
+        "name_en": "prd_clsf",
+        "name_kr": "기간구분",
+        "length": 1,
+        "required": false,
+        "description": "1:전일 2:5일 3:10일 4:20일 5:60일 6:250일 7:120일",
+        "choices": []
+      },
+      {
+        "name_en": "excd_clsf",
+        "name_kr": "돌파구분",
+        "length": 1,
+        "required": false,
+        "description": "1:일시돌파, 2:돌파유지",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "lngth": "길이",
+      "clsfP": "구분자",
+      "msg": "메시지",
+      "out_RecordSize": "out_레코드길이",
+      "out": "out",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "now_prc": "현재가",
+      "bdy_cmpr_ccd": "전일대비구분코드",
+      "bdy_cmpr": "전일대비",
+      "up_dwn_r_p2": "등락율P2",
+      "vlm": "거래량",
+      "s_askprc": "매도호가",
+      "b_askprc": "매수호가",
+      "hgh_prc": "고가",
+      "lw_prc": "저가"
+    }
+  },
+  {
+    "code": "SIAM4983",
+    "name": "종목기본정보",
+    "category": "해외주식 > 기본시세",
+    "endpoint": "/api/v1/siam4983",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "Record1",
+        "name_kr": "Record1",
+        "length": 10,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "stnd_is_cd": "표준종목코드",
+      "iso_cd": "ISO코드",
+      "shrt_is_cd": "단축종목코드",
+      "symbl_is_cd": "심볼종목코드",
+      "slf_is_cd": "자체종목코드",
+      "hngl_is_nm": "한글종목명의",
+      "eng_is_nm": "영문종목명의",
+      "fcrncy_scrt_knd_cd": "외화증권종류코드",
+      "dl_mkt_ccd": "거래시장구분코드",
+      "frex_cd": "해외거래소코드",
+      "mrkt_ccd": "시장구분코드",
+      "sedol_cd": "SEDOL코드",
+      "isng_ntn_cd": "발행국가코드",
+      "crncy_cd": "통화코드",
+      "stmt_crncy_cd": "결제통화코드",
+      "lnd_cd": "대륙코드",
+      "scrt_grp_id": "증권그룹ID",
+      "s_unt_q": "매도단위수량",
+      "b_unt_q": "매수단위수량",
+      "frgn_stk_ulmt_prc_p6": "해외주식상한가P6",
+      "frgn_stk_llmt_prc_p6": "해외주식하한가P6",
+      "frgn_stk_bdy_cls_prc_p6": "해외주식전일종가P6",
+      "fcrncy_scrt_pr_vl_prc": "외화증권액면가",
+      "lstng_dt": "상장일자",
+      "lstng_stk_q": "상장주식수량",
+      "trd_rstn_ccd": "매매제한구분코드",
+      "trd_rstn_strt_dt": "매매제한시작일자",
+      "trd_rstn_end_dt": "매매제한종료일자",
+      "io_rstn_ccd": "입출제한구분코드",
+      "io_rstn_strt_dt": "입출제한시작일자",
+      "io_rstn_end_dt": "입출제한종료일자",
+      "s_askprc_unt_p6": "매도호가단위P6",
+      "b_askprc_unt_p6": "매수호가단위P6",
+      "askprc_unt_typ": "호가단위유형",
+      "scrt_kp_ccd": "증권보관구분코드",
+      "prfstk_f": "우선주여부",
+      "dl_crncy_cd": "거래통화코드",
+      "symbl_blmgrg_cd": "심볼블룸버그코드",
+      "symbl_rtrs_cd": "심볼로이터코드",
+      "csh_mgn_r": "현금증거금율",
+      "dcml_trd_f": "소수점매매여부",
+      "frsd_instk_cnvr_psbl_f": "해외주식소수점온주전환가능여부",
+      "grid_cnt": "그리드건수",
+      "frgn_stk_sprc_p6": "해외주식기준가P6",
+      "trd_rstn_hndl_rsn": "매매제한처리사유",
+      "ptp_is_f": "PTP종목여부",
+      "ptp_txtn_f": "PTP과세여부",
+      "qn_isng_f": "검증공시발행여부",
+      "rgt_trd_rstn_cd": "권리매매제한코드",
+      "rgt_trd_rstn_rsn": "권리매매제한사유",
+      "rgt_io_stk_rstn_cd": "권리입출고제한코드",
+      "rgt_io_stk_rstn_rsn": "권리입출고제한사유",
+      "qn_pu_dt": "검증공시게시일자",
+      "qn_pu_end_dt": "검증공시게시종료일자",
+      "rgt_trd_rstn_strt_dt": "권리매매제한시작일자",
+      "rgt_trd_rstn_end_dt": "권리매매제한종료일자",
+      "frgn_stk_krx_cd": "해외주식거래소코드",
+      "fcr_scrt_knd_dtls_cd": "외화증권종류상세코드",
+      "frsk_onl_trd_rstn_ccd": "해외주식온라인매매제한구분코드",
+      "sngl_is_etp_f": "단일종목ETP여부",
+      "lvrg_vl_p7": "레버리지값P7",
+      "Record1": "Record1"
+    }
+  },
+  {
+    "code": "SIQM4900",
+    "name": "종목기본정보",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/siqm4900",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "stnd_is_cd": "표준종목코드",
+      "shrt_is_cd": "단축종목코드",
+      "symbl_is_cd": "심볼종목코드",
+      "slf_is_cd": "자체종목코드",
+      "hngl_is_nm": "한글종목명",
+      "eng_is_nm": "영문종목명",
+      "hngl_shrt_nm": "한글단축명",
+      "eng_shrt_nm": "영문단축명",
+      "is_typ_cd": "종목유형코드",
+      "is_typ_nm": "종목유형명",
+      "is_dtl_typ_cd": "종목세부유형코드",
+      "is_dtl_typ_nm": "종목세부유형명",
+      "dmstc_clsf_nm": "국내구분명",
+      "lnd_clsf_nm": "대륙구분명",
+      "dl_crncy_clsf_nm": "거래통화구분명",
+      "is_rgst_clsf_nm": "종목등록구분명",
+      "trd_rstn_clsf_nm": "매매제한구분명",
+      "trd_rstn_strt_dt": "매매제한시작일자",
+      "trd_rstn_end_dt": "매매제한종료일자",
+      "io_rstn_clsf_nm": "입출제한구분명",
+      "io_rstn_strt_dt": "입출제한시작일자",
+      "io_rstn_end_dt": "입출제한종료일자",
+      "gds_rprst_cd": "상품대표코드",
+      "rsk_grd_clsf_cd": "위험등급구분코드",
+      "rsk_grd_nm": "위험등급명",
+      "hngl_is_nm2": "한글종목명2",
+      "eng_is_nm2": "영문종목명2",
+      "hngl_shrt_nm2": "한글단축명2",
+      "eng_shrt_nm2": "영문단축명2"
+    }
+  },
+  {
+    "code": "SKAM2101",
+    "name": "매도_매수주문",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skam2101",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "trd_dl_ccd",
+        "name_kr": "매매거래구분코드",
+        "length": 2,
+        "required": true,
+        "description": "01:매도, 02:매수",
+        "choices": [
+          [
+            "01",
+            "매도"
+          ],
+          [
+            "02",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "ex)TSLA",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_typ_cd",
+        "name_kr": "해외주문유형코드",
+        "length": 1,
+        "required": true,
+        "description": "1:시장가, 2:지정가, 3:VWAP시장가, 4:TWAP시장가",
+        "choices": [
+          [
+            "1",
+            "시장가"
+          ],
+          [
+            "2",
+            "지정가"
+          ],
+          [
+            "3",
+            "VWAP시장가"
+          ],
+          [
+            "4",
+            "TWAP시장가"
+          ]
+        ]
+      },
+      {
+        "name_en": "frgn_ordr_q",
+        "name_kr": "해외주문수량",
+        "length": 18,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_prc_p4",
+        "name_kr": "해외주문가격P4",
+        "length": 15,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "cutn_mtr_err_cd": "주의사항오류코드"
+    }
+  },
+  {
+    "code": "SKAM2102",
+    "name": "정정_취소주문",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skam2102",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "crct_cncl_clsf",
+        "name_kr": "정정취소구분",
+        "length": 1,
+        "required": true,
+        "description": "1:정정, 2:취소",
+        "choices": [
+          [
+            "1",
+            "정정"
+          ],
+          [
+            "2",
+            "취소"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "orgn_ordr_no",
+        "name_kr": "원주문번호",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_prc_p4",
+        "name_kr": "해외주문가격P4",
+        "length": 15,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "cutn_mtr_err_cd": "주의사항오류코드"
+    }
+  },
+  {
+    "code": "SKAM2201",
+    "name": "소수점매도_매수주문",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skam2201",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "trd_dl_ccd",
+        "name_kr": "매매거래구분코드",
+        "length": 2,
+        "required": true,
+        "description": "01-매도, 02-매수",
+        "choices": [
+          [
+            "01",
+            "매도"
+          ],
+          [
+            "02",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "amt_q_clsf",
+        "name_kr": "금액수량구분",
+        "length": 1,
+        "required": true,
+        "description": "0-금액, 1-수량",
+        "choices": [
+          [
+            "0",
+            "금액"
+          ],
+          [
+            "1",
+            "수량"
+          ]
+        ]
+      },
+      {
+        "name_en": "tv_s_est_f",
+        "name_kr": "전량매도설정여부",
+        "length": 1,
+        "required": false,
+        "description": "0-일부매도, 1-전량매도",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_typ_cd",
+        "name_kr": "해외주문유형코드",
+        "length": 1,
+        "required": true,
+        "description": "2-지정가, E-유사시장가",
+        "choices": [
+          [
+            "2",
+            "지정가"
+          ],
+          [
+            "E",
+            "유사시장가"
+          ]
+        ]
+      },
+      {
+        "name_en": "crncy_ccd",
+        "name_kr": "통화구분코드",
+        "length": 1,
+        "required": false,
+        "description": "0-원화, 1-외화(USD)",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_amt",
+        "name_kr": "주문금액",
+        "length": 18,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dcml_ordr_q_p6",
+        "name_kr": "소수점주문수량P6",
+        "length": 16,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_prc_p4",
+        "name_kr": "해외주문가격P4",
+        "length": 15,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "cutn_mtr_err_cd": "주의사항오류코드",
+      "rsrv_ordr_f": "예약주문여부"
+    }
+  },
+  {
+    "code": "SKAM2202",
+    "name": "소수점취소주문",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skam2202",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "orgn_ordr_no",
+        "name_kr": "원주문번호",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호"
+    }
+  },
+  {
+    "code": "SKQM2106",
+    "name": "주문가능금액조회",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skqm2106",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "fcrncy_ordr_psbl_amt": "외화주문가능금액",
+      "krw_exch_fcrncy_ordr_psbl_amt": "원화환산외화주문가능금액",
+      "ordr_psbl_q": "주문가능수량",
+      "fcrncy_unty_ordr_psbl_amt_p2": "외화통합주문가능금액P2",
+      "krw_exch_unty_ordr_psbl_amt": "원화환산통합주문가능금액",
+      "ordr_psbl_q1": "주문가능수량1",
+      "fcrncy_rcvbl_ordr_psbl_amt_p2": "외화미수주문가능금액P2",
+      "mx_ordr_psbl_amt": "최대주문가능금액",
+      "ordr_psbl_q2": "주문가능수량2",
+      "dmstc_ordr_psbl_amt": "국내주문가능금액",
+      "is_mgn_r_p4": "종목증거금율P4",
+      "aplc_mgn_r_p4": "적용증거금율P4",
+      "aplc_exch_r_p8": "적용환율P8",
+      "frgn_ordr_prc_p4": "해외주문가격P4",
+      "rcvbl_psbl_f": "미수가능여부"
+    }
+  },
+  {
+    "code": "SKQM3350",
+    "name": "주문가능금액현황조회",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/skqm3350",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "dmstc_orgn_ordr_psbl_amt": "국내원주문가능금액",
+      "dmstc_ofr_use_psbl_krw_amt": "국내제공사용가능원화금액",
+      "dmstc_otr_crncy_use_amt": "국내타통화사용금액",
+      "fcr_tfnd_krw_exch_amt": "외화예수금원화환산금액",
+      "frsk_ust_sum_krw_amt": "해외주식미결제합계원화금액",
+      "exch_mny_trgt_krw_ordr_mgn": "환전대상원화주문증거금",
+      "grid_cnt": "그리드건수",
+      "Record1": "Record1",
+      "crncy_cd": "통화코드",
+      "ntn_nm": "국가명",
+      "fcrncy_tfnd": "외화예수금",
+      "fcrncy_use_psbl_amt_p2": "외화사용가능금액P2",
+      "fcrncy_unty_ordr_psbl_amt_p2": "외화통합주문가능금액P2",
+      "fcrncy_rcvbl_ordr_psbl_amt_p2": "외화미수주문가능금액P2"
+    }
+  },
+  {
+    "code": "SPAO2104",
+    "name": "주식예약주문미국",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/spao2104",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_dl_ccd",
+        "name_kr": "매매거래구분코드",
+        "length": 2,
+        "required": true,
+        "description": "01:매도,02:매수",
+        "choices": [
+          [
+            "01",
+            "매도"
+          ],
+          [
+            "02",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "ordr_typ_cd",
+        "name_kr": "주문유형코드",
+        "length": 1,
+        "required": true,
+        "description": "1:시장가, 2:지정가, 3:VWAP시장가, 4:TWAP시장가",
+        "choices": [
+          [
+            "1",
+            "시장가"
+          ],
+          [
+            "2",
+            "지정가"
+          ],
+          [
+            "3",
+            "VWAP시장가"
+          ],
+          [
+            "4",
+            "TWAP시장가"
+          ]
+        ]
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_prc_p4",
+        "name_kr": "해외주문가격P4",
+        "length": 15,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "strt_tm",
+        "name_kr": "시작시간",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_tm",
+        "name_kr": "종료시간",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "rsrv_ordr_no": "예약주문번호"
+    }
+  },
+  {
+    "code": "SPAO2106",
+    "name": "예약주문취소미국",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/spao2106",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 4,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_typ",
+        "name_kr": "주문유형",
+        "length": 6,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 9,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_ordr_prc_p4",
+        "name_kr": "해외주문가격P4",
+        "length": 15,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "cncl_ordr_no",
+        "name_kr": "취소주문번호",
+        "length": 10,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "inpt_vl": "입력값"
+    }
+  },
+  {
+    "code": "SPQM2103",
+    "name": "주문체결조회",
+    "category": "해외주식 > 주문내역",
+    "endpoint": "/api/v1/spqm2103",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ccls_clsf",
+        "name_kr": "체결구분",
+        "length": 1,
+        "required": true,
+        "description": "1:전체,2:체결,3:미체결",
+        "choices": [
+          [
+            "1",
+            "전체"
+          ],
+          [
+            "2",
+            "체결"
+          ],
+          [
+            "3",
+            "미체결"
+          ]
+        ]
+      },
+      {
+        "name_en": "ordr_dt",
+        "name_kr": "주문일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dl_clsf",
+        "name_kr": "거래구분",
+        "length": 1,
+        "required": false,
+        "description": "0.전체 1.일반 2.소수점",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ac_nm": "계좌명",
+      "b_sum_q_p6": "매수합계수량P6",
+      "s_sum_q_p6": "매도합계수량P6",
+      "b_sum_amt_p2": "매수합계금액P2",
+      "s_sum_amt_p2": "매도합계금액P2",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "ordr_no": "주문번호",
+      "orgn_ordr_no": "원주문번호",
+      "mkt_clsf_nm": "시장구분명",
+      "crncy_cd": "통화코드",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "dl_clsf_nm": "거래구분명",
+      "ordr_clsf_nm": "주문구분명",
+      "frgn_ordr_q_p6": "해외주문수량P6",
+      "frgn_ordr_prc_p6": "해외주문가격P6",
+      "ccls_q_p6": "체결수량P6",
+      "frgn_ccls_prc_p6": "해외체결가격P6",
+      "crct_cncl_clsf_nm": "정정취소구분명",
+      "frgn_cncl_ordr_q_p6": "해외취소주문수량P6",
+      "ordr_md_nm": "주문매체명",
+      "ordr_ttm": "주문시각",
+      "ccls_ttm": "체결시각",
+      "frgn_rfsl_rsn_cd": "해외거부사유코드",
+      "rfsl_rsn": "거부사유",
+      "frex_ccd": "해외거래소구분코드",
+      "aplc_exch_r": "적용환율",
+      "strt_tm": "시작시간",
+      "end_tm": "종료시간",
+      "dcml_dl_f": "소수점거래여부"
+    }
+  },
+  {
+    "code": "SPQM2204",
+    "name": "체결미체결 조회",
+    "category": "해외주식 > 주문내역",
+    "endpoint": "/api/v1/spqm2204",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "strt_ordr_dt",
+        "name_kr": "시작주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_ordr_dt",
+        "name_kr": "종료주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ccls_clsf",
+        "name_kr": "체결구분",
+        "length": 1,
+        "required": true,
+        "description": "0: 전체, 1: 체결, 2: 미체결",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "1",
+            "체결"
+          ],
+          [
+            "2",
+            "미체결"
+          ]
+        ]
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 2,
+        "required": true,
+        "description": "99: 전체, 01: 매도, 02: 매수",
+        "choices": [
+          [
+            "99",
+            "전체"
+          ],
+          [
+            "01",
+            "매도"
+          ],
+          [
+            "02",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dl_clsf",
+        "name_kr": "거래구분",
+        "length": 1,
+        "required": false,
+        "description": "0:전체 ,1:일반거래,2:소수점거래",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ac_nm": "계좌명",
+      "s_ccls_amt_p3": "매도체결금액P3",
+      "b_ccls_amt_p3": "매수체결금액P3",
+      "tl_s_ccls_q_p6": "총매도체결수량P6",
+      "tl_b_ccls_q_p6": "총매수체결수량P6",
+      "nxt_key": "다음키",
+      "grid_cnt": "그리드건수",
+      "Record1": "Record1",
+      "ordr_dt": "주문일자",
+      "ordr_no": "주문번호",
+      "shrt_is_nm": "단축종목명",
+      "shrt_is_cd": "단축종목코드",
+      "stnd_is_cd": "표준종목코드",
+      "etc_trd_ccd": "기타매매구분코드",
+      "dl_clsf_nm": "거래구분명",
+      "ordr_st_nm": "주문상태명",
+      "ccls_q_p6": "체결수량P6",
+      "frgn_ccls_prc_p6": "해외체결가격P6",
+      "frgn_ordr_q_p6": "해외주문수량P6",
+      "frgn_ordr_prc_p6": "해외주문가격P6",
+      "nccls_q_p6": "미체결수량P6",
+      "orgn_ordr_no": "원주문번호",
+      "mkt_clsf_nm": "시장구분명",
+      "crncy_cd": "통화코드",
+      "ordr_clsf_nm": "주문구분명",
+      "strt_tm": "시작시간",
+      "end_tm": "종료시간",
+      "ordr_md_nm": "주문매체명",
+      "ordr_tm": "주문시간",
+      "aplc_exch_r": "적용환율",
+      "rfsl_rsn": "거부사유",
+      "frgn_ordr_typ_cd": "해외주문유형코드",
+      "frex_ccd": "해외거래소구분코드",
+      "ln_dt": "대출일자",
+      "frgn_orgn_ordr_prc_p4": "해외원주문가격P4",
+      "exch_r3_p4": "환율3P4",
+      "frgn_stp_prc_p4": "해외중단가격P4",
+      "frgn_brkr_cd": "해외브로커코드",
+      "dcml_dl_f": "소수점거래여부",
+      "amt_q_clsf": "금액수량구분",
+      "crncy_ccd": "통화구분코드",
+      "fcrncy_ordr_amt": "외화주문금액",
+      "krw_ordr_amt": "원화주문금액",
+      "cnvr_clsf_nm": "전환구분명"
+    }
+  },
+  {
+    "code": "SPQM2205",
+    "name": "매매정산 현황",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/spqm2205",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "strt_ordr_dt",
+        "name_kr": "시작주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_ordr_dt",
+        "name_kr": "종료주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 2,
+        "required": false,
+        "description": "99:전체, 01:매도, 02:매수",
+        "choices": []
+      },
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "krw_unty_mgn_rqst_f",
+        "name_kr": "원화통합증거금신청여부",
+        "length": 1,
+        "required": false,
+        "description": "0: 외화기준, 1: 원화기준",
+        "choices": []
+      },
+      {
+        "name_en": "dl_clsf",
+        "name_kr": "거래구분",
+        "length": 1,
+        "required": false,
+        "description": "0:전체, 1:일반거래, 2:소수점거래",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 100,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ac_nm": "계좌명",
+      "s_stmt_amt_sum_p4": "매도결제금액합계P4",
+      "b_stmt_amt_sum_p4": "매수결제금액합계P4",
+      "tl_s_ccls_q_p6": "총매도체결수량P6",
+      "tl_b_ccls_q_p6": "총매수체결수량P6",
+      "fcrncy_fee_p4": "외화수수료P4",
+      "nxt_key": "다음키",
+      "grid_cnt": "그리드건수",
+      "Record1": "Record1",
+      "stmt_dt": "결제일자",
+      "frgn_krx_ccd": "해외거래소구분코드",
+      "frgn_krx_clsf_nm": "해외거래소구분명",
+      "etc_trd_ccd": "기타매매구분코드",
+      "trd_clsf_nm": "매매구분명",
+      "crncy_cd": "통화코드",
+      "stnd_is_cd": "표준종목코드",
+      "shrt_is_cd": "단축종목코드",
+      "shrt_is_nm": "단축종목명",
+      "ordr_dt": "주문일자",
+      "stmt_q_p6": "결제수량P6",
+      "frgn_stmt_prc_p6": "해외결제가격P6",
+      "frgn_agr_amt_p4": "해외약정금액P4",
+      "frgn_trd_fee_p4": "해외매매수수료P4",
+      "frgn_dl_tx_p4": "해외거래세P4",
+      "frgn_stmt_amt_p4": "해외결제금액P4",
+      "stmt_f": "결제여부",
+      "ordr_md_cd": "주문매체코드",
+      "ordr_md_nm": "주문매체명",
+      "crdt_dl_amt": "신용거래금액",
+      "mkt_clsf_nm": "시장구분명",
+      "aplc_exch_r": "적용환율",
+      "stmt_amt_p4": "결제금액P4",
+      "dcml_dl_f": "소수점거래여부",
+      "ptp_tx_amt": "PTP세금액"
+    }
+  },
+  {
+    "code": "SPQM2206",
+    "name": "매매손익 당일",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/spqm2206",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ordr_dt",
+        "name_kr": "주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "std_crncy_f",
+        "name_kr": "기준통화여부",
+        "length": 1,
+        "required": false,
+        "description": "1:외화기준,2:원화기준",
+        "choices": []
+      },
+      {
+        "name_en": "exch_r_aplc_f",
+        "name_kr": "환율적용여부",
+        "length": 1,
+        "required": false,
+        "description": "1:환전시매도환율, 2:매매기준율",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_stk_mgn_ccd",
+        "name_kr": "해외주식증거금구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:원화, 2:외화",
+        "choices": []
+      },
+      {
+        "name_en": "dl_clsf",
+        "name_kr": "거래구분",
+        "length": 1,
+        "required": false,
+        "description": "0:전체,1:일반거래,2:소수점거래",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ac_nm": "계좌명",
+      "fcrncy_pl_amt_p2": "외화손익금액P2",
+      "fcrncy_pl_amt_sum_p2": "외화손익금액합계P2",
+      "nxt_svcst_sum_p4": "다음제비용합계P4",
+      "b_svcst1_p2": "매수제비용1P2",
+      "s_svcst1_p2": "매도제비용1P2",
+      "fcrncy_trd_pl_sum_p2": "외화매매손익합계P2",
+      "tl_krw_val_pl_amt": "총원화평가손익금액",
+      "nxt_key": "다음키",
+      "Record1": "Record1",
+      "dl_mkt_ccd": "거래시장구분코드",
+      "mkt_clsf_nm": "시장구분명",
+      "crncy_cd": "통화코드",
+      "grid_cnt1": "그리드건수1",
+      "Record2": "Record2",
+      "frgn_krx_ccd": "해외거래소구분코드",
+      "frgn_krx_clsf_nm": "해외거래소구분명",
+      "stnd_is_cd": "표준종목코드",
+      "shrt_is_cd": "단축종목코드",
+      "shrt_is_nm": "단축종목명",
+      "byng_avr_prc_p6": "매입평균가P6",
+      "ccls_q_p6": "체결수량P6",
+      "frgn_ccls_prc_p6": "해외체결가격P6",
+      "dcml_dl_f": "소수점거래여부",
+      "b_yld": "매수수익율"
+    }
+  },
+  {
+    "code": "SPQM2207",
+    "name": "매매손익 기간별",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/spqm2207",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "std_crncy_f",
+        "name_kr": "기준통화여부",
+        "length": 1,
+        "required": false,
+        "description": "1:외화기준,2:원화기준",
+        "choices": []
+      },
+      {
+        "name_en": "exch_r_aplc_f",
+        "name_kr": "환율적용여부",
+        "length": 1,
+        "required": false,
+        "description": "1:환전시매도환율, 2:매매기준율",
+        "choices": []
+      },
+      {
+        "name_en": "frgn_stk_mgn_ccd",
+        "name_kr": "해외주식증거금구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:원화, 2:외화",
+        "choices": []
+      },
+      {
+        "name_en": "dl_clsf",
+        "name_kr": "거래구분",
+        "length": 1,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ac_nm": "계좌명",
+      "tl_krw_val_pl_amt": "총원화평가손익금액",
+      "nxt_key": "다음키",
+      "Record1": "Record1",
+      "crncy_cd": "통화코드",
+      "dl_mkt_ccd": "거래시장구분코드",
+      "mkt_clsf_nm": "시장구분명",
+      "fcrncy_trd_pl_sum_p2": "외화매매손익합계P2",
+      "nxt_svcst_sum_p4": "다음제비용합계P4",
+      "s_svcst1_p2": "매도제비용1P2",
+      "b_svcst1_p2": "매수제비용1P2",
+      "fcrncy_prft_pl_sum_p2": "외화이익손익합계P2",
+      "grid_cnt1": "그리드건수1",
+      "Record2": "Record2",
+      "ordr_dt": "주문일자",
+      "frgn_krx_ccd": "해외거래소구분코드",
+      "frgn_dl_tx_p4": "해외거래세P4"
+    }
+  },
+  {
+    "code": "SPQM2226",
+    "name": "해외주식계좌잔고평가조회",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/spqm2226",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "std_crncy_f",
+        "name_kr": "기준통화여부",
+        "length": 1,
+        "required": true,
+        "description": "1: 외화기준, 2: 원화기준",
+        "choices": [
+          [
+            "1",
+            "외화기준"
+          ],
+          [
+            "2",
+            "원화기준"
+          ]
+        ]
+      },
+      {
+        "name_en": "exch_r_aplc_f",
+        "name_kr": "환율적용여부",
+        "length": 1,
+        "required": false,
+        "description": "1:환전시매도환율, 2: 매매기준환율(원화)",
+        "choices": []
+      },
+      {
+        "name_en": "fee_clsf",
+        "name_kr": "수수료구분",
+        "length": 1,
+        "required": false,
+        "description": "0: 포함, 1: 미포함",
+        "choices": []
+      },
+      {
+        "name_en": "cn_f",
+        "name_kr": "연속여부",
+        "length": 1,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 100,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "tl_asts_exch_val_amt": "총자산환산평가금액",
+      "tl_tfnd_exch_val_amt": "총예수금환산평가금액",
+      "tl_scrts_exch_val_amt": "총유가증권환산평가금액",
+      "krw_tfnd": "원화예수금",
+      "chck_amt": "수표금액",
+      "krw_mgn": "원화증거금",
+      "krw_o_amt_psbl_amt": "원화출금가능금액",
+      "etc_lndng_amt": "기타대여금액",
+      "tl_krw_val_amt": "총원화평가금액",
+      "tl_krw_val_pl_amt": "총원화평가손익금액",
+      "mrtg_ln_amt": "담보대출금액",
+      "asts_val_amt": "자산평가금액",
+      "nxt_key": "다음키",
+      "Record1": "Record1",
+      "crncy_clsf_nm": "통화구분명",
+      "tfnd": "예수금",
+      "mgn_p2": "증거금P2",
+      "fcrncy_dl_fee": "외화거래수수료",
+      "rus_psbl_ra_p3": "재사용가능잔액P3",
+      "rus_use_amt_p3": "재사용사용금액P3",
+      "ordr_psbl_amt_p2": "주문가능금액P2",
+      "o_amt_psbl_amt_p2": "출금가능금액P2",
+      "tfnd_val_amt": "예수금평가금액",
+      "std_exch_r": "기준환율",
+      "cnvr_exch_r_p4": "전환환율P4",
+      "otr_ogn_fcrncy_tfnd_p2": "타기관외화예수금P2",
+      "grid_cnt2": "그리드건수2",
+      "Record2": "Record2",
+      "mkt_clsf_nm": "시장구분명",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "frgn_hld_q_p6": "해외보유수량P6",
+      "frgn_ordr_psbl_q_p6": "해외주문가능수량P6",
+      "now_prc_p4": "현재가P4",
+      "byng_avr_prc_p4": "매입평균가P4",
+      "b_ordr_q": "매수주문수량",
+      "b_ccls_q_p6": "매수체결수량P6",
+      "s_ordr_q": "매도주문수량",
+      "s_ccls_q_p6": "매도체결수량P6",
+      "krw_val_amt": "원화평가금액",
+      "krw_exch_val_pl": "원화환산평가손익",
+      "yld": "수익율",
+      "frgn_ordr_psbl_q1_p6": "해외주문가능수량1P6",
+      "ln_dt": "대출일자",
+      "mtrt_dt": "만기일자",
+      "byng_amt": "매입금액",
+      "mkt_clsf": "시장구분",
+      "mn_fee_p4": "최소수수료P4",
+      "fee_r_p10": "수수료율P10",
+      "pl_qt_uprc_p4": "손익분기단가P4",
+      "tl_byng_amt_p2": "총매입금액P2",
+      "krw_exch_byng_amt": "원화환산매입금액",
+      "invst_sgrvt_rt_p5": "투자비중비율P5",
+      "dcml_dl_f": "소수점거래여부"
+    }
+  },
+  {
+    "code": "SPQM3390",
+    "name": "계좌증거금조회",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/spqm3390",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "krw_tfnd": "원화예수금",
+      "krw_exch_fcrncy_tfnd": "원화환산외화예수금",
+      "nstmt_amt": "미결제금액",
+      "ordr_mgn_sum": "주문증거금합계",
+      "krw_o_amt_mgn": "원화출금증거금",
+      "csh_rcvbl_amt": "현금미수금액",
+      "etc_rcvbl_amt": "기타미수금액",
+      "tfnd_tl_amt": "예수금총액",
+      "do_psbl_amt": "인출가능금액",
+      "nxt_stmt_dt": "익결제일자",
+      "nxt2_stmt_dt": "익익결제일자",
+      "nxt3_stmt_dt": "익익익결제일자",
+      "nxt_key": "다음키",
+      "Record1": "Record1",
+      "dl_mkt_nm": "거래시장명",
+      "o_amt1": "출금액1",
+      "o_amt2": "출금액2",
+      "o_amt3": "출금액3",
+      "o_amt4": "출금액4",
+      "o_amt_sum": "출금액합계",
+      "grid_cnt2": "그리드건수2",
+      "Record2": "Record2"
+    }
+  },
+  {
+    "code": "SPQN5472",
+    "name": "소수점주문가능금액조회",
+    "category": "해외주식 > 주식주문",
+    "endpoint": "/api/v1/spqn5472",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "krw_exch_unty_ordr_psbl_amt": "원화환산통합주문가능금액",
+      "fcrncy_unty_ordr_psbl_amt_p2": "외화통합주문가능금액P2",
+      "aplc_exch_r": "적용환율",
+      "fee_r_p10": "수수료율P10",
+      "expct_fee": "예상수수료",
+      "val_sprc_p8": "평가기준가P8",
+      "expct_stk_q_p6": "예상주식수량P6",
+      "rsrv_ordr_f": "예약주문여부",
+      "fcrncy_fee_p2": "외화수수료P2",
+      "dcml_ordr_psbl_q_p6": "소수점주문가능수량P6"
+    }
+  },
+  {
+    "code": "SPQO2105",
+    "name": "예약주문조회",
+    "category": "해외주식 > 주문내역",
+    "endpoint": "/api/v1/spqo2105",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "rsrv_dt",
+        "name_kr": "예약일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "stnd_is_cd",
+        "name_kr": "표준종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 1,
+        "required": true,
+        "description": "1:시장가,3:지정가",
+        "choices": [
+          [
+            "1",
+            "시장가"
+          ],
+          [
+            "3",
+            "지정가"
+          ]
+        ]
+      },
+      {
+        "name_en": "krw_unty_mgn_rqst_f",
+        "name_kr": "원화통합증거금신청여부",
+        "length": 1,
+        "required": false,
+        "description": "0: 외화, 1: 원화",
+        "choices": []
+      },
+      {
+        "name_en": "cn_key",
+        "name_kr": "연속키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "cn_key": "연속키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "rsrv_ordr_sq": "예약주문일련번호",
+      "is_no": "종목번호",
+      "is_nm": "종목명",
+      "trd_clsf": "매매구분",
+      "ordr_typ_nm": "주문유형명",
+      "ordr_q": "주문수량",
+      "rsrv_tm": "예약시간",
+      "cncl_tm": "취소시간",
+      "frgn_ordr_prc_p4": "해외주문가격P4",
+      "hndl_p_eno": "처리자사번",
+      "msg": "메시지",
+      "mkt_clsf": "시장구분",
+      "aplc_exch_r": "적용환율",
+      "strt_tm": "시작시간",
+      "end_tm": "종료시간",
+      "bskt_ordr_no": "바스켓주문번호",
+      "frgn_stp_prc_p4": "해외중단가격P4",
+      "snd_tms_clsf": "발송시기구분"
+    }
+  },
+  {
+    "code": "SRQM3051",
+    "name": "계좌권리 발생내역",
+    "category": "해외주식 > 계좌잔고",
+    "endpoint": "/api/v1/srqm3051",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "strt_dt",
+        "name_kr": "시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "rgt_clsf",
+        "name_kr": "권리구분",
+        "length": 1,
+        "required": true,
+        "description": "0:전체, 1:배당, 2:유상증자/BW권리행사, 3:무상증자, 4:매수청구, 5:감자, 6:액면분할/액면병합, 7:피흡수합병",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "1",
+            "배당"
+          ],
+          [
+            "2",
+            "유상증자/BW권리행사"
+          ],
+          [
+            "3",
+            "무상증자"
+          ],
+          [
+            "4",
+            "매수청구"
+          ],
+          [
+            "5",
+            "감자"
+          ],
+          [
+            "6",
+            "액면분할/액면병합"
+          ],
+          [
+            "7",
+            "피흡수합병"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 35,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "is_cd": "종목코드",
+      "bss_dt": "기준일자",
+      "hld_clsf_nm": "보유구분명",
+      "hld_q": "보유수량",
+      "alct_q": "배정수량",
+      "stck_io_stck_dt": "주식입출고일자",
+      "csh_sl_o_amt_dt": "현금대주출금일자",
+      "odds_amt_py_dt": "단주대금지급일자",
+      "sl_odds_amt_o_amt_dt": "대주단주금액출금일자",
+      "is_nm": "종목명",
+      "rgt_rt": "권리비율",
+      "isng_prc": "발행가",
+      "csh_py_dt": "현금지급일자",
+      "stk_sl_o_amt_dt": "주식대주출금일자",
+      "uprc": "단가",
+      "rmrk": "비고",
+      "hndl_p_nm": "처리자명",
+      "hndl_dt": "처리일자",
+      "bw_lstng_dt": "BW상장일자",
+      "lstng_dt": "상장일자",
+      "bw_isng_prc": "BW발행가",
+      "wrnt_excs_prc": "워런트행사가",
+      "rgt_ccd_nm": "권리구분코드명",
+      "ecss_sbs_rt_p10": "초과청약비율P10",
+      "ecss_alct_rt_p10": "초과배정비율P10",
+      "hgh_dvdnd_entp_f": "고배당기업여부",
+      "hgh_dvdnd_f_nm": "고배당여부명",
+      "wrkng_ac_no": "운용계좌번호",
+      "ptfl_nm": "포트폴리오명",
+      "dpstn_p_brn_no": "예탁자지점번호",
+      "hld_q_p6": "보유수량P6",
+      "alct_q_p6": "배정수량P6",
+      "dcml_dl_f": "소수점거래여부",
+      "dvdnd_expt_amt": "배당예정금액",
+      "dvdnd_dfnt_amt": "배당확정금액"
+    }
+  },
+  {
+    "code": "SSAM0831",
+    "name": "예약주문접수",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam0831",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ordr_jb_clsf",
+        "name_kr": "주문업무구분",
+        "length": 1,
+        "required": true,
+        "description": "1:매도,2:매수",
+        "choices": [
+          [
+            "1",
+            "매도"
+          ],
+          [
+            "2",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 7,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_uprc",
+        "name_kr": "주문단가",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_ccd",
+        "name_kr": "주문구분코드",
+        "length": 2,
+        "required": true,
+        "description": "00:지정가,03:시장가,12:최유리지정가,13:최우선지정가",
+        "choices": [
+          [
+            "00",
+            "지정가"
+          ],
+          [
+            "03",
+            "시장가"
+          ],
+          [
+            "12",
+            "최유리지정가"
+          ],
+          [
+            "13",
+            "최우선지정가"
+          ]
+        ]
+      },
+      {
+        "name_en": "strt_dt",
+        "name_kr": "시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_dt",
+        "name_kr": "종료일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_tm_ccd",
+        "name_kr": "시장시간구분코드",
+        "length": 1,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "inpt_vl": "입력값"
+    }
+  },
+  {
+    "code": "SSAM1801",
+    "name": "매도주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam1801",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_tm_clsf",
+        "name_kr": "시장시간구분",
+        "length": 1,
+        "required": true,
+        "description": "1:정규장,2:장개시전시간외종가,3:장종료후시간외종가,4:장종료후시간외단일가",
+        "choices": [
+          [
+            "1",
+            "정규장"
+          ],
+          [
+            "2",
+            "장개시전시간외종가"
+          ],
+          [
+            "3",
+            "장종료후시간외종가"
+          ],
+          [
+            "4",
+            "장종료후시간외단일가"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_uprc",
+        "name_kr": "주문단가",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_ccd",
+        "name_kr": "주문구분코드",
+        "length": 2,
+        "required": true,
+        "description": "00:지정가,03:시장가,12:최유리지정가,13:최우선지정가,M3:중간가",
+        "choices": [
+          [
+            "00",
+            "지정가"
+          ],
+          [
+            "03",
+            "시장가"
+          ],
+          [
+            "12",
+            "최유리지정가"
+          ],
+          [
+            "13",
+            "최우선지정가"
+          ],
+          [
+            "M3",
+            "중간가"
+          ]
+        ]
+      },
+      {
+        "name_en": "sor_ordr_ccd",
+        "name_kr": "SOR주문구분코드",
+        "length": 1,
+        "required": false,
+        "description": "K:KRX,N:NXT,S:SOR",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "mkt_tm_clsf": "시장시간구분",
+      "ordr_jb_clsf": "주문업무구분",
+      "s_clsf": "매도구분",
+      "is_cd": "종목코드",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "ordr_ccd": "주문구분코드",
+      "crdt_typ_cd": "신용유형코드",
+      "ln_dt": "대출일자",
+      "crct_clsf": "정정구분",
+      "orgn_ordr_no": "원주문번호",
+      "gtc_ccd": "HTS_GTC구분코",
+      "ordr_mng_no": "주문관리번호",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "acct_cd": "계정코드",
+      "sor_ordr_ccd": "SOR주문구분코드",
+      "stpd_prc": "스톱지정가격"
+    }
+  },
+  {
+    "code": "SSAM1802",
+    "name": "매수주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam1802",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_tm_clsf",
+        "name_kr": "시장시간구분",
+        "length": 1,
+        "required": true,
+        "description": "1:정규장,2:장개시전시간외종가,3:장종료후시간외종가,4:장종료후시간외단일가",
+        "choices": [
+          [
+            "1",
+            "정규장"
+          ],
+          [
+            "2",
+            "장개시전시간외종가"
+          ],
+          [
+            "3",
+            "장종료후시간외종가"
+          ],
+          [
+            "4",
+            "장종료후시간외단일가"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_uprc",
+        "name_kr": "주문단가",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_ccd",
+        "name_kr": "주문구분코드",
+        "length": 2,
+        "required": true,
+        "description": "00:지정가,03:시장가,12:최유리지정가,13:최우선지정가, M3:중간가",
+        "choices": [
+          [
+            "00",
+            "지정가"
+          ],
+          [
+            "03",
+            "시장가"
+          ],
+          [
+            "12",
+            "최유리지정가"
+          ],
+          [
+            "13",
+            "최우선지정가"
+          ],
+          [
+            "M3",
+            "중간가"
+          ]
+        ]
+      },
+      {
+        "name_en": "sor_ordr_ccd",
+        "name_kr": "SOR주문구분코드",
+        "length": 1,
+        "required": false,
+        "description": "K:KRX,N:NXT,S:SOR",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "mkt_tm_clsf": "시장시간구분",
+      "ordr_jb_clsf": "주문업무구분",
+      "s_clsf": "매도구분",
+      "is_cd": "종목코드",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "ordr_ccd": "주문구분코드",
+      "crdt_typ_cd": "신용유형코드",
+      "ln_dt": "대출일자",
+      "crct_clsf": "정정구분",
+      "orgn_ordr_no": "원주문번호",
+      "gtc_ccd": "HTS_GTC구분코",
+      "ordr_mng_no": "주문관리번호",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "acct_cd": "계정코드",
+      "sor_ordr_ccd": "SOR주문구분코드",
+      "stpd_prc": "스톱지정가격"
+    }
+  },
+  {
+    "code": "SSAM1805",
+    "name": "정정주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam1805",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "mkt_tm_clsf",
+        "name_kr": "시장시간구분",
+        "length": 1,
+        "required": true,
+        "description": "1:정규장,2:장개시전시간외종가,3:장종료후시간외종가,4:장종료후시간외단일가",
+        "choices": [
+          [
+            "1",
+            "정규장"
+          ],
+          [
+            "2",
+            "장개시전시간외종가"
+          ],
+          [
+            "3",
+            "장종료후시간외종가"
+          ],
+          [
+            "4",
+            "장종료후시간외단일가"
+          ]
+        ]
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 10,
+        "required": true,
+        "description": "*일부정정시 입력",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_uprc",
+        "name_kr": "주문단가",
+        "length": 9,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_ccd",
+        "name_kr": "주문구분코드",
+        "length": 2,
+        "required": true,
+        "description": "00:지정가,03:시장가,05:조건부지정가,12:최유리지정가,13:최우선지정가",
+        "choices": [
+          [
+            "00",
+            "지정가"
+          ],
+          [
+            "03",
+            "시장가"
+          ],
+          [
+            "05",
+            "조건부지정가"
+          ],
+          [
+            "12",
+            "최유리지정가"
+          ],
+          [
+            "13",
+            "최우선지정가"
+          ]
+        ]
+      },
+      {
+        "name_en": "crct_clsf",
+        "name_kr": "정정구분",
+        "length": 1,
+        "required": true,
+        "description": "1:일부정정,2:전부정정",
+        "choices": [
+          [
+            "1",
+            "일부정정"
+          ],
+          [
+            "2",
+            "전부정정"
+          ]
+        ]
+      },
+      {
+        "name_en": "orgn_ordr_no",
+        "name_kr": "원주문번호",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "sor_ordr_ccd",
+        "name_kr": "SOR주문구분코드",
+        "length": 1,
+        "required": false,
+        "description": "K:KRX,N:NXT,S:SOR",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "mkt_tm_clsf": "시장시간구분",
+      "ordr_jb_clsf": "주문업무구분",
+      "s_clsf": "매도구분",
+      "is_cd": "종목코드",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "ordr_ccd": "주문구분코드",
+      "crdt_typ_cd": "신용유형코드",
+      "ln_dt": "대출일자",
+      "crct_clsf": "정정구분",
+      "orgn_ordr_no": "원주문번호",
+      "gtc_ccd": "HTS_GTC구분코",
+      "ordr_mng_no": "주문관리번호",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "acct_cd": "계정코드",
+      "sor_ordr_ccd": "SOR주문구분코드",
+      "stpd_prc": "스톱지정가격"
+    }
+  },
+  {
+    "code": "SSAM1806",
+    "name": "취소주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam1806",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q",
+        "name_kr": "주문수량",
+        "length": 10,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "crct_clsf",
+        "name_kr": "정정구분",
+        "length": 1,
+        "required": true,
+        "description": "1:일부정정,2:전부정정",
+        "choices": [
+          [
+            "1",
+            "일부정정"
+          ],
+          [
+            "2",
+            "전부정정"
+          ]
+        ]
+      },
+      {
+        "name_en": "orgn_ordr_no",
+        "name_kr": "원주문번호",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_no": "주문번호",
+      "mkt_tm_clsf": "시장시간구분",
+      "ordr_jb_clsf": "주문업무구분",
+      "s_clsf": "매도구분",
+      "is_cd": "종목코드",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "ordr_ccd": "주문구분코드",
+      "crdt_typ_cd": "신용유형코드",
+      "ln_dt": "대출일자",
+      "crct_clsf": "정정구분",
+      "orgn_ordr_no": "원주문번호",
+      "gtc_ccd": "HTS_GTC구분코",
+      "ordr_mng_no": "주문관리번호",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "acct_cd": "계정코드",
+      "sor_ordr_ccd": "SOR주문구분코드",
+      "stpd_prc": "스톱지정가격"
+    }
+  },
+  {
+    "code": "SSAM5762",
+    "name": "소수점 매도주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam5762",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q_p6",
+        "name_kr": "주문수량P6",
+        "length": 15,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_amt",
+        "name_kr": "주문금액",
+        "length": 18,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dcml_ordr_std_ccd",
+        "name_kr": "소수점주문기준구분코드",
+        "length": 1,
+        "required": true,
+        "description": "1:금액, 2:수량 (전량일때 2번으로)",
+        "choices": [
+          [
+            "1",
+            "금액"
+          ],
+          [
+            "2",
+            "수량 (전량일때 2번으로)"
+          ]
+        ]
+      },
+      {
+        "name_en": "tv_s_est_f",
+        "name_kr": "전량매도설정여부",
+        "length": 1,
+        "required": true,
+        "description": "0:일부매도, 1:전량매도",
+        "choices": [
+          [
+            "0",
+            "일부매도"
+          ],
+          [
+            "1",
+            "전량매도"
+          ]
+        ]
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_dt": "주문일자",
+      "dmstc_stk_dcml_trd_jb_ccd": "국내주식소수점매매업무구분코드",
+      "ordr_sqc": "주문회차",
+      "bnf_is_cd": "수익증권종목코드",
+      "stnd_is_cd": "표준종목코드",
+      "trd_dl_ccd": "매매거래구분코드",
+      "dmstc_stk_dcml_ordr_sq": "국내주식소수점주문일련번호",
+      "is_cd": "종목코드",
+      "ordr_q_p6": "주문수량P6",
+      "ordr_amt": "주문금액",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "dcml_ordr_std_ccd": "소수점주문기준구분코드",
+      "rsv_typ_ordr_f": "적립식주문여부",
+      "rsv_typ_ordr_acpt_dt": "적립식주문접수일자",
+      "rsv_typ_ordr_sq": "적립식주문일련번호",
+      "rsv_typ_ordr_sqc": "적립식주문회차",
+      "rsv_amt": "적립금액",
+      "acpt_sq": "접수일련번호",
+      "cpn_cd": "쿠폰코드",
+      "tv_s_est_f": "전량매도설정여부",
+      "dmstc_stk_dcml_evnt_ccd": "국내주식소수점이벤트구분코드"
+    }
+  },
+  {
+    "code": "SSAM5763",
+    "name": "소수점 매수주문",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam5763",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_q_p6",
+        "name_kr": "주문수량P6",
+        "length": 15,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_amt",
+        "name_kr": "주문금액",
+        "length": 18,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dcml_ordr_std_ccd",
+        "name_kr": "소수점주문기준구분코드",
+        "length": 1,
+        "required": true,
+        "description": "1:금액,2:수량",
+        "choices": [
+          [
+            "1",
+            "금액"
+          ],
+          [
+            "2",
+            "수량"
+          ]
+        ]
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_dt": "주문일자",
+      "dmstc_stk_dcml_trd_jb_ccd": "국내주식소수점매매업무구분코드",
+      "ordr_sqc": "주문회차",
+      "bnf_is_cd": "수익증권종목코드",
+      "stnd_is_cd": "표준종목코드",
+      "trd_dl_ccd": "매매거래구분코드",
+      "dmstc_stk_dcml_ordr_sq": "국내주식소수점주문일련번호",
+      "is_cd": "종목코드",
+      "ordr_q_p6": "주문수량P6",
+      "ordr_amt": "주문금액",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "dcml_ordr_std_ccd": "소수점주문기준구분코드",
+      "rsv_typ_ordr_f": "적립식주문여부",
+      "rsv_typ_ordr_acpt_dt": "적립식주문접수일자",
+      "rsv_typ_ordr_sq": "적립식주문일련번호",
+      "rsv_typ_ordr_sqc": "적립식주문회차",
+      "rsv_amt": "적립금액",
+      "acpt_sq": "접수일련번호",
+      "cpn_cd": "쿠폰코드",
+      "tv_s_est_f": "전량매도설정여부",
+      "dmstc_stk_dcml_evnt_ccd": "국내주식소수점이벤트구분코드"
+    }
+  },
+  {
+    "code": "SSAM5764",
+    "name": "소수점 주문취소",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssam5764",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "dmstc_stk_dcml_trd_jb_ccd",
+        "name_kr": "국내주식소수점매매업무구분코드",
+        "length": 2,
+        "required": true,
+        "description": "01:일반,02:자기,03:정기매수,04:비상장분할 일괄청산,05:정리매매 일괄청산",
+        "choices": [
+          [
+            "01",
+            "일반"
+          ],
+          [
+            "02",
+            "자기"
+          ],
+          [
+            "03",
+            "정기매수"
+          ],
+          [
+            "04",
+            "비상장분할 일괄청산"
+          ],
+          [
+            "05",
+            "정리매매 일괄청산"
+          ]
+        ]
+      },
+      {
+        "name_en": "ordr_sqc",
+        "name_kr": "주문회차",
+        "length": 10,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_dt",
+        "name_kr": "주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "bnf_is_cd",
+        "name_kr": "수익증권종목코드",
+        "length": 12,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_dl_ccd",
+        "name_kr": "매매거래구분코드",
+        "length": 2,
+        "required": true,
+        "description": "01:매도, 02:매수",
+        "choices": [
+          [
+            "01",
+            "매도"
+          ],
+          [
+            "02",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "dmstc_stk_dcml_ordr_sq",
+        "name_kr": "국내주식소수점주문일련번호",
+        "length": 18,
+        "required": true,
+        "description": "SSQM5765 api 의 acpt_no 값",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_dt": "주문일자",
+      "dmstc_stk_dcml_trd_jb_ccd": "국내주식소수점매매업무구분코드",
+      "ordr_sqc": "주문회차",
+      "bnf_is_cd": "수익증권종목코드",
+      "stnd_is_cd": "표준종목코드",
+      "trd_dl_ccd": "매매거래구분코드",
+      "dmstc_stk_dcml_ordr_sq": "국내주식소수점주문일련번호",
+      "is_cd": "종목코드",
+      "ordr_q_p6": "주문수량P6",
+      "ordr_amt": "주문금액",
+      "spclz_ordr_ccd": "특화주문구분코드",
+      "dcml_ordr_std_ccd": "소수점주문기준구분코드",
+      "rsv_typ_ordr_f": "적립식주문여부",
+      "rsv_typ_ordr_acpt_dt": "적립식주문접수일자",
+      "rsv_typ_ordr_sq": "적립식주문일련번호",
+      "rsv_typ_ordr_sqc": "적립식주문회차",
+      "rsv_amt": "적립금액",
+      "acpt_sq": "접수일련번호",
+      "cpn_cd": "쿠폰코드",
+      "tv_s_est_f": "전량매도설정여부",
+      "dmstc_stk_dcml_evnt_ccd": "국내주식소수점이벤트구분코드"
+    }
+  },
+  {
+    "code": "SSQM0004",
+    "name": "예수금내역",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm0004",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_no",
+        "name_kr": "종목번호",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_psbl_csh": "주문가능현금",
+      "ordr_psbl_sbt": "주문가능대용",
+      "ordr_psbl_amt": "주문가능금액",
+      "ordr_std_dpstn_csh": "주문기준예탁현금",
+      "ordr_std_dpstn_sbt": "주문기준예탁대용",
+      "ordr_std_dpstn_tl_amt": "주문기준예탁총액",
+      "tdy_tfnd_amt": "금일예수금액",
+      "ndy_tfnd": "익일예수금",
+      "nxt2_dy_tfnd": "익익일예수금",
+      "do_psbl_csh": "인출가능현금",
+      "do_psbl_sbt": "인출가능대용",
+      "do_psbl_tl_amt": "인출가능총액"
+    }
+  },
+  {
+    "code": "SSQM0831",
+    "name": "예약주문처리 조회",
+    "category": "국내주식 > 주문내역",
+    "endpoint": "/api/v1/ssqm0831",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ordr_dt",
+        "name_kr": "주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 18,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 1,
+        "required": true,
+        "description": "0:전체,1:매도,2:매수",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "1",
+            "매도"
+          ],
+          [
+            "2",
+            "매수"
+          ]
+        ]
+      },
+      {
+        "name_en": "hndl_clsf",
+        "name_kr": "처리구분",
+        "length": 1,
+        "required": true,
+        "description": "0:전체,S:완료,R:접수,E:거부",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "S",
+            "완료"
+          ],
+          [
+            "R",
+            "접수"
+          ],
+          [
+            "E",
+            "거부"
+          ]
+        ]
+      },
+      {
+        "name_en": "tv_rv_ccd",
+        "name_kr": "전량잔량구분코드",
+        "length": 1,
+        "required": true,
+        "description": "0:전체,N:일반,T:기간",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "N",
+            "일반"
+          ],
+          [
+            "T",
+            "기간"
+          ]
+        ]
+      },
+      {
+        "name_en": "end_dt",
+        "name_kr": "종료일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "ac_nm": "계좌명",
+      "prt_rcrd_c": "출력레코드수",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "sq": "일련번호",
+      "md_clsf": "매체구분",
+      "md_clsf_nm": "매체구분명",
+      "ordr_f": "주문여부",
+      "ordr_f_nm": "주문여부명",
+      "ordr_clsf": "주문구분",
+      "ordr_clsf_nm": "주문구분명",
+      "ksdq_clsf": "코스닥구분",
+      "is_no": "종목번호",
+      "is_nm": "종목명",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "ordr_ccd": "주문구분코드",
+      "ordr_ccd_nm": "주문구분코드명",
+      "crdt_typ_cd": "신용유형코드",
+      "crdt_typ_nm": "신용유형명",
+      "crdt_ln_dt": "신용대출일자",
+      "cncl_clsf": "취소구분",
+      "cncl_nm": "취소명",
+      "msg_cd": "메시지코드",
+      "msg": "메시지",
+      "ordr_no": "주문번호",
+      "acpt_tm": "접수시간",
+      "ordr_tm": "주문시간",
+      "prd_ordr_rgst_dt": "기간주문등록일자",
+      "prd_ordr_sq": "기간주문일련번호",
+      "ordr_dt": "주문일자"
+    }
+  },
+  {
+    "code": "SSQM0834",
+    "name": "예약주문접수 조회",
+    "category": "국내주식 > 주문내역",
+    "endpoint": "/api/v1/ssqm0834",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 19,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "strt_dt",
+        "name_kr": "시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_dt",
+        "name_kr": "종료일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "sq": "일련번호",
+      "is_no": "종목번호",
+      "is_nm": "종목명",
+      "trd_dl_ccd": "매매거래구분코드",
+      "trd_ccd_nm": "매매구분코드명",
+      "ordr_clsf": "주문구분",
+      "ordr_clsf_nm": "주문구분명",
+      "ordr_q": "주문수량",
+      "ordr_uprc": "주문단가",
+      "crdt_typ_cd": "신용유형코드",
+      "crdt_typ_nm": "신용유형명",
+      "ln_dt": "대출일자",
+      "md_clsf": "매체구분",
+      "md_clsf_nm": "매체구분명",
+      "cncl_clsf": "취소구분",
+      "cncl_clsf_nm": "취소구분명",
+      "tv_rv_ccd": "전량잔량구분코드",
+      "tv_rv_ccd_nm": "전량잔량구분코드명",
+      "rgst_dt": "등록일자",
+      "prd": "기간",
+      "acpt_tm": "접수시간",
+      "ordr_dt": "주문일자",
+      "cncl_dy_tm": "취소일시",
+      "excg_tcd": "거래소유형코드",
+      "excg_tcdnm": "거래소유형코드명"
+    }
+  },
+  {
+    "code": "SSQM1801",
+    "name": "보유주식 조회",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm1801",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "inq_clsf",
+        "name_kr": "조회구분",
+        "length": 1,
+        "required": false,
+        "description": "0:현금주식매도,1:현금주식예약,2:현금주식일괄매도,3:ELW+현금,4:장외단주매도,5:ELW 전용,6:현금주식매도+코넥스+ETN,7:코넥스전용,8:ETN 전용,9:ELW+현금+ETN",
+        "choices": []
+      },
+      {
+        "name_en": "is_no",
+        "name_kr": "종목번호",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "mkt_tm_ccd",
+        "name_kr": "시장시간구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:정규시장,2:장개시전시간외,3:장종료후시간외,4:시간외단일가",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ordr_psbl_q": "주문가능수량",
+      "gnrl_q": "일반수량",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "is_no": "종목번호",
+      "is_nm": "종목명"
+    }
+  },
+  {
+    "code": "SSQM1802",
+    "name": "매수주문가능금액",
+    "category": "국내주식 > 주식주문",
+    "endpoint": "/api/v1/ssqm1802",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_no",
+        "name_kr": "종목번호",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "tfnd": "예수금",
+      "ordr_psbl_csh": "주문가능현금",
+      "ordr_psbl_sbt": "주문가능대용",
+      "ordr_psbl_tl_amt": "주문가능총액",
+      "pcnt100_ordr_psbl_amt": "100퍼센트주문가능금액",
+      "mx_ordr_psbl_amt": "최대주문가능금액",
+      "do_psbl_csh": "인출가능현금",
+      "sbt_tl_amt": "대용총액",
+      "mx_ordr_psbl_amt_a_grp": "최대주문가능금액A군",
+      "mx_ordr_psbl_amt_b_grp": "최대주문가능금액B군",
+      "mx_ordr_psbl_amt_c_grp": "최대주문가능금액C군"
+    }
+  },
+  {
+    "code": "SSQM2121",
+    "name": "매매정산현황",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm2121",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "trd_dt",
+        "name_kr": "매매일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "clsf",
+        "name_kr": "구분",
+        "length": 1,
+        "required": true,
+        "description": "1: 단가별, 2: 종목별",
+        "choices": [
+          [
+            "1",
+            "단가별"
+          ],
+          [
+            "2",
+            "종목별"
+          ]
+        ]
+      },
+      {
+        "name_en": "stmt_dt",
+        "name_kr": "결제일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 50,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "ac_nm": "계좌명",
+      "s_ec_sum": "매도정산합계",
+      "b_ec_sum": "매수정산합계",
+      "trd_dt": "매매일자",
+      "stmt_dt": "결제일자",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "is_no": "종목번호",
+      "dl_clsf": "거래구분",
+      "ccls_q": "체결수량",
+      "fee": "수수료",
+      "ffs_tx": "농특세",
+      "incm_tx": "소득세",
+      "dl_amt": "거래금액",
+      "is_nm": "종목명",
+      "trd_clsf": "매매구분",
+      "ccls_uprc": "체결단가",
+      "dl_tx": "거래세",
+      "tl_ccls_q": "총체결수량",
+      "rsdnt_tx": "주민세",
+      "ec_amt": "정산금액",
+      "fncng_amt": "융자금액",
+      "rfnd_amt": "상환금액",
+      "ccls_uprc2": "체결단가2",
+      "rfnd_itst_clt_amt": "상환이자징수금액",
+      "krx_ccls_amt": "한국거래소체결금액",
+      "nxtd_ccls_amt": "넥스트레이드체결금액"
+    }
+  },
+  {
+    "code": "SSQM2341",
+    "name": "체결미체결 조회",
+    "category": "국내주식 > 주문내역",
+    "endpoint": "/api/v1/ssqm2341",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ccls_clsf",
+        "name_kr": "체결구분",
+        "length": 1,
+        "required": true,
+        "description": "0:전체, 1:체결, 2:미체결",
+        "choices": [
+          [
+            "0",
+            "전체"
+          ],
+          [
+            "1",
+            "체결"
+          ],
+          [
+            "2",
+            "미체결"
+          ]
+        ]
+      },
+      {
+        "name_en": "ordr_dt",
+        "name_kr": "주문일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 40,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "inq_clsf": "조회구분",
+      "ordr_dt": "주문일자",
+      "stnd_is_cd": "표준종목코드",
+      "ac_nm": "계좌명",
+      "s_ccls_amt": "매도체결금액",
+      "b_ccls_amt": "매수체결금액",
+      "s_ccls_q": "매도체결수량",
+      "b_ccls_q": "매수체결수량",
+      "cn_clsf": "연속구분",
+      "ordr_no": "주문번호",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "orgn_ordr_no": "원주문번호",
+      "ccls_ntc_ccd": "체결통지구분코드",
+      "stnd_is_no": "표준종목번호",
+      "ordr_q": "주문수량",
+      "tl_ccls_q": "총체결수량",
+      "nccls_q": "미체결수량",
+      "trd_dl_ccd_nm": "매매거래구분코드명",
+      "ordr_typ_cd": "주문유형코드",
+      "ordr_md_cd": "주문매체코드",
+      "dprt_nm": "부점명",
+      "ccls_ntc_tm": "체결통지시간",
+      "hngl_shrt_nm": "한글단축명",
+      "ordr_uprc": "주문단가",
+      "ccls_uprc": "체결단가",
+      "ordr_tm": "주문시간",
+      "ordr_ccd": "주문구분코드",
+      "crct_cncl_ccd": "정정취소구분코드",
+      "rfsl_rsn_nm": "거부사유명",
+      "ordr_p_eno": "주문자사번",
+      "ccls_ntc_p_eno": "체결통지자사번",
+      "gds_typ_dtls_nm": "상품유형상세명",
+      "crct_q": "정정수량",
+      "is_dtl_typ_cd": "종목세부유형코드",
+      "ln_dt": "대출일자",
+      "mtrt_dt": "만기일자",
+      "ordr_uprc2": "주문단가2",
+      "ccls_uprc2": "체결단가2",
+      "sor_ordr_ccd": "SOR주문구분코드",
+      "sor_cncl_q": "SOR취소수량",
+      "mgn_cc_q": "증거금해지수량",
+      "stpd_prc": "스톱지정가격",
+      "stpdp_rch_f": "스톱지정가도달여부",
+      "sor_ordr_ccdnm": "SOR주문구분코드명",
+      "sor_ordr_f": "SOR주문여부"
+    }
+  },
+  {
+    "code": "SSQM2392",
+    "name": "매매손익현황",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm2392",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_no",
+        "name_kr": "종목번호",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_dt_from",
+        "name_kr": "주문일자FROM",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "ordr_dt_to",
+        "name_kr": "주문일자TO",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 30,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "trd_pl": "매매손익",
+      "trd_svrl_cst": "매매제비용",
+      "trd_nt_pl": "매매순손익",
+      "nxt_key": "다음키",
+      "grid_cnt": "그리드건수",
+      "Record1": "Record1",
+      "ordr_dt": "주문일자",
+      "byng_prc": "매입가격",
+      "s_prc": "매도가격",
+      "ccls_q": "체결수량",
+      "is_no": "종목번호",
+      "is_nm": "종목명",
+      "crdt_typ_cd": "신용유형코드",
+      "crdt_typ_nm": "신용유형명",
+      "b_q": "매수수량"
+    }
+  },
+  {
+    "code": "SSQM2442",
+    "name": "실현손익현황",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm2442",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "inq_strt_dt",
+        "name_kr": "조회시작일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "inq_end_dt",
+        "name_kr": "조회종료일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "md_clsf",
+        "name_kr": "매체구분",
+        "length": 1,
+        "required": true,
+        "description": "1:오프라인 2:온라인 3:지점",
+        "choices": [
+          [
+            "1",
+            "오프라인"
+          ],
+          [
+            "2",
+            "온라인"
+          ],
+          [
+            "3",
+            "지점"
+          ]
+        ]
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 24,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "s_q_sum": "매도수량합계",
+      "s_amt_sum": "매도금액합계",
+      "tl_s_fee": "총매도수수료",
+      "tl_s_svrl_tx": "총매도제세금",
+      "tl_s_ec_amt": "총매도정산금액",
+      "b_q_sum": "매수수량합계",
+      "b_amt_sum": "매수금액합계",
+      "tl_b_fee": "총매수수수료",
+      "tl_b_svrl_tx": "총매수제세금",
+      "tl_b_ec_amt": "총매수정산금액",
+      "trd_q_sum": "매매수량합계",
+      "trd_amt_sum": "매매금액합계",
+      "trd_fee_sum": "매매수수료합계",
+      "svrl_tx_tl_sum": "제세금총합계",
+      "tl_ec_amt": "총정산금액",
+      "tl_b_q_p6": "총매수수량P6",
+      "tl_s_q_p6": "총매도수량P6",
+      "tl_trd_q_p6": "총매매수량P6",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "trd_dt": "매매일자",
+      "stnd_is_cd": "표준종목코드",
+      "is_nm": "종목명",
+      "crdt_typ_cd": "신용유형코드",
+      "trd_dl_ccd": "매매거래구분코드",
+      "ccls_q": "체결수량",
+      "ccls_uprc": "체결단가",
+      "b_uprc": "매수단가",
+      "s_amt": "매도금액",
+      "b_amt": "매수금액",
+      "fee": "수수료",
+      "svrl_tx": "제세금",
+      "rlztn_pl": "실현손익",
+      "yld": "수익율",
+      "shrt_is_cd": "단축종목코드",
+      "dtls_ccls_q": "상세체결수량",
+      "dcml_dl_f": "소수점거래여부"
+    }
+  },
+  {
+    "code": "SSQM2932",
+    "name": "잔고현황 조회(결제기준)",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm2932",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "inq_clsf",
+        "name_kr": "조회구분",
+        "length": 1,
+        "required": true,
+        "description": "1:계좌별, 2:상품유형별 (자문/일임)",
+        "choices": [
+          [
+            "1",
+            "계좌별"
+          ],
+          [
+            "2",
+            "상품유형별 (자문/일임)"
+          ]
+        ]
+      },
+      {
+        "name_en": "excg_mktpr_ccd",
+        "name_kr": "거래소시세구분코드",
+        "length": 1,
+        "required": true,
+        "description": "A:통합시세,K:KRX시세,N:NXT시세",
+        "choices": [
+          [
+            "A",
+            "통합시세"
+          ],
+          [
+            "K",
+            "KRX시세"
+          ],
+          [
+            "N",
+            "NXT시세"
+          ]
+        ]
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "tfnd": "예수금",
+      "o_amt_psbl_amt": "출금가능금액",
+      "rcvbl_npamt_amt": "미수미납금액",
+      "fcrncy_tfnd_krw_exch_amt": "외화예수금원화환산액",
+      "ordr_psbl_csh": "주문가능현금",
+      "pcnt100_ordr_psbl_amt": "100퍼센트주문가능금액",
+      "pcnt30_mx_ordr_psbl_amt": "30퍼센트최대주문가능금액",
+      "pcnt40_mx_ordr_psbl_amt": "40퍼센트최대주문가능금액",
+      "scrts_sbt_amt": "유가증권대용금액",
+      "tl_crdt_ln_amt": "총신용대출금액",
+      "mrtg_shrtg_amt": "담보부족금액",
+      "byng_amt_sum": "매입금액합계",
+      "pl_amt_sum": "손익금액합계",
+      "val_amt_sum": "평가금액합계",
+      "fncng_amt_sum": "융자금액합계",
+      "yld_sum": "수익율합계",
+      "mgn_csh": "증거금현금",
+      "crdt_gamt_csh": "신용보증금현금",
+      "csh_rcvbl_amt": "현금미수금액",
+      "crdt_itst_npamt_amt": "신용이자미납부금액",
+      "etc_lndng_amt": "기타대여금액",
+      "rgt_sbt_amt": "권리대용금액",
+      "mgn_sbt": "증거금대용",
+      "crdt_gamt_sbt": "신용보증금대용",
+      "fncng_amt": "융자금액",
+      "sl_amt": "대주금액",
+      "mrtg_amt": "담보금액",
+      "add_mrtgg_csh": "추가담보현금",
+      "nrfnd_fncng_amt": "미상환융자금액",
+      "dpstn_byng_fnds_ln_amt": "예탁매입자금대출금",
+      "s_sbs_ln_amt": "매도청약대출금액",
+      "cma_mrtg_ln_amt": "CMA담보대출금",
+      "ln_itst_npamt_amt": "대출이자미납부금액",
+      "brwg_nd_mrtg_amt": "대차소요담보금",
+      "elw_excs_mgn": "ELW행사증거금",
+      "mrtg_rt": "담보비율",
+      "brwg_mrtg_csh_est_amt": "대차담보현금설정금",
+      "cma_pldg_est_amt": "CMA질권설정금액",
+      "rtpnsn_pldg_est_amt": "퇴직연금질권설정금액",
+      "tl_data_cnt": "총데이터건수",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "gds_typ": "상품유형",
+      "clsf": "구분",
+      "crncy_cd": "통화코드",
+      "is_nm": "종목명",
+      "is_cd": "종목코드",
+      "ln_dt": "대출일자",
+      "mtrt_dt": "만기일자",
+      "blnc_q": "잔고수량",
+      "ordr_psbl_q": "주문가능수량",
+      "now_prc": "현재가",
+      "byng_avr_prc": "매입평균가",
+      "pl_amt": "손익금액",
+      "val_amt": "평가금액",
+      "yld": "수익율",
+      "is_dtl_typ_cd": "종목세부유형코드",
+      "crdt_typ_cd": "신용유형코드",
+      "val_sgrvt_p2": "평가비중P2",
+      "blnc_q_p6": "잔고수량P6",
+      "ordr_psbl_q_p6": "주문가능수량P6",
+      "nxtd_lstng_ccd": "넥스트레이드상장구분코드",
+      "fnl_ccls_excg_cd": "최종체결거래소코드"
+    }
+  },
+  {
+    "code": "SSQM2952",
+    "name": "잔고현황 조회(체결기준)",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/ssqm2952",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "excg_mktpr_ccd",
+        "name_kr": "거래소시세구분코드",
+        "length": 1,
+        "required": true,
+        "description": "A:통합시세, K:KRX시세, N:NXT시세",
+        "choices": [
+          [
+            "A",
+            "통합시세"
+          ],
+          [
+            "K",
+            "KRX시세"
+          ],
+          [
+            "N",
+            "NXT시세"
+          ]
+        ]
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt2_dy_tfnd": "익익일예수금",
+      "nt_asts_val_amt": "순자산평가금액",
+      "fncng_amt": "융자금액",
+      "ndy_tfnd": "익일예수금",
+      "scrts_nt_val_amt": "유가순평가금액",
+      "gnl_ln_amt": "종합대출금액",
+      "dy_tfnd": "일예수금",
+      "nt_byng_amt": "순매입금액",
+      "nrfnd_fncng_amt": "미상환융자금",
+      "fcrncy_tfnd_krw_exch_amt": "외화예수금원화환산액",
+      "val_pl": "평가손익",
+      "brwg_nd_mrtg_amt": "대차소요담보금",
+      "etc_lndng_amt": "기타대여금",
+      "val_yld": "평가수익율",
+      "mrtg_shrtg_amt": "담보부족금액",
+      "itst_npymt_amt": "이자미납금",
+      "elw_excs_mgn": "ELW행사증거금",
+      "val_amt_sum": "평가금액합계",
+      "val_pl_sum": "평가손익합계",
+      "byng_amt_sum": "매입금액합계",
+      "fncng_amt_sum": "융자금액합계",
+      "val_yld_sum": "평가수익율합계",
+      "ndy_o_amt_psbl_amt": "익일출금가능금액",
+      "nxt2_dy_o_amt_psbl_amt": "익익일출금가능금액",
+      "mrtg_rt": "담보비율",
+      "brwg_mrtg_csh_est_amt": "대차담보현금설정금",
+      "cma_pldg_est_amt": "CMA질권설정금액",
+      "tl_data_cnt": "총데이터건수",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "clsf": "구분",
+      "crncy_cd": "통화코드",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "hld_q": "보유수량",
+      "ordr_psbl_q": "주문가능수량",
+      "nstmt_s_q": "미결제매도수량",
+      "nstmt_b_q": "미결제매수수량",
+      "ec_q": "정산수량",
+      "byng_amt": "매입금액",
+      "now_prc": "현재가",
+      "byng_avr_prc": "매입평균가",
+      "val_amt": "평가금액",
+      "is_dtl_typ_cd": "종목세부유형코드",
+      "fee_r_p9": "수수료율P9",
+      "addt_amt": "가산금액",
+      "dl_tx_r_p4": "거래세율P4",
+      "ffs_tx_r_p4": "농특세율P4",
+      "hld_q_p6": "보유수량P6",
+      "ordr_psbl_q_p6": "주문가능수량P6",
+      "nstmt_s_q_p6": "미결제매도수량P6",
+      "nstmt_b_q_p6": "미결제매수수량P6",
+      "ec_q_p6": "정산수량P6",
+      "nxtd_lstng_ccd": "넥스트레이드상장구분코드",
+      "fnl_ccls_excg_cd": "최종체결거래소코드"
+    }
+  },
+  {
+    "code": "SSQM5765",
+    "name": "소수점매매 조회",
+    "category": "국내주식 > 주문내역",
+    "endpoint": "/api/v1/ssqm5765",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "trd_clsf",
+        "name_kr": "매매구분",
+        "length": 1,
+        "required": false,
+        "description": "0: 전체, 1:매도, 2:매수",
+        "choices": []
+      },
+      {
+        "name_en": "trd_strt_dt",
+        "name_kr": "매매시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "trd_end_dt",
+        "name_kr": "매매종료일자",
+        "length": 8,
+        "required": false,
+        "description": "* 당일자 조회시에는 빈값",
+        "choices": []
+      },
+      {
+        "name_en": "is_cd",
+        "name_kr": "종목코드",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 74,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "trd_dt": "매매일자",
+      "jb_clsf_nm": "업무구분명",
+      "acpt_no": "접수번호",
+      "is_cd": "종목코드",
+      "is_nm": "종목명",
+      "ordr_clsf_nm": "주문구분명",
+      "trd_clsf_nm": "매매구분명",
+      "s_clsf_nm": "매도구분명",
+      "ordr_amt": "주문금액",
+      "dmstc_stk_dcml_ordr_q_p6": "국내주식소수점주문수량P6",
+      "ordr_prc": "주문가격",
+      "dmstc_stk_dcml_ccls_q_p6": "국내주식소수점체결수량P6",
+      "ccls_prc": "체결가격",
+      "ccls_amt": "체결금액",
+      "fee": "수수료",
+      "dl_tx": "거래세",
+      "ec_amt": "정산금액",
+      "hndl_p_eno_nm": "처리자사번명",
+      "hndl_clsf": "처리구분",
+      "rfsl_rsn": "거부사유",
+      "acpt_tm": "접수시간",
+      "dmstc_stk_dcml_trd_jb_ccd": "국내주식소수점매매업무구분코드",
+      "ordr_sqc": "주문회차",
+      "bnf_is_cd": "수익증권종목코드",
+      "trd_dl_ccd": "매매거래구분코드",
+      "bdy_cls_prc": "전일종가",
+      "tv_s_clsf_nm": "전량매도구분명",
+      "acpt_dt": "접수일자"
+    }
+  },
+  {
+    "code": "SWQA2301",
+    "name": "거래내역 조회",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/swqa2301",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "inq_clsf",
+        "name_kr": "조회구분",
+        "length": 1,
+        "required": true,
+        "description": "전체",
+        "choices": []
+      },
+      {
+        "name_en": "strt_dt",
+        "name_kr": "시작일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "end_dt",
+        "name_kr": "종료일자",
+        "length": 8,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "is_no",
+        "name_kr": "종목번호",
+        "length": 12,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 100,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "srt_clsf",
+        "name_kr": "정렬구분",
+        "length": 1,
+        "required": false,
+        "description": "1: 과거거래내역순, 2: 최근거래내역순",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "grid_cnt1": "그리드건수1",
+      "Record1": "Record1",
+      "dl_dt": "거래일자",
+      "dl_sq": "거래일련번호",
+      "q": "수량",
+      "tfnd_blnc": "예수금잔고",
+      "fncng_amt": "융자금액",
+      "fee": "수수료",
+      "incm_tx": "소득세",
+      "dl_txtn_uprc": "거래과세단가",
+      "itst_rpay_amt": "이자변제금액",
+      "etc_chck_amt": "기타수표금액",
+      "crncy_clsf_nm": "통화구분명",
+      "stmt_pr_pymt_amt": "결제선납입금액",
+      "fcrncy_tfnd_ra": "외화예수금잔액",
+      "smry_nm": "적요명",
+      "ec_amt": "정산금액",
+      "dl_uprc": "거래단가",
+      "ocp_pymt_amt": "원본납입금",
+      "dl_tx": "거래세",
+      "rsdnt_tx": "주민세",
+      "itst_use_fe": "이자이용료",
+      "arrs_fee": "연체료",
+      "scrts_rpay_q": "유가증권변제수량",
+      "exch_r": "환율",
+      "stmt_pr_pymt_amt_rpay": "결제선납입금액변제",
+      "dprt_cd_nm": "부점코드명",
+      "is_nm": "종목명",
+      "dl_amt": "거래금액",
+      "bnf_blnc_val": "수익증권잔고평가",
+      "bnf_no": "수익증권번호",
+      "ffs_tx": "농특세",
+      "trsf_tx": "양도세",
+      "rcvbl_rpay_amt": "미수변제금액",
+      "etc_lndng_amt_rpay_amt": "기타대여금변제금액",
+      "scrts_blnc_q": "유가증권잔고수량",
+      "abrd_fee": "국외수수료",
+      "fcrncy_amt": "외화금액",
+      "cprty_ac_nm": "상대계좌명",
+      "tx": "세금",
+      "stnd_is_cd": "표준종목코드",
+      "fcrncy_tfnd": "외화예수금",
+      "smry_typ_cd": "적요유형코드",
+      "dl_typ_cd": "거래유형코드",
+      "dl_mkt": "거래시장"
+    }
+  },
+  {
+    "code": "SWQM2412",
+    "name": "거래내역 조회 상세",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/swqm2412",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "inq_dt",
+        "name_kr": "조회일자",
+        "length": 8,
+        "required": true,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "dl_sq",
+        "name_kr": "거래일련번호",
+        "length": 10,
+        "required": false,
+        "description": "",
+        "choices": []
+      },
+      {
+        "name_en": "nxt_key",
+        "name_kr": "다음키",
+        "length": 10,
+        "required": false,
+        "description": "",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "nxt_key": "다음키",
+      "dl_sq": "거래일련번호",
+      "dl_knd_cd": "거래종류코드",
+      "dl_knd_nm": "거래종류명",
+      "rap_no": "출납번호",
+      "rap_ccd": "출납구분코드",
+      "cncl_clsf": "취소구분",
+      "orgnl_dl_sq": "원거래일련번호",
+      "is_no": "종목번호",
+      "is_nm": "종목명",
+      "dl_q": "거래수량",
+      "uprc_p4": "단가P4",
+      "tx_mvg_out_pamt_amt": "세전출납부금액",
+      "chck_i_amt": "수표입금액",
+      "etc_chck_i_amt": "기타수표입금액",
+      "fee": "수수료",
+      "dl_tx": "거래세",
+      "incm_tx": "소득세",
+      "rsdnt_tx": "주민세",
+      "ffs_tx": "농특세",
+      "ec_amt": "정산금액",
+      "smry_cd": "적요코드",
+      "smry": "적요",
+      "tfnd_bdy_ra": "예수금전일잔액",
+      "tfnd_tdy_ra": "예수금금일잔액",
+      "sbt_amt_tdy_ra": "대용금금일잔액",
+      "sbt_amt_bdy_ra": "대용금전일잔액",
+      "scrts_bdy_blnc_q": "유가증권전일잔고수량",
+      "scrts_tdy_blnc_q": "유가증권금일잔고수량",
+      "hndl_dprt_cd": "처리부점코드",
+      "hndl_dprt_cdnm": "처리부점코드명",
+      "pth_cprty_ac_no": "이체상대계좌번호",
+      "i_amt_rqs_p": "입금요청자",
+      "crd_ccd": "카드구분코드",
+      "rsdnt_rno": "주민등록번호",
+      "b_dt": "매수일자",
+      "spt_incm_tx": "분리소득세",
+      "spt_rsdnt_tx": "분리주민세",
+      "spt_ffs_tx": "분리농특세",
+      "itst_amt": "이자금액",
+      "crdt_dl_ccd": "신용거래구분코드",
+      "crdt_amt": "신용금액",
+      "crdt_rfnd_dfrnc_amt": "신용상환차금",
+      "crdt_itst_sl_use_fe": "신용이자대주이용료",
+      "csh_rcvbl_ocrnc_amt": "현금미수발생금액",
+      "itst_npamt_ocrnc_amt": "이자미납부발생금",
+      "etc_lndng_amt_ocrnc_amt": "기타대여금발생금",
+      "scrts_rcvbl_ocrnc_q": "유가증권미수발생수량",
+      "rcvbl_amt_bdy_ra": "미수금전일잔액",
+      "rcvbl_amt_tdy_ra": "미수금금일잔액",
+      "scrts_rcvbl_rpay_q": "유가증권미수변제수량",
+      "csh_rcvbl_rpay_amt": "현금미수변제금액",
+      "csh_rcvbl_arrs_fee": "현금미수연체료",
+      "crdt_itst_npamt_rpay_amt": "신용이자미납부변제금",
+      "crdt_itst_npamt_arrs_fee": "신용이자미납부연체료",
+      "etc_lndng_amt_rpay_amt": "기타대여금변제금액",
+      "etc_lndng_amt_arrs_fee": "기타대여금연체료",
+      "arrs_fee_prtl_clt_amt": "연체료일부징수금액",
+      "pgm_id": "프로그램ID",
+      "hndl_tm": "처리시간",
+      "mn_dl_dprt_cd": "주거래부점코드",
+      "mn_dl_brn": "주거래지점",
+      "amt_val_amt": "금평가금액",
+      "dl_memo": "거래메모",
+      "ordr_md_cd": "주문매체코드",
+      "dl_amt": "거래금액",
+      "nsvng_q": "비저축수량",
+      "nsvng_q_tdy_blnc": "비저축수량금일잔고",
+      "nsvng_q_bdy_blnc": "비저축수량전일잔고",
+      "dprt_cd_nm": "부점코드명",
+      "fcrncy_amt": "외화금액",
+      "exch_r": "환율",
+      "abrd_fee": "국외수수료",
+      "dtls_cntnt": "상세내용",
+      "i_stk_expt_s_q": "입고예정매도수량"
+    }
+  },
+  {
+    "code": "SWQN2302",
+    "name": "출금가능금액 조회",
+    "category": "국내주식 > 계좌잔고",
+    "endpoint": "/api/v1/swqn2302",
+    "method": "POST",
+    "fields": [
+      {
+        "name_en": "ccd",
+        "name_kr": "구분코드",
+        "length": 1,
+        "required": false,
+        "description": "1:익일예수금/익익일예수금 포함",
+        "choices": []
+      }
+    ],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "ndy_o_amt_psbl_amt": "익일출금가능금액",
+      "nxt2_dy_o_amt_psbl_amt": "익익일출금가능금액",
+      "ac_nm": "계좌명",
+      "tfnd_amt": "예수금액",
+      "sbt_tl_amt": "대용총액",
+      "tfnd_tl_amt": "예수금총액",
+      "chck_i_amt": "수표입금액",
+      "etc_chck_amt": "기타수표금액",
+      "rgt_sbt_amt": "권리대용금액",
+      "b_mgn_csh": "매수증거금현금",
+      "b_mgn_sbt": "매수증거금대용",
+      "b_mgn_tl_amt": "매수증거금총액",
+      "s_mgn_sbt": "매도증거금대용",
+      "bdy_hld_stk_s_amt": "전일보유주식매도금액",
+      "tdy_hld_stk_s_amt": "금일보유주식매도금액",
+      "nstmt_stk_s_rstr_amt_csh": "미결제주식매도환원금액현금",
+      "nstmt_stk_s_rstr_amt_sbt": "미결제주식매도환원금액대용",
+      "nstmt_stk_s_rstr_amt_tl_amt": "미결제주식매도환원금액총액",
+      "trd_pl": "매매손익",
+      "etc_mgn": "기타증거금",
+      "crdt_dl_mrtg_csh": "신용거래담보현금",
+      "crdt_dl_mrtg_sbt_amt": "신용거래담보대용금",
+      "crdt_dl_mrtg_amt": "신용거래담보금액",
+      "add_mrtgg_csh": "추가담보현금",
+      "add_mrtgg_sbt": "추가담보대용",
+      "add_mrtgg_amt": "추가담보금",
+      "ordr_std_dpstn_csh": "주문기준예탁현금",
+      "ordr_std_dpstn_sbt": "주문기준예탁대용",
+      "ordr_std_dpstn_tl_amt": "주문기준예탁총액",
+      "do_std_dpstn_csh": "인출기준예탁현금",
+      "do_std_dpstn_sbt": "인출기준예탁대용",
+      "do_std_dpstn_tl_amt": "인출기준예탁총액",
+      "do_psbl_csh": "인출가능현금",
+      "do_psbl_sbt": "인출가능대용",
+      "do_psbl_tl_amt": "인출가능총액",
+      "sl_assr_amt": "대주확보금액",
+      "crdt_mgn_csh": "신용증거금현금",
+      "crdt_mgn_sbt": "신용증거금대용",
+      "crdt_mgn_tl_amt": "신용증거금총액",
+      "sprc_sbt_amt": "기준가대용금",
+      "sprc_sbt_tl_amt": "기준가대용총액",
+      "crdt_ordr_psbl_csh": "신용주문가능현금",
+      "crdt_ordr_psbl_sbt": "신용주문가능대용",
+      "crdt_ordr_psbl_tl_amt": "신용주문가능총액",
+      "slf_fncng": "자기융자",
+      "crlt_fncng": "유통융자",
+      "fncng_nd_mrtg_amt": "융자소요담보금액",
+      "fncng_orgnl_mrtg_amt": "융자원담보금액",
+      "slf_sl_rfnd_nd_amt": "자기대주상환소요금",
+      "crlt_sl_rfnd_nd_amt": "유통대주상환소요금",
+      "sl_nd_mrtg": "대주소요담보",
+      "sl_orgnl_mrtg_amt": "대주원담보금액",
+      "etc_mrtg_amt": "기타담보금",
+      "mrtg_shrtg_amt": "담보부족금액",
+      "dpstn_scrt_mrtg_ln_amt": "예탁증권담보대출액",
+      "byng_fnds_ln_amt": "매입자금대출금",
+      "bnd_mrtg_ln_amt": "채권담보대출금액",
+      "sbs_ln_amt": "청약대출금액",
+      "cma_ln_amt": "CMA대출금액",
+      "brwg_nd_mrtg_amt": "대차소요담보금",
+      "tl_ln_amt": "총대출금액",
+      "tl_nd_mrtg_amt": "총소요담보금액",
+      "mrtg_val_tl_amt": "담보평가총액",
+      "mrtg_rt": "담보비율",
+      "brwg_rfnd_nd_amt": "대차상환소요금액",
+      "brwg_orgn_mrtg_amt": "대차원담보금액",
+      "rcvbl_scrts_assr_amt": "미수유가증권확보금",
+      "csh_rcvbl_amt": "현금미수금액",
+      "crdt_itst_npamt_amt": "신용이자미납부금액",
+      "nrfnd_fncng_amt": "미상환융자금액",
+      "etc_lndng_amt": "기타대여금액",
+      "ln_itst_npamt_amt": "대출이자미납부금액",
+      "tl_pymt_amt": "총납입금액",
+      "svng_amt": "저축금액",
+      "nsvng_amt": "비저축금액",
+      "i_amt_psbl_amt": "입금가능금액",
+      "mm_pymt_amt": "월납입금액",
+      "csh_pcnt100": "현금100퍼센트",
+      "csh_pcnt30": "현금30퍼센트",
+      "csh_pcnt40": "현금40퍼센트",
+      "byng_fnds_ln_pcnt100": "매입자금대출100퍼센트",
+      "byng_fnds_ln_mx": "매입자금대출최대",
+      "sl_pcnt100": "대주100퍼센트",
+      "sl_mx": "대주최대",
+      "crdt_pcnt40_pcnt100": "신용40퍼센트100퍼센트",
+      "crdt_pcnt40_mx": "신용40퍼센트최대",
+      "crdt_pcnt50_pcnt100": "신용50퍼센트100퍼센트",
+      "crdt_pcnt50_mx": "신용50퍼센트최대",
+      "krw_exch_amt": "원화환산금액",
+      "brwg_mrtg_csh_est_amt": "대차담보현금설정금",
+      "otr_ogn_tfnd": "타기관예수금",
+      "ndy_tfnd_amt": "익일예수금액",
+      "nxt2_dy_tfnd_amt": "익익일예수금액",
+      "opn_dt": "개설일자",
+      "mtrty_dt": "만기일자",
+      "cc_dt": "해지일자",
+      "unty_cls_cc_dt": "통폐합해지일자",
+      "fnl_pymt_dt": "최종납입일자",
+      "pymt_tno": "납입횟수",
+      "csh_pcnt20": "현금20퍼센트",
+      "s_mrtg_ln_amt": "매도담보대출금액"
+    }
+  },
+  {
+    "code": "SZQM0771",
+    "name": "장운영상태",
+    "category": "국내주식 > 기본시세",
+    "endpoint": "/api/v1/szqm0771",
+    "method": "POST",
+    "fields": [],
+    "output_labels": {
+      "o_lngth": "출길이",
+      "o_clsf": "출구분",
+      "o_msg": "출메시지",
+      "now_dt": "현재일자",
+      "now_tm": "현재시간",
+      "dt": "일자",
+      "wd": "요일",
+      "wd_ccd": "요일구분코드",
+      "b3dt": "전전전일자",
+      "b2dt": "전전일자",
+      "bdt": "전일자",
+      "ndt": "익일자",
+      "n2dt": "익익일자",
+      "n3dt": "익익익일자",
+      "std_bsnss_dt": "기준영업일자",
+      "bfr_bsns_dt": "전영업일자",
+      "next_biz_dt": "익영업일자",
+      "bfr3_ordr_std_dt": "전전전주문기준일자",
+      "bfr2_ordr_std_dt": "전전주문기준일자",
+      "bfr_ordr_std_dt": "전주문기준일자",
+      "ordr_std_dt": "주문기준일자",
+      "nxt_ordr_std_dt": "익주문기준일자",
+      "nxt2_ordr_std_dt": "익익주문기준일자",
+      "nxt3_ordr_std_dt": "익익익주문기준일자",
+      "on_clsng_f": "온라인마감여부",
+      "bsnss_dt": "영업일자",
+      "jb_clsng_f": "업무마감여부",
+      "stk_mkoprt_ccd": "주식장운영구분코드",
+      "bnd_mkoprt_ccd": "채권장운영구분코드",
+      "fts_mkoprt_ccd": "선물장운영구분코드",
+      "opt_mkoprt_ccd": "옵션장운영구분코드",
+      "ksdq_mkoprt_ccd": "코스닥장운영구분코드",
+      "frbrd_mkoprt_ccd": "프리보드장운영구분코드",
+      "rtl_bnd_mkoprt_ccd": "소매채권장운영구분코드",
+      "fnlssn_dy_f": "납회일여부"
+    }
+  }
+]

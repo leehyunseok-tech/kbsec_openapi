@@ -1,0 +1,4 @@
+interface:
+  display_name: "KB Securities Open API"
+  short_description: "Run delegated KB증권 trading workflows"
+  default_prompt: "Use $kbsec-skill to check my KB Securities account balance and holdings."
