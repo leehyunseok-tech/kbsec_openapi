@@ -6,9 +6,9 @@ Codex, Claude Code 같은 에이전트에서 KB증권 Open API를 바로 탐색�
 Agent Skill입니다. 74개 REST API의 필드 명세, 표준 라이브러리 기반 CLI, 주문 dry-run, 그리고
 사용자가 자연어로 위임한 자율 매수/매도 실행 흐름을 함께 묶었습니다.
 
-[BEOKS/tossinvest-skill](https://github.com/BEOKS/tossinvest-skill)과 동일한 구조
-(`SKILL.md` + `references/` + `scripts/`)로 만들어, [vercel-labs/skills](https://github.com/vercel-labs/skills)
-CLI(`npx skills`)로 그대로 설치할 수 있습니다.
+표준 Agent Skill 구조(`SKILL.md` + `references/` + `scripts/`)로 만들어,
+[vercel-labs/skills](https://github.com/vercel-labs/skills) CLI(`npx skills`)로 그대로
+설치할 수 있습니다.
 
 ```bash
 npx skills add leehyunseok-tech/kbsec-skill

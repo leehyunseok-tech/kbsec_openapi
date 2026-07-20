@@ -19,9 +19,7 @@ CLI가 GitHub 저장소를 읽어 `SKILL.md`를 찾고, Claude Code(`.claude/ski
 (`.codex/skills/` 또는 `.agents/skills/`) 등 감지된 에이전트의 스킬 디렉터리에 심볼릭
 링크/복사한다.
 
-## 2. 참고한 예시: BEOKS/tossinvest-skill
-
-`https://github.com/BEOKS/tossinvest-skill` 구조를 그대로 따랐다:
+## 2. agent-skill 구조
 
 ```
 SKILL.md                     — 에이전트 진입점
@@ -32,10 +30,8 @@ scripts/<name>.py            — 표준 라이브러리 기반 CLI
 README.md                    — 저장소 랜딩 페이지 (npx 설치 안내 포함)
 ```
 
-토스증권 스킬은 공식 OpenAPI JSON을 그대로 복사해 번들했지만, KB증권은 단일 OpenAPI
-문서를 공개하지 않는다. 대신 이 프로젝트(`kbsec_api`)가 이미 `docs/api/md/*.md` 74개 파일을
-런타임에 파싱하는 `src/utils/api_spec.py`를 갖고 있어서, 그 파서를 한 번 돌려
-`references/endpoints.json`(코드/카테고리/엔드포인트/필드명/필수여부/선택지)으로 내보내는
+이 프로젝트(`kbsec_api`)가 이미 `docs/api/md/*.md` 74개 파일을 런타임에 파싱하는 `src/utils/api_spec.py`를 갖고 있어서,
+그 파서를 한 번 돌려 `references/endpoints.json`(코드/카테고리/엔드포인트/필드명/필수여부/선택지)으로 내보내는
 방식으로 대체했다. 아래 "5. endpoints.json 갱신 방법"에 재생성 절차가 있다.
 
 ## 3. 로컬에서 먼저 검증
@@ -67,11 +63,11 @@ npx skills list
 `kbsec-skill` 저장소는 **공개(public)** 여야 `npx skills add`로 누구나 설치할 수 있다. 올리기
 전에 반드시 확인:
 
-- [ ] `agent-skill/` 안에 `config/config.py`, 실제 앱키/시크릿, 텔레그램 토큰 등 민감정보가
-      전혀 없다 (이 스킬은 설계상 환경변수만 읽고, 저장소에는 예시/플레이스홀더도 넣지 않았다).
-- [ ] `scripts/kbsec.py`가 자격증명을 로그/출력하지 않는다 (`token` 명령은 기본적으로
-      마스킹된 토큰만 출력한다).
-- [ ] `git status`로 의도치 않은 파일이 섞여 들어가지 않는지 확인한다.
+- [ ]  `agent-skill/` 안에 `config/config.py`, 실제 앱키/시크릿, 텔레그램 토큰 등 민감정보가
+  전혀 없다 (이 스킬은 설계상 환경변수만 읽고, 저장소에는 예시/플레이스홀더도 넣지 않았다).
+- [ ]  `scripts/kbsec.py`가 자격증명을 로그/출력하지 않는다 (`token` 명령은 기본적으로
+  마스킹된 토큰만 출력한다).
+- [ ]  `git status`로 의도치 않은 파일이 섞여 들어가지 않는지 확인한다.
 
 별도 저장소로 분리해서 올리는 절차 (이 프로젝트의 커밋 히스토리를 가져가지 않고, 현재
 `agent-skill/` 내용만 새 저장소의 루트로 복사):
@@ -191,8 +187,8 @@ npx skills use leehyunseok-tech/kbsec-skill --skill kbsec-skill --agent claude-c
 같은 뼈대(`SKILL.md` + `references/workflows.md` + `references/*.json` + `scripts/*.py`)를
 그대로 재사용하면 된다. 브로커마다 달라지는 부분은:
 
-- 인증 방식과 요청/응답 envelope (KB는 `dataHeader`/`dataBody`, Toss는 표준 OAuth2 + 공용
-  `result` envelope)
+- 인증 방식과 요청/응답 envelope (KB는 `dataHeader`/`dataBody`, 다른 브로커는 표준 OAuth2 +
+  공용 `result` envelope)
 - 필드 스펙을 어디서 가져올지 (공식 OpenAPI JSON이 있으면 그대로 복사, 없으면 이번처럼
   기존 프로젝트의 파서를 재사용해 직접 내보낸다)
 - 주문류 API 목록(`MUTATING_CODES`에 해당하는 것) — dry-run 게이트는 반드시 유지한다

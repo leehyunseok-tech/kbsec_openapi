@@ -93,19 +93,20 @@ since doing so for something like an order quantity or price would be actively w
 All 74 business endpoints are under `https://developer.kbsec.com:32484/api/v1/<lowercase-code>`.
 Full field-level detail lives in `references/endpoints.json`; the categories are:
 
-| Category | Examples | Mutating? |
-|---|---|---|
-| 국내주식 > 계좌잔고 | 예수금내역(SSQM0004), 보유주식 조회(SSQM1801), 잔고현황 조회 | No |
-| 국내주식 > 기본시세 | 현재가(IVU10140), 호가(IVU10070), 체결(IVU10080), 차트(IVS11560) | No |
-| 국내주식 > 시세분석 | 거래량 상위(IVU10280), 등락률 상위(IVU10240), 등 순위/랭킹류 | No |
-| 국내주식 > 주문내역 | 체결미체결 조회(SSQM2341), 예약주문 조회 | No |
-| 국내주식 > 주식주문 | 매수(SSAM1802)/매도(SSAM1801)/정정(SSAM1805)/취소(SSAM1806)주문, 소수점 주문 | **Yes** |
-| 국내주식 > 투자정보 | 증시주변자금동향, 세계지수, 환율종합, 업종랭킹 | No |
-| 해외주식 > 계좌잔고 | 매매손익, 해외주식계좌잔고평가조회(SPQM2226) | No |
-| 해외주식 > 기본시세 | 현재가(GSS10030), 호가(GSS10040), 체결(GSA10020), 통합차트(GSC10060) | No |
-| 해외주식 > 시세분석 | 거래량상위(GSA10150), 시가총액상위(GSA10170) | No |
-| 해외주식 > 주문내역 | 주문체결조회(SPQM2103), 체결미체결 조회(SPQM2204) | No |
-| 해외주식 > 주식주문 | 매도_매수(SKAM2101)/정정_취소(SKAM2102)주문, 소수점 주문, 예약주문(미국) | **Yes** |
+
+| Category            | Examples                                                                     | Mutating? |
+| --------------------- | ------------------------------------------------------------------------------ | ----------- |
+| 국내주식 > 계좌잔고 | 예수금내역(SSQM0004), 보유주식 조회(SSQM1801), 잔고현황 조회                 | No        |
+| 국내주식 > 기본시세 | 현재가(IVU10140), 호가(IVU10070), 체결(IVU10080), 차트(IVS11560)             | No        |
+| 국내주식 > 시세분석 | 거래량 상위(IVU10280), 등락률 상위(IVU10240), 등 순위/랭킹류                 | No        |
+| 국내주식 > 주문내역 | 체결미체결 조회(SSQM2341), 예약주문 조회                                     | No        |
+| 국내주식 > 주식주문 | 매수(SSAM1802)/매도(SSAM1801)/정정(SSAM1805)/취소(SSAM1806)주문, 소수점 주문 | **Yes**   |
+| 국내주식 > 투자정보 | 증시주변자금동향, 세계지수, 환율종합, 업종랭킹                               | No        |
+| 해외주식 > 계좌잔고 | 매매손익, 해외주식계좌잔고평가조회(SPQM2226)                                 | No        |
+| 해외주식 > 기본시세 | 현재가(GSS10030), 호가(GSS10040), 체결(GSA10020), 통합차트(GSC10060)         | No        |
+| 해외주식 > 시세분석 | 거래량상위(GSA10150), 시가총액상위(GSA10170)                                 | No        |
+| 해외주식 > 주문내역 | 주문체결조회(SPQM2103), 체결미체결 조회(SPQM2204)                            | No        |
+| 해외주식 > 주식주문 | 매도_매수(SKAM2101)/정정_취소(SKAM2102)주문, 소수점 주문, 예약주문(미국)     | **Yes**   |
 
 Run `python3 scripts/kbsec.py list-endpoints` for the full 76-row table (74 business + token
 issue/revoke), or `--category`/`--search` to filter it. Rows tagged `[LIVE]` are in
@@ -146,8 +147,7 @@ without per-order reconfirmation while that instruction remains active.
 
 Use this loop:
 
-1. Read the current balance, holdings, buying power, open orders (`order-history --status
-   open`), price, and orderbook for the target symbol(s).
+1. Read the current balance, holdings, buying power, open orders (`order-history --status open`), price, and orderbook for the target symbol(s).
 2. Choose the next buy, sell, modify, cancel, wait, or stop action from the delegated
    objective and current data.
 3. Produce a dry run for the exact order mutation (the CLI default — no `--execute`).
@@ -163,22 +163,24 @@ Securities has no sandbox, so every mutation in this loop is real money from the
 
 Domestic order type codes (`ordr_ccd`, used by `--order-type`):
 
-| CLI value | KB code | Meaning |
-|---|---|---|
-| `limit` | `00` | 지정가 |
-| `market` | `03` | 시장가 |
-| `best` | `12` | 최유리지정가 |
-| `priority` | `13` | 최우선지정가 |
-| `mid` | `M3` | 중간가 (정정주문만) |
+
+| CLI value  | KB code | Meaning             |
+| ------------ | --------- | --------------------- |
+| `limit`    | `00`    | 지정가              |
+| `market`   | `03`    | 시장가              |
+| `best`     | `12`    | 최유리지정가        |
+| `priority` | `13`    | 최우선지정가        |
+| `mid`      | `M3`    | 중간가 (정정주문만) |
 
 Market-time codes (`mkt_tm_clsf`, used by `--market-time`):
 
-| CLI value | KB code | Meaning |
-|---|---|---|
-| `regular` | `1` | 정규장 |
-| `pre-close` | `2` | 장개시전시간외종가 |
-| `post-close` | `3` | 장종료후시간외종가 |
-| `single` | `4` | 장종료후시간외단일가 |
+
+| CLI value    | KB code | Meaning              |
+| -------------- | --------- | ---------------------- |
+| `regular`    | `1`     | 정규장               |
+| `pre-close`  | `2`     | 장개시전시간외종가   |
+| `post-close` | `3`     | 장종료후시간외종가   |
+| `single`     | `4`     | 장종료후시간외단일가 |
 
 ```bash
 python3 scripts/kbsec.py buy --symbol 005930 --qty 1 --price 70000
@@ -213,8 +215,7 @@ python3 scripts/kbsec.py call SKAM2101 \
 
 ## Rate Limits
 
-KB Securities does not publish documented per-endpoint rate limits for this API (unlike,
-e.g., Toss Securities' TPS-per-group model). Treat that as "undocumented," not "unlimited":
+KB Securities does not publish documented per-endpoint rate limits for this API. Treat that as "undocumented," not "unlimited":
 poll conservatively, especially inside an autonomous loop, and back off on repeated errors
 rather than retrying tightly.
 
@@ -232,5 +233,4 @@ response body attached.
 removes, or changes an endpoint, this file will drift. There is no automated puller bundled
 here (KB has no public OpenAPI feed to diff against) — regenerating it means re-deriving the
 field tables from KB's current developer-portal documentation and re-exporting in the same
-shape: `{code, name, category, endpoint, method, fields: [{name_en, name_kr, length,
-required, description, choices}], output_labels}`.
+shape: `{code, name, category, endpoint, method, fields: [{name_en, name_kr, length, required, description, choices}], output_labels}`.
