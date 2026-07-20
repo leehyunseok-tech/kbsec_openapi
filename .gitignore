@@ -16,5 +16,11 @@ config/config.py
 config/data/*.json
 logs/
 
+# 통합 런처 run-kbsec-openapi — 리포에 커밋하지 않고 install-project.* 실행 시
+# OS에 맞게 생성된다(.sh는 heredoc, .bat는 base64 디코드). 확장자 없는 링크 포함.
+/run-kbsec-openapi
+/run-kbsec-openapi.sh
+/run-kbsec-openapi.bat
+
 # 로컬 Claude Code 권한/설정 (개인 머신 전용, 팀 공유 대상 아님)
 .claude/

@@ -60,9 +60,72 @@ else
     echo "[OK] config/config.py 생성 (템플릿 복사)"
 fi
 
-# -- 5) 실행 스크립트 권한 ------------------------------------
+# -- 5) 실행 스크립트 권한 + OS 맞춤 통합 런처 생성 -------------
 chmod +x manage/run/run-main.sh manage/run/run-terminal.sh manage/run/run-web.sh 2>/dev/null
-echo "[OK] manage/run/run-*.sh 실행 권한 부여"
+
+# OS 특성에 맞는 통합 런처(run-kbsec-openapi.sh)를 여기서 생성한다.
+# (런처는 리포에 커밋하지 않고 설치 시점에 이 스크립트가 만든다 — .gitignore 처리됨)
+cat > run-kbsec-openapi.sh <<'RUNSH'
+#!/usr/bin/env bash
+# KB증권 Open API 통합 실행 런처 (Unix: macOS / Linux).
+# OS 환경에 맞춰 manage/run/run-*.sh 를 파라미터로 골라 실행한다.
+# 짝이 되는 Windows 런처는 run-kbsec-openapi.bat 이다.
+#
+# 사용법: ./run-kbsec-openapi [main | terminal | web [token]]
+#   main         텔레그램 Agent 실행       → manage/run/run-main.sh
+#   terminal     터미널 클라이언트 실행     → manage/run/run-terminal.sh
+#   web [token]  웹 클라이언트 실행         → manage/run/run-web.sh  (기본값)
+#                token 을 붙이면 run-web.sh token 과 동일 (config/config.py 앱키로 자동 로그인, 로컬 전용)
+#   (옵션 생략)   web 실행 (token 없음)
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RUN_DIR="$SCRIPT_DIR/manage/run"
+
+show_options() {
+  echo "KB증권 Open API 실행 옵션:"
+  echo "  main          텔레그램 Agent 실행"
+  echo "  terminal      터미널 클라이언트 실행"
+  echo "  web [token]   웹 클라이언트 실행 (http://localhost:8000, 기본값)"
+  echo "                └ token: config/config.py 앱키로 자동 로그인 (로컬 전용)"
+}
+
+TARGET="${1:-web}"
+shift 2>/dev/null || true   # 남은 인자는 하위 run-*.sh 로 그대로 전달
+
+case "$TARGET" in
+  main)     DESC="텔레그램 Agent";                        SCRIPT="run-main.sh" ;;
+  terminal) DESC="터미널 클라이언트";                     SCRIPT="run-terminal.sh" ;;
+  web)      DESC="웹 클라이언트 (http://localhost:8000)"; SCRIPT="run-web.sh" ;;
+  -h|--help|help)
+    echo "사용법: run-kbsec-openapi [main|terminal|web] [추가인자...]"
+    echo
+    show_options
+    exit 0
+    ;;
+  *)
+    echo "❌ 알 수 없는 옵션: $TARGET"
+    echo
+    show_options
+    exit 1
+    ;;
+esac
+
+show_options
+echo
+echo "▶ 선택: $TARGET — $DESC 실행 ($SCRIPT)"
+echo
+exec bash "$RUN_DIR/$SCRIPT" "$@"
+RUNSH
+chmod +x run-kbsec-openapi.sh
+
+# 확장자 없이 `./run-kbsec-openapi` 로도 실행되도록 링크(실패 시 복사본) 생성
+if ln -sf run-kbsec-openapi.sh run-kbsec-openapi 2>/dev/null; then
+    :
+else
+    cp -f run-kbsec-openapi.sh run-kbsec-openapi 2>/dev/null && chmod +x run-kbsec-openapi 2>/dev/null
+fi
+echo "[OK] 통합 런처 생성: ./run-kbsec-openapi (및 run-kbsec-openapi.sh)"
 
 echo
 echo "============================================================"
@@ -70,8 +133,9 @@ echo " 설치 완료. 다음 단계:"
 echo "============================================================"
 echo "  1. config/config.py 를 열어 실제 키를 입력하세요"
 echo "     (real_client_key / real_client_secret 은 필수)"
-echo "  2. 아래 중 하나로 실행:"
-echo "       ./manage/run/run-terminal.sh   # 터미널 클라이언트 (가장 빠른 시작)"
-echo "       ./manage/run/run-main.sh       # 텔레그램 봇"
-echo "       ./manage/run/run-web.sh        # 웹 클라이언트 (http://localhost:8000)"
+echo "  2. 통합 런처로 실행 (파라미터로 클라이언트 선택):"
+echo "       ./run-kbsec-openapi            # 웹 클라이언트 (기본, http://localhost:8000)"
+echo "       ./run-kbsec-openapi terminal   # 터미널 클라이언트 (가장 빠른 시작)"
+echo "       ./run-kbsec-openapi main       # 텔레그램 Agent"
+echo "     (개별 스크립트도 그대로 사용 가능: ./manage/run/run-*.sh)"
 echo
