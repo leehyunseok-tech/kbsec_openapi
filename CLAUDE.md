@@ -36,7 +36,7 @@ uv run python -m manage.generate.generate_mst         # mst/origin → 종목마
 
 ## 프롬프트 히스토리 기록 규칙
 
-- 이 프로젝트에서 사용자와 나눈 질문/답변은 `docs/prompt/prompt-history.md`에 순서대로 기록한다.
+- 이 프로젝트에서 사용자와 나눈 질문/답변은 `docs/prompt/prompt_history.md`에 순서대로 기록한다.
 - 새 대화가 시작되어도 이 규칙을 계속 적용하여 해당 파일에 이어서 기록한다.
 - 형식: `## YYYY-MM-DD` 날짜 헤더 아래 `### Q: ...` / `### A: ...` 쌍으로 기록한다.
 

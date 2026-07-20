@@ -24,3 +24,5 @@ logs/
 
 # 로컬 Claude Code 권한/설정 (개인 머신 전용, 팀 공유 대상 아님)
 .claude/
+.idea/
+docs/prompt/
