@@ -31,68 +31,73 @@
       <button class="side-rail" data-panel="guide-panel" title="펼치기">사용 방법</button>
       <div class="side-body">
         <h2 class="side-title">사용 방법 <button class="collapse-h-btn" data-panel="guide-panel" title="접기">⟨⟨</button></h2>
-        <p class="hint">
-          <!-- · 처음이라면 먼저 <a href="/settings.html">설정</a>에서 KB증권 <b>앱키(client_key) / 앱시크릿(client_secret)</b>을 입력하세요 — 저장하면 자동으로 로그인됩니다.<br>
-          · 아래 입력창에 <b>/로 시작하는 명령어</b>를 치면 즉시 실행되고, <b>/ 없이 한국어로</b> 입력하면 AI가 명령어로 바꿔준 뒤 실행 전에 확인을 받습니다 (Claude API 키 설정 필요).<br>
-          · 예시 명령을 <b>클릭하면 입력창에 자동으로 채워집니다.</b><br>
-          · ⚠️ 로그인/토큰은 사용자(브라우저)별로 분리되지만, <b>설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록은 서버 공용</b>입니다 — 여러 사람이 같은 서버를 쓸 때는 자동매매 기능을 조율해서 사용하세요. -->
-          · <a href="/settings.html">설정</a>에 <b>앱키/앱시크릿</b> 저장시 자동 토큰발급.<br>
-          · <b>/명령어</b> + [Enter] 즉시 실행 <br>
-          · <b>자연어 입력</b> + [Enter] AI가 명령어로 바꿔준 뒤 실행 (Claude API 키 설정 필요).<br>
-          · 예시 명령 <b>클릭시 명령창에 입력</b><br>
-          · 하단 <b>전체 API 명령어</b>를 펼치면 API 74개를 전부 클릭으로 실행할 수 있습니다.
-          <!-- · ⚠️ 로그인/토큰은 사용자(브라우저)별로 분리되지만, <b>설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록은 서버 공용</b>입니다 — 여러 사람이 같은 서버를 쓸 때는 자동매매 기능을 조율해서 사용하세요. -->
-        </p>
-        <div class="guide-grid">
-          <div class="guide-card">
-            <b>조회</b>
-            <code>/srch 005930</code>
-            <code>/report</code>
-            <code>/rank</code>
-            <code>/stcd 삼성</code>
-          </div>
-          <div class="guide-card">
-            <b>매매</b>
-            <code>/buy 005930 10</code>
-            <code>/sell 005930</code>
-            <code>/ccl pend</code>
-          </div>
-          <div class="guide-card">
-            <b>자연어 (AI)</b>
-            <code>삼성전자 10주 사줘</code>
-            <code>보유주식 전부 팔아줘</code>
-            <code>보유주식조회 해줘</code>
-          </div>
-          <div class="guide-card">
-            <b>설정/자동매매</b>
-            <code>/stts</code>
-            <code>/익절 5</code>
-            <code>/start trst</code>
-            <code>/stop trst</code>
-          </div>
-          <div class="guide-card">
-            <b>API 직접호출</b>
-            <code>/api list 주문</code>
-            <code>/api SSQM1801</code>
-            <code>/info SSAM1801</code>
-          </div>
-          <div class="guide-card">
-            <b>기타</b>
-            <code>/help</code>
-            <code>/status</code>
-            <code>/log</code>
-          </div>
-        </div>
 
-        <details class="guide" id="direct-cmd-guide">
+        <!-- 1) 전체 API 명령어 트리 (최상단) -->
+        <details class="guide" id="direct-cmd-guide" open>
           <summary>전체 API 명령어 (자동생성, 74개)</summary>
           <p class="hint">
-            <b>국내주식 → 시세분석 → ...</b> 순서로 펼쳐서 원하는 API를 클릭하면 명령 실행 입력창에
-            <code>/{API코드}-{API명} {"파라미터명":"설명"} ...</code> 형태로 채워집니다.
-            <code>{"..":".."}</code> 부분은 실행되는 문법이 아니라 <b>실제 값으로 바꿔 입력하라는 안내</b>입니다.
-            ⚠️ 매수/매도 등 주문 계열 API도 실제 값을 넣으면 그대로 실거래로 실행되니 주의하세요.
+           <!-- <b>국내주식 → 시세분석 → ...</b> 순으로 펼쳐 원하는 API를 클릭하면 -->
+           ⚠️ <b>운영환경에서 </b>매수/매도 등 주문 계열 API는 실제 값 입력 후 실행하면 실거래가 됩니다.
           </p>
           <div id="direct-cmd-tree" class="spec-tree"></div>
+        </details>
+
+        <!-- 2) 기본 명령어 예시 (하단, 접이식) -->
+        <details class="guide" id="guide-examples">
+          <summary>기본 명령어 예시</summary>
+          <p class="hint">
+            · <a href="/settings.html">설정</a>에 <b>앱키/앱시크릿</b> 저장 시 자동 토큰발급.<br>
+            · <b>[/명령어</b>+Enter] 즉시 실행, <br>
+            · <b>[자연어 입력</b>+Enter] AI 변환 후 실행(Claude API 키 필요).<br>
+            · 아래 예시 <b>클릭시 명령창에 입력됩니다.</b>
+          </p>
+          <div class="guide-grid">
+            <details class="guide-card">
+              <summary><b>조회</b></summary>
+              <code>/종목정보 105560</code>
+              <code>/종목검색 KB금융</code>
+              <code>/잔고</code>
+              <code>/순위</code>
+            </details>
+            <details class="guide-card">
+              <summary><b>매매</b></summary>
+              <code>/매수 105560 10</code>
+              <code>/매도 005930</code>
+              <code>/취소 pend</code>
+            </details>
+            <details class="guide-card">
+              <summary><b>자연어 (AI)</b></summary>
+              <code>KB금융 10주 사줘</code>
+              <code>보유주식 전부 팔아줘</code>
+              <code>보유주식조회 해줘</code>
+            </details>
+            <details class="guide-card">
+              <summary><b>설정/자동매매</b></summary>
+              <code>/설정</code>
+              <code>/익절 5</code>
+              <code>/감시시작 트레일링</code>
+              <code>/감시중단 트레일링</code>
+            </details>
+            <details class="guide-card">
+              <summary><b>API 직접호출</b></summary>
+              <code>/api list 주문</code>
+              <code>/api SSQM1801</code>
+              <code>/info SSAM1801</code>
+            </details>
+            <details class="guide-card">
+              <summary><b>기타</b></summary>
+              <code>/도움말</code>
+              <code>/상태</code>
+              <code>/체결기록</code>
+            </details>
+          </div>
+        </details>
+
+        <!-- 3) 종목 검색 (사용 방법 패널 하단으로 이동) -->
+        <details class="guide" id="stock-search-guide" open>
+          <summary>종목 검색</summary>
+          <input id="stock-search" type="text" placeholder="종목명/종목코드/티커 입력" autocomplete="off">
+          <div id="stock-results" class="stock-results hidden"></div>
         </details>
       </div>
     </aside>
@@ -115,21 +120,13 @@
           </div>
 
           <div class="cmd-row">
-            <input id="cmd-input" type="text" placeholder="/help  또는  삼성전자 10주 사줘  (↑/↓: 이전 입력)" autocomplete="off" autofocus>
+            <input id="cmd-input" type="text" placeholder="/help  또는  KB금융 10주 사줘  (↑/↓: 이전 입력)  ·  '/' 입력 시 명령어 목록" autocomplete="off" autofocus>
             <button id="cmd-send">실행</button>
           </div>
+          <!-- "/" 입력 시 매칭되는 한글 명령어 자동완성 드롭다운 (클릭/↑↓+Enter로 선택) -->
+          <div id="cmd-suggest" class="cmd-suggest hidden"></div>
           <div id="stock-detect" class="stock-detect hidden"></div>
         </div>
-      </section>
-
-      <section class="panel resizable">
-        <details class="v-collapse" open>
-          <summary>
-            <span class="v-title">종목 검색</span>
-            <input id="stock-search" type="text" placeholder="종목명 / 종목코드 / 티커 (두 글자 이상)" autocomplete="off">
-          </summary>
-          <div id="stock-results" class="stock-results hidden"></div>
-        </details>
       </section>
     </div>
 
@@ -142,6 +139,17 @@
       </div>
     </aside>
   </main>
+
+  <!-- API 명령 실행 모달 레이어 (트리에서 API 클릭 시 표시, 뒤 배경은 딤 처리) -->
+  <div id="api-form-overlay" class="api-form-overlay hidden">
+    <div class="api-form-modal" role="dialog" aria-modal="true" aria-labelledby="api-form-sub">
+      <div class="api-form-modal-head">
+        <h3 class="api-form-title">명령 실행 <span class="api-form-sub" id="api-form-sub"></span></h3>
+        <button class="api-form-close" id="api-form-close" title="닫기 (Esc)" aria-label="닫기">✕</button>
+      </div>
+      <div id="api-form-body" class="api-form-modal-body"></div>
+    </div>
+  </div>
 
   <script src="/js/api.js"></script>
   <script src="/js/app.js"></script>

@@ -201,7 +201,7 @@ function collectBody() {
 function updateJsonPreview() {
   const payload = {
     dataBody: collectBody(),
-    dataHeader: { ipAddr: "(서버 자동)", macAddr: "(서버 자동)" },
+    dataHeader: { ipAddr: "(openAPI 전송 ipAddr)", macAddr: "(openAPI 전송 macAddr)" },
   };
   jsonPreview.textContent = JSON.stringify(payload, null, 4);
 }

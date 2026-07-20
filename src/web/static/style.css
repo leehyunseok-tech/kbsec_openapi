@@ -213,18 +213,35 @@ details.guide:not([open]) summary::after { transform: rotate(-90deg); }
 .guide-card {
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 14px 16px;
+  padding: 10px 16px;
   background: linear-gradient(180deg, #fffdf7, #fbf9f2);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .guide-card:hover { border-color: var(--kb-yellow-soft); box-shadow: 0 4px 14px rgba(255, 188, 0, 0.12); }
+/* 국내주식/해외주식 API 트리와 동일한 방식(카드 자체가 <details>)으로 클릭 시 펼쳐짐 */
+.guide-card summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.guide-card summary::-webkit-details-marker { display: none; }
+.guide-card summary::before {
+  content: "▸";
+  color: var(--kb-yellow);
+  font-size: 12px;
+  transition: transform 0.15s;
+}
+.guide-card[open] > summary::before { transform: rotate(90deg); }
+.guide-card[open] > summary { margin-bottom: 6px; }
 .guide-card b {
-  display: block;
-  margin-bottom: 8px;
   font-size: 13px;
   color: var(--kb-gray);
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  font-weight: 700;
 }
 .guide-card code {
   display: block;
@@ -238,6 +255,115 @@ details.guide:not([open]) summary::after { transform: rotate(-90deg); }
   transition: background 0.12s, color 0.12s;
 }
 .guide-card code:hover { background: var(--kb-yellow-bg); color: #7a5c00; }
+
+/* ── API 명령 실행 모달 레이어 (트리에서 API 클릭 시 표시) ── */
+.api-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(20, 16, 8, 0.5); /* 뒤 배경 딤 처리 */
+  display: flex;
+  align-items: flex-start;        /* 사용 방법 상단 쪽에 뜨도록 위 정렬 */
+  justify-content: center;
+  padding: 48px 16px 16px;
+  overflow-y: auto;
+}
+.api-form-overlay.hidden { display: none; }
+.api-form-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  background: #fffdf7;
+  border: 1.5px solid var(--kb-yellow-soft);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  animation: apiFormPop 0.14s ease-out;
+}
+@keyframes apiFormPop {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.api-form-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.api-form-title {
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+.api-form-sub { font-size: 12.5px; font-weight: 600; color: var(--kb-gray); font-family: var(--mono); }
+.api-form-close {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.api-form-close:hover { background: #f0ece2; color: #333; }
+.api-form-modal-body { padding: 16px; overflow-y: auto; }
+.api-form-token {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--kb-charcoal-2, #333);
+  background: #f4f1e9;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+.api-form-warn {
+  background: #fdeaea;
+  border: 1px solid #f3c5c3;
+  color: #7f1d1d;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.api-form-actions { margin-top: 12px; }
+.api-form-run {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  background: var(--kb-yellow);
+  color: #3a2e00;
+  cursor: pointer;
+  transition: filter 0.12s;
+}
+.api-form-run:hover { filter: brightness(0.96); }
+.api-form-preview-wrap { margin-top: 10px; }
+.api-form-preview-label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.api-form-preview {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--kb-gray);
+  background: #f4f1e9;
+  border-radius: 8px;
+  padding: 8px 10px;
+  word-break: break-all;
+  line-height: 1.5;
+}
 
 /* ── 명령 입력/출력 ── */
 #output {
@@ -275,6 +401,30 @@ details.guide:not([open]) summary::after { transform: rotate(-90deg); }
   border-color: var(--kb-yellow);
   box-shadow: 0 0 0 3px rgba(255, 188, 0, 0.18);
 }
+
+/* "/" 입력 시 명령 자동완성 드롭다운 */
+.cmd-suggest {
+  margin-top: 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #fffefb;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.cmd-suggest.hidden { display: none; }
+.cmd-suggest-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0ece2;
+}
+.cmd-suggest-row:last-child { border-bottom: none; }
+.cmd-suggest-row:hover, .cmd-suggest-row.active { background: var(--kb-yellow-bg); }
+.cmd-suggest-row .cs-name { font-family: var(--mono); font-weight: 700; color: #7a5c00; flex-shrink: 0; }
+.cmd-suggest-row .cs-desc { color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 button {
   font-size: 14px;
@@ -353,6 +503,7 @@ button.ghost:hover { background: #f1eee6; filter: none; transform: none; box-sha
 .hidden { display: none !important; }
 
 /* ── 종목 검색 ── */
+details.guide > #stock-search { margin-top: 12px; }
 #stock-search {
   width: 100%;
   font-family: var(--mono);
@@ -479,13 +630,20 @@ main.home-layout {
 }
 .home-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
-/* 명령 실행 패널 — 패널은 고정 높이(기본 640px, 우측하단 드래그로 조절)이고,
-   검은 출력창(#output)이 남는 공간 전부를 채운다(flex-basis 0 + min-height 0).
-   실행 결과가 쌓여도 패널이 늘어나지 않고 출력창 내부에서 스크롤되며(자동 추적),
-   입력창/인식된 종목 칸은 항상 패널 하단에 붙어 있는다.
+/* 명령 실행 패널 — API 로그 패널(.log-side)과 동일하게 화면 세로 전체를 채운다
+   (sticky + calc(100vh - 110px), 우측하단 드래그로 조절 가능). 검은 출력창(#output)이
+   남는 공간 전부를 채운다(flex-basis 0 + min-height 0). 실행 결과가 쌓여도 패널이
+   늘어나지 않고 출력창 내부에서 스크롤되며(자동 추적), 입력창/인식된 종목 칸은 항상
+   패널 하단에 붙어 있는다.
    details를 쓰지 않는 이유: details는 flex 컨테이너가 되지 못해(브라우저가 display를
    블록으로 강제) 높이 전달 체인이 끊긴다 — 접기는 .v-head 클릭(JS 토글)로 처리. */
-.cmd-panel { display: flex; flex-direction: column; height: 640px; }
+.cmd-panel {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  position: sticky;
+  top: 76px;
+}
 .cmd-panel .v-head { flex: 0 0 auto; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }
 .cmd-panel .v-arrow { color: var(--muted); font-size: 12px; margin-left: 4px; transition: transform 0.2s; }
 
@@ -511,7 +669,7 @@ main.home-layout {
   margin-top: 0;
 }
 .cmd-panel #output { flex: 1 1 0; min-height: 0; max-height: none; }
-.cmd-panel #pending, .cmd-panel .cmd-row, .cmd-panel .stock-detect { flex: 0 0 auto; }
+.cmd-panel #pending, .cmd-panel .cmd-row, .cmd-panel .cmd-suggest, .cmd-panel .stock-detect { flex: 0 0 auto; }
 /* 접힘: 제목 줄만 남긴다 (author !important가 드래그가 남긴 인라인 height보다 우선) */
 .cmd-panel.v-collapsed { height: auto !important; resize: none; }
 .cmd-panel.v-collapsed .v-body { display: none; }
@@ -740,7 +898,31 @@ main.spec-layout {
 .spec-field-row .desc { color: var(--muted); font-size: 11.5px; margin-top: 3px; line-height: 1.5; }
 
 details.spec-json { margin-top: 14px; }
-details.spec-json summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--kb-gray); }
+/* 클릭해서 접었다 펼치는 요소임을 명확히 — 캐럿 + 노란 알약(pill) 버튼 형태 */
+details.spec-json summary {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7a5c00;
+  padding: 7px 12px;
+  border: 1.5px solid var(--kb-yellow-soft);
+  border-radius: 8px;
+  background: var(--kb-yellow-bg);
+  list-style: none;
+  transition: background 0.12s, border-color 0.12s;
+}
+details.spec-json summary::-webkit-details-marker { display: none; }
+details.spec-json summary::before {
+  content: "▸";
+  color: var(--kb-yellow);
+  font-size: 12px;
+  transition: transform 0.15s;
+}
+details.spec-json[open] summary::before { transform: rotate(90deg); }
+details.spec-json summary:hover { background: #fff2cc; border-color: var(--kb-yellow); }
 details.spec-json pre {
   font-family: var(--mono);
   font-size: 12.5px;

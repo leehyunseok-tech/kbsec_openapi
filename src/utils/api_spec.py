@@ -29,9 +29,11 @@ from src.api.client import call_business_api
 from src.paths import DOCS_API_DIR, API_LIST_JSON  # noqa: F401 — DOCS_API_DIR은 spec_browser.py가 여기서 재수입
 
 _LENGTH_RE = re.compile(r"\((\d+)\)")
-# "1:오프라인 2:온라인", "01-매도, 02-매수", "1: 외화기준, 2: 원화기준" 등
-# "<코드><:또는-><라벨>" 반복 패턴을 찾는다. 코드 앞뒤가 한글/영문/숫자면 오탐이므로 제외.
-_CHOICE_RE = re.compile(r"(?<![0-9A-Za-z가-힣])([A-Za-z0-9]{1,4})\s*[:\-]\s*")
+# "1:오프라인 2:온라인", "01-매도, 02-매수", "0.전체 1.일반 2.소수점" 등
+# "<코드><구분자><라벨>" 반복 패턴을 찾는다. 구분자는 : - . 를 인정하되, 점(.)은 뒤에
+# (공백 후) 숫자가 오면 소수점("1.0", "0.5%")으로 보고 구분자에서 제외해 오탐을 막는다.
+# 코드 앞이 한글/영문/숫자면 오탐이므로 제외.
+_CHOICE_RE = re.compile(r"(?<![0-9A-Za-z가-힣])([A-Za-z0-9]{1,4})\s*(?::|-|\.(?!\s*\d))\s*")
 
 
 @dataclass(frozen=True)

@@ -172,8 +172,11 @@ let cmdHistory = loadStore(HISTORY_STORE_KEY);
 let historyIndex = -1; // -1 = 히스토리 탐색 중 아님
 let historyDraft = "";
 
-async function sendCommand() {
-  const text = input.value.trim();
+// 명령 문자열을 실제로 실행하는 공통 함수. 입력창(#cmd-input)뿐 아니라
+// "사용 방법" 패널의 API 폼(guide-tree.js)에서도 window.runCommandText로 호출한다 —
+// 폼 실행 시 원시 명령을 입력창에 남기지 않고 곧바로 실행하기 위함.
+async function runCommandText(text) {
+  text = (text || "").trim();
   if (!text) return;
   if (cmdHistory[cmdHistory.length - 1] !== text) {
     cmdHistory.push(text);
@@ -182,7 +185,6 @@ async function sendCommand() {
   }
   historyIndex = -1;
   historyDraft = "";
-  input.value = "";
   invalidateDetect(); // 전송 시점 — 인식 요청이 아직 응답 전이면 그 결과가 늦게 도착해 칩을 되살리지 않도록 무효화
   appendOutput(">>> " + text, "cmd-echo");
   setBusy(true);
@@ -195,9 +197,18 @@ async function sendCommand() {
   } finally {
     setBusy(false);
     refreshStatusBadge();
-    input.focus();
     if (typeof pollApiLog === "function") pollApiLog(); // 실행 직후 로그 즉시 갱신
   }
+}
+window.runCommandText = runCommandText;
+
+async function sendCommand() {
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  hideCmdSuggest();
+  await runCommandText(text);
+  input.focus();
 }
 
 function confirmPendingVisible() {
@@ -206,6 +217,29 @@ function confirmPendingVisible() {
 
 sendBtn.addEventListener("click", sendCommand);
 input.addEventListener("keydown", (e) => {
+  // 명령 자동완성 드롭다운이 열려 있으면 ↑/↓/Enter/Esc 를 우선 처리
+  if (cmdSuggestVisible()) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setCmdSuggestActive((cmdSuggestActive + 1) % cmdSuggestItems.length);
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setCmdSuggestActive((cmdSuggestActive - 1 + cmdSuggestItems.length) % cmdSuggestItems.length);
+      return;
+    }
+    if (e.key === "Enter" && cmdSuggestActive >= 0) {
+      e.preventDefault();
+      pickCmdSuggest(cmdSuggestItems[cmdSuggestActive].name);
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      hideCmdSuggest();
+      return;
+    }
+  }
   if (e.key === "Enter") {
     // 확인 프롬프트가 떠 있고 입력창이 비어 있으면 Enter = 실행 (버튼을 누를 필요 없음)
     if (confirmPendingVisible() && input.value.trim() === "") {
@@ -234,6 +268,89 @@ input.addEventListener("keydown", (e) => {
     input.value = historyIndex === -1 ? historyDraft : cmdHistory[cmdHistory.length - 1 - historyIndex];
   }
 });
+
+// ── 명령 자동완성 ("/" 입력 시 매칭 한글 명령어 드롭다운) ──────────────
+// "/" 로 시작하고 아직 공백이 없는 동안(명령 토큰만 입력 중) 접두어로 명령을 필터해
+// 입력칸 하단에 보여주고, 클릭/↑↓+Enter 로 고르면 "/명령 " 으로 채운다.
+const cmdSuggest = document.getElementById("cmd-suggest");
+let commandList = []; // [{name, usage, desc, category, aliases}]
+let cmdSuggestItems = []; // [{el, name}]
+let cmdSuggestActive = -1;
+
+apiGet("/api/commands")
+  .then((r) => { commandList = r.commands || []; })
+  .catch(() => {});
+
+function cmdSuggestVisible() {
+  return cmdSuggest && !cmdSuggest.classList.contains("hidden") && cmdSuggestItems.length > 0;
+}
+
+function hideCmdSuggest() {
+  if (!cmdSuggest) return;
+  cmdSuggest.classList.add("hidden");
+  cmdSuggest.innerHTML = "";
+  cmdSuggestItems = [];
+  cmdSuggestActive = -1;
+}
+
+function updateCmdSuggest() {
+  if (!cmdSuggest) return;
+  const m = input.value.match(/^\/(\S*)$/); // 슬래시 + 공백 없는 토큰만 입력 중일 때만
+  if (!m) {
+    hideCmdSuggest();
+    return;
+  }
+  const prefix = m[1];
+  const matches = commandList.filter((c) => c.name.startsWith(prefix));
+  if (matches.length === 0) {
+    hideCmdSuggest();
+    return;
+  }
+  cmdSuggest.innerHTML = "";
+  cmdSuggestItems = [];
+  cmdSuggestActive = -1;
+  matches.forEach((c) => {
+    const row = document.createElement("div");
+    row.className = "cmd-suggest-row";
+    const nm = document.createElement("span");
+    nm.className = "cs-name";
+    nm.textContent = "/" + c.name;
+    const ds = document.createElement("span");
+    ds.className = "cs-desc";
+    ds.textContent = c.desc || "";
+    row.appendChild(nm);
+    row.appendChild(ds);
+    // mousedown + preventDefault: 입력창 blur 전에 처리해 포커스를 유지한 채 채운다
+    row.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      pickCmdSuggest(c.name);
+    });
+    cmdSuggest.appendChild(row);
+    cmdSuggestItems.push({ el: row, name: c.name });
+  });
+  cmdSuggest.classList.remove("hidden");
+}
+
+function setCmdSuggestActive(idx) {
+  if (cmdSuggestActive >= 0 && cmdSuggestItems[cmdSuggestActive]) {
+    cmdSuggestItems[cmdSuggestActive].el.classList.remove("active");
+  }
+  cmdSuggestActive = idx;
+  if (cmdSuggestActive >= 0 && cmdSuggestItems[cmdSuggestActive]) {
+    const el = cmdSuggestItems[cmdSuggestActive].el;
+    el.classList.add("active");
+    el.scrollIntoView({ block: "nearest" });
+  }
+}
+
+function pickCmdSuggest(name) {
+  input.value = "/" + name + " ";
+  hideCmdSuggest();
+  input.focus();
+}
+
+input.addEventListener("input", updateCmdSuggest);
+input.addEventListener("blur", () => setTimeout(hideCmdSuggest, 120)); // 바깥 클릭 시 닫기(행 클릭은 mousedown로 먼저 처리)
 
 // 사용법 카드의 예시 명령 클릭 → 입력창에 채우기
 document.querySelectorAll(".guide-card code").forEach((el) => {
@@ -406,7 +523,7 @@ stockSearchInput.addEventListener("keydown", (e) => {
 // ── 자연어 명령의 종목 인식 표시 ───────────────────────────────────────
 // "/"로 시작하지 않는 입력(자연어 → AI 변환 대상)을 타이핑하는 동안, 문장 속
 // 종목명/티커/6자리 코드를 로컬 마스터로 인식해 입력창 아래에 칩으로 보여준다.
-// 예: "삼성전자 10주 사줘" → [삼성전자 005930 · KOSPI]
+// 예: "KB금융 10주 사줘" → [KB금융 105560 · KOSPI]
 const detectBox = document.getElementById("stock-detect");
 let detectTimer = null;
 let detectSeq = 0;
