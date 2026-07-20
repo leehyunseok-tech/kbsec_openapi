@@ -128,7 +128,7 @@ def _handle_overseas_buy(overseas_stock, args, session):
             if max_amount <= 0:
                 raise ValueError
         except (ValueError, IndexError):
-            return f"❌ 사용법: /buy {ticker} max {{금액(USD)}}"
+            return f"❌ 사용법: /매수 {ticker} max {{금액(USD)}}"
 
         price_info = get_overseas_current_price(overseas_stock.exchange, ticker, session.access_token, session.host_url)
         if price_info is None:
@@ -191,9 +191,9 @@ def handle_buy(args, session):
     buy 명령 처리 - 종목 매수주문 (국내 6자리 코드 또는 해외 티커)
 
     사용법:
-      /buy {종목코드} {수량}         - 시장가 매수 (해외는 현재가 조회 후 지정가로 제출)
-      /buy {종목코드} {수량} {지정가} - 지정가 매수
-      /buy {종목코드} max {금액}     - 금액 범위 내 최대 매수 (국내는 원화, 해외는 USD)
+      /매수 {종목코드} {수량}         - 시장가 매수 (해외는 현재가 조회 후 지정가로 제출)
+      /매수 {종목코드} {수량} {지정가} - 지정가 매수
+      /매수 {종목코드} max {금액}     - 금액 범위 내 최대 매수 (국내는 원화, 해외는 USD)
 
     해외 종목은 종목코드 자리에 티커(예: IONQ)를 입력하세요. mst/api/openapi_field_foren-us.mst에
     등록된 티커인지로 국내/해외를 판별한다(자연어 입력 시엔 src/utils/stock_resolver.py가 미리
@@ -202,9 +202,9 @@ def handle_buy(args, session):
     if len(args) < 2:
         return (
             "사용법:\n"
-            "/buy {종목코드} {수량}          - 시장가 매수 (해외는 현재가 조회 후 지정가로 제출)\n"
-            "/buy {종목코드} {수량} {지정가} - 지정가 매수\n"
-            "/buy {종목코드} max {금액}      - 금액 범위 내 최대 매수 (국내: 원화, 해외: USD)"
+            "/매수 {종목코드} {수량}          - 시장가 매수 (해외는 현재가 조회 후 지정가로 제출)\n"
+            "/매수 {종목코드} {수량} {지정가} - 지정가 매수\n"
+            "/매수 {종목코드} max {금액}      - 금액 범위 내 최대 매수 (국내: 원화, 해외: USD)"
         )
 
     if not session.is_logged_in():
@@ -219,7 +219,7 @@ def handle_buy(args, session):
     if overseas_stock:
         return _handle_overseas_buy(overseas_stock, args, session)
 
-    return f"❌ '{stock_code}'는 국내 6자리 종목코드도, 등록된 해외 티커도 아닙니다.\n/stcd {stock_code} 로 종목명을 확인해보세요."
+    return f"❌ '{stock_code}'는 국내 6자리 종목코드도, 등록된 해외 티커도 아닙니다.\n/종목검색 {stock_code} 로 종목명을 확인해보세요."
 
 
 def _handle_domestic_buy(stock_code, args, session):
@@ -234,7 +234,7 @@ def _handle_domestic_buy(stock_code, args, session):
             if max_amount <= 0:
                 raise ValueError
         except (ValueError, IndexError):
-            return "❌ 사용법: /buy {종목코드} max {금액}"
+            return "❌ 사용법: /매수 {종목코드} max {금액}"
 
         price_info, err = _get_current_price(stock_code, session)
         if err:

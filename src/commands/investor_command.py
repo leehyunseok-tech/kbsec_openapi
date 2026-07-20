@@ -16,7 +16,7 @@ def handle_investor(args, session, send_photo_fn=None):
     """
     investor {종목코드} {개월수} 명령 처리
 
-    사용법: /investor {종목코드} {개월수}  (예: /investor 005930 3)
+    사용법: /투자자 {종목코드} {개월수}  (예: /투자자 005930 3)
     """
     if not session.is_logged_in():
         return "❌ 로그인이 필요합니다.\nlogin real로 로그인하세요."

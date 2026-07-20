@@ -110,7 +110,7 @@ KB증권 OpenAPI를 활용한 텔레그램/터미널/웹 기반 자동매매 Age
 
 | 기능 | 상태 | 담당 파일 | 비고 |
 |---|---|---|---|
-| `/` 유무로 커맨드·자연어 구분 | ✅ | `src/run/main.py`/`src/run/terminal.py`의 `process_command`/`_dispatch_direct` | `/`로 시작하면 AI를 거치지 않고 곧바로 실행(예: `/buy 005930 10`), `/` 없으면 단어가 실제 명령어와 같아도 무조건 자연어로 취급해 Claude로 보낸다(예: `buy 005930 10`도 자연어). rsv 예약 재실행처럼 이미 해석된 문자열을 신뢰하고 즉시 실행해야 하는 내부 호출은 `_dispatch_direct()`로 이 판단 자체를 우회한다 |
+| `/` 유무로 커맨드·자연어 구분 | ✅ | `src/run/main.py`/`src/run/terminal.py`의 `process_command`/`_dispatch_direct` | `/`로 시작하면 AI를 거치지 않고 곧바로 실행(예: `/매수 105560 10`), `/` 없으면 단어가 실제 명령어와 같아도 무조건 자연어로 취급해 Claude로 보낸다(예: `buy 005930 10`도 자연어). rsv 예약 재실행처럼 이미 해석된 문자열을 신뢰하고 즉시 실행해야 하는 내부 호출은 `_dispatch_direct()`로 이 판단 자체를 우회한다 |
 | 자연어 → 명령어 변환 (Claude API) | ✅ | `src/utils/ai_command_converter.py` | `docs/command_guide_for_ai.md`를 시스템 프롬프트에 삽입, ephemeral 프롬프트 캐싱 |
 | 종목명 → 종목코드 로컬 해석 | ✅ | `src/utils/stock_resolver.py` | `buy`/`sell`/`srch`/`investor`는 Claude가 종목코드를 직접 추측하지 않고 종목명을 그대로 넘기면, `mst/api/` 로컬 검색으로 결정적으로 코드를 확정한다(코드 오추측 방지). `buy`/`sell`/`srch`는 국내 검색이 비면 해외(미국) 티커로 한 번 더 검색한다(`investor`는 해외 API 자체가 없어 국내 전용 유지). 검색 결과가 2건 이상이면 번호 선택 세션(`StockSelectionPending`)으로 사용자에게 후보를 보여주고 선택받는다. `rsv`에 중첩된 명령은 예외(기존처럼 Claude가 직접 코드로 변환) |
 | 실행 전 확인/선택 UI | ✅ | `src/utils/command_executor.py`, `src/run/command_pipeline.py`, `src/utils/terminal_ui.py`, `src/web/static/js/app.js` | 확인은 **터미널에서 Enter(그 외 키는 취소)**, **텔레그램에서 ✅/❌ 인라인 버튼 탭**, **웹에서 화면 버튼 클릭**으로 한다. 후보가 여럿인 선택(종목명/API명/`/api` 필드값)은 터미널은 화살표 `↑↓`+Enter 또는 번호 직접 입력, 텔레그램은 후보별 인라인 버튼 탭, 웹은 후보별 버튼 클릭으로 고른다. 세션 해석 로직 자체는 세 클라이언트가 공유하는 텍스트("y"/"n"/1-based 번호) 기반이라 변하지 않고, 그 텍스트를 어떻게 입력받는지만 클라이언트별로 다르다 |

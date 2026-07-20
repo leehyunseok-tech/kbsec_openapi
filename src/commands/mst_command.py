@@ -17,5 +17,5 @@ def handle_mst(args, session):
 코스닥: {len(kosdaq):,}종목
 해외주식: {len(overseas):,}종목
 
-종목명 검색: /stcd {{키워드}}
+종목명 검색: /종목검색 {{키워드}}
 파일 위치: mst/api/"""

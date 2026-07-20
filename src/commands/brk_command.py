@@ -58,9 +58,9 @@ def handle_brk(args, session, monitor=None):
 def _usage():
     return """📋 돌파매수 감시 명령어
 
-brk rate {상승률}            기준 상승률 설정 (예: brk rate 3.5)
-brk add {종목코드} {명령어}  감시 종목 추가 (예: brk add 005930 buy 005930 10)
-brk list                     감시 목록 조회
-brk remove {일련번호}        항목 제거
-start brk                    감시 시작
-stop brk                     감시 중단"""
+돌파매수 rate {상승률}            기준 상승률 설정 (예: 돌파매수 rate 3.5)
+돌파매수 add {종목코드} {명령어}  감시 종목 추가 (예: 돌파매수 add 005930 매수 005930 10)
+돌파매수 list                     감시 목록 조회
+돌파매수 remove {일련번호}        항목 제거
+감시시작 돌파매수                 감시 시작
+감시중단 돌파매수                 감시 중단"""

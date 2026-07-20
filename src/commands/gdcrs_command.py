@@ -8,11 +8,11 @@ def handle_gdcrs(args, session):
     gdcrs 명령 처리
 
     사용법:
-      /gdcrs intv {단기} {장기}      분봉 주기 설정 (예: /gdcrs intv 5 20)
-      /gdcrs add {종목} {금액}       목록에 추가
-      /gdcrs list                    목록 조회
-      /gdcrs remove {번호}           항목 삭제
-      /gdcrs clear                   목록 전체 비우기
+      /골든크로스 intv {단기} {장기}      분봉 주기 설정 (예: /골든크로스 intv 5 20)
+      /골든크로스 add {종목} {금액}       목록에 추가
+      /골든크로스 list                    목록 조회
+      /골든크로스 remove {번호}           항목 삭제
+      /골든크로스 clear                   목록 전체 비우기
     """
     if not args:
         return _show_menu()
@@ -34,19 +34,19 @@ def handle_gdcrs(args, session):
 def _show_menu():
     return """📊 골든크로스(GDCRS) 설정
 
-/gdcrs intv {단기} {장기}      분봉 주기 설정 (1~60, 예: /gdcrs intv 5 20)
-/gdcrs add {종목} {금액}       목록에 추가 (예: /gdcrs add 005930 100000)
-/gdcrs list                    목록 조회
-/gdcrs remove {번호}           항목 삭제
-/gdcrs clear                   목록 전체 비우기
+/골든크로스 intv {단기} {장기}      분봉 주기 설정 (1~60, 예: /골든크로스 intv 5 20)
+/골든크로스 add {종목} {금액}       목록에 추가 (예: /골든크로스 add 005930 100000)
+/골든크로스 list                    목록 조회
+/골든크로스 remove {번호}           항목 삭제
+/골든크로스 clear                   목록 전체 비우기
 
-📌 주의: /start gdcrs 명령으로 모니터링을 시작하세요.
-(참고: /ddcrs 전용 설정 명령은 없으며, ddcrs는 gdcrs와 동일한 분봉 주기(기본 5/20분)를 사용합니다.)"""
+📌 주의: /감시시작 골든크로스 명령으로 모니터링을 시작하세요.
+(참고: /데드크로스 전용 설정 명령은 없으며, ddcrs는 gdcrs와 동일한 분봉 주기(기본 5/20분)를 사용합니다.)"""
 
 
 def _handle_intv(args):
     if len(args) < 2:
-        return "❌ 사용법: /gdcrs intv {단기} {장기}\n예: /gdcrs intv 5 20"
+        return "❌ 사용법: /골든크로스 intv {단기} {장기}\n예: /골든크로스 intv 5 20"
     try:
         intv_short, intv_long = int(args[0]), int(args[1])
         if not (1 <= intv_short <= 60) or not (1 <= intv_long <= 60):
@@ -66,7 +66,7 @@ def _handle_intv(args):
 
 def _handle_add(args):
     if len(args) < 2:
-        return "❌ 사용법: /gdcrs add {종목코드} {금액}\n예: /gdcrs add 005930 100000"
+        return "❌ 사용법: /골든크로스 add {종목코드} {금액}\n예: /골든크로스 add 005930 100000"
     stk_cd = args[0].strip()
     try:
         amount = int(args[1])
@@ -92,7 +92,7 @@ def _handle_list():
     settings = SettingsManager.load_settings()
     stocks = settings.get("gdcrs", {}).get("stocks", [])
     if not stocks:
-        return "📭 골든크로스 목록이 비어있습니다.\n\n/gdcrs add로 종목을 추가하세요."
+        return "📭 골든크로스 목록이 비어있습니다.\n\n/골든크로스 add로 종목을 추가하세요."
     intv_short, intv_long = settings.get("gdcrs", {}).get("intv_short", 5), settings.get("gdcrs", {}).get("intv_long", 20)
     lines = [f"📊 골든크로스 모니터링 목록\n\n분봉 설정: {intv_short}분 × {intv_long}분\n추적 종목: {len(stocks)}개\n"]
     lines.extend(f"{i}. {s.get('code', 'N/A')}   |   {s.get('amount', 0):,}원" for i, s in enumerate(stocks, 1))
@@ -101,7 +101,7 @@ def _handle_list():
 
 def _handle_remove(args):
     if not args:
-        return "❌ 사용법: /gdcrs remove {번호}\n예: /gdcrs remove 1"
+        return "❌ 사용법: /골든크로스 remove {번호}\n예: /골든크로스 remove 1"
     try:
         idx = int(args[0]) - 1
     except ValueError:

@@ -23,13 +23,13 @@ def handle_ccl(args, session):
     ccl 명령 처리 - 주문 취소
 
     사용법:
-      /ccl pend  - 미체결 주문 전체 취소
+      /취소 pend  - 미체결 주문 전체 취소
     """
     if not session.is_logged_in():
         return "❌ 먼저 로그인을 해야 합니다.\n/login real을 입력하세요."
 
     if not args or args[0].lower() != "pend":
-        return "사용법: /ccl pend - 미체결 주문 전체 취소"
+        return "사용법: /취소 pend - 미체결 주문 전체 취소"
 
     today = datetime.now().strftime("%Y%m%d")
     # inq_clsf는 2026-07-17 재수출 명세에서 INPUT에서 빠졌지만 운영 검증된 페이로드 유지를 위해 extra로 전송.

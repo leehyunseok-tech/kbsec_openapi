@@ -94,6 +94,7 @@ KB증권 REST API를 활용한 텔레그램/터미널/웹 기반 자동매매 �
 4. `src/web/client.py`의 `WebClient.commands` 딕셔너리에도 동일하게 등록 (트리플 클라이언트 아키텍처 — `main.py`/`terminal.py`/`web/client.py`는 같은 핸들러를 공유해야 함)
 5. **`docs/command_guide_for_ai.md`에 해당 명령어 섹션 추가/수정** — 이 문서는 `src/utils/ai_command_converter.py`가 Claude API 시스템 프롬프트에 그대로 삽입하는 실제 런타임 참조 문서다. 갱신하지 않으면 AI가 자연어를 잘못된 명령어로 변환한다.
 6. `docs/features.md`의 해당 기능 상태도 필요시 갱신
+7. **`src/commands/command_meta.py`의 `COMMANDS_META`에 한글 명령 항목 추가** — 명령어는 **한글이 기본, 영문은 숨김 별칭** 체계다(`login`과 저수준 `/api`·`/call`·`/info`·`/list`만 영문 예외). 각 클라이언트는 `self.commands`(영문 키)를 만든 뒤 `self.commands.update(korean_command_map(self.commands))` 한 줄로 한글 별칭을 일괄 등록한다. `command_meta.py`는 이 한글↔영문 매핑의 단일 소스이자, 웹 "/" 자동완성 드롭다운(`GET /api/commands`)의 데이터 소스다. 새 명령을 추가하면 여기에도 등록해야 자동완성·한글 별칭이 반영된다. (AI 변환기는 계속 영문을 출력하고 별칭으로 실행되므로 `docs/command_guide_for_ai.md`는 영문 기준을 유지한다.)
 
 **예외 — `commands` 딕셔너리를 거치지 않는 명령들**: `/call`·`/info`·`/list`(저수준 직접 호출)와 `/{API코드}-{API명}` 형태의 API 전체 자동 실행 커맨드 74개는 위 2~4번(`commands` 딕셔너리 등록)을 따르지 않는다. 이들은 각 클라이언트 `_dispatch_direct()`의 "알 수 없는 명령어" 폴백 직전에서 하드코딩 분기(`/call`류) 또는 동적 판정(`src/utils/direct_api_command.py`의 `resolve_direct_command`)으로 처리된다. 74개 전용 커맨드는 `docs/api/api-list.json` + `docs/api/md/*.md`만 읽어 `api_spec.py` 로직을 재사용하므로, 명세가 추가/변경되면 코드 수정 없이 자동으로 새 커맨드가 생긴다. 이들은 5번(`docs/command_guide_for_ai.md`)에도 **의도적으로 등록하지 않는다** — AI 자연어 변환이 이 토큰을 스스로 만들어 실거래 주문을 잘못 실행하는 것을 막기 위함. 사람이 읽는 요약은 `docs/개발환경/command_summary.md` 9절에 있다.
 

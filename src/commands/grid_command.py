@@ -55,9 +55,9 @@ def handle_grid(args, session, monitor=None):
 def _usage():
     return """📋 그리드 트레이딩 명령어
 
-grid add {종목코드} {기준가} {간격} {주문금액} {최대단계}   항목 추가
-  예: grid add 005930 75000 2 100000 3
-grid list                                                    목록 조회
-grid remove {일련번호}                                       항목 제거
-start grid                                                   감시 시작
-stop grid                                                    감시 중단"""
+그리드 add {종목코드} {기준가} {간격} {주문금액} {최대단계}   항목 추가
+  예: 그리드 add 005930 75000 2 100000 3
+그리드 list                                                    목록 조회
+그리드 remove {일련번호}                                       항목 제거
+감시시작 그리드                                                감시 시작
+감시중단 그리드                                                감시 중단"""

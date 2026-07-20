@@ -70,6 +70,7 @@ from src.commands.api_command import handle_api
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils.api_spec import load_api_spec, describe_spec, search_api_entries, full_blank_body, execute_api_call
 from src.utils.direct_api_command import resolve_direct_command, execute_direct_command
+from src.commands.command_meta import korean_command_map, AUTOTRADE_FEATURE_ALIASES, AUTOTRADE_FEATURES_KR
 from src.utils.ai_command_converter import convert_natural_to_commands
 from src.utils import terminal_ui
 from src.utils.command_executor import (
@@ -161,6 +162,9 @@ class TerminalClient(CommandPipelineMixin):
             "stop": self.handle_command_stop,
             "power": self.handle_command_power,
         }
+        # 한글 명령 등록: command_meta의 한글 이름을 같은 핸들러로 매핑 (영문 키는 별칭으로 유지)
+        self.commands.update(korean_command_map(self.commands))
+        self.commands["종료"] = self.handle_command_quit  # /종료 는 인자 없이 즉시 종료 (/power off 와 별개)
 
     @staticmethod
     def _notify(message):
@@ -274,23 +278,29 @@ class TerminalClient(CommandPipelineMixin):
 
     def handle_command_power(self, args):
         if not args or args[0].lower() != "off":
-            return "사용법: /power off"
+            return "사용법: /power off  (또는 /종료)"
+        self.running = False
+        return "👋 프로그램이 종료됩니다."
+
+    def handle_command_quit(self, args):
+        """/종료 — 인자 없이 즉시 종료. (오작동 방지 가드가 있는 /power off 와 별개 진입점)"""
         self.running = False
         return "👋 프로그램이 종료됩니다."
 
     def handle_command_start(self, args):
         if not args:
-            return f"❌ 사용법: /start {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시시작 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "start")
 
     def handle_command_stop(self, args):
         if not args:
-            return f"❌ 사용법: /stop {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시중단 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "stop")
 
     def _dispatch_monitor(self, feature, action):
+        feature = AUTOTRADE_FEATURE_ALIASES.get(feature, feature)  # 한글 전략명(골든크로스 등) → 내부키
         if feature not in _AUTOTRADE_FEATURES:
-            return f"❌ 알 수 없는 기능: {feature}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 알 수 없는 전략: {feature}\n\n전략: {AUTOTRADE_FEATURES_KR}"
 
         if feature == "brk":
             monitor = self.brk_monitor
@@ -319,7 +329,7 @@ class TerminalClient(CommandPipelineMixin):
                 self.hold_monitor = HoldingsMonitor(self.session, self._notify)
             monitor = self.hold_monitor
         else:
-            return f"❌ 알 수 없는 기능: {feature}"
+            return f"❌ 알 수 없는 전략: {feature}"
 
         return monitor.start() if action == "start" else monitor.stop()
 

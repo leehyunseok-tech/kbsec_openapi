@@ -65,11 +65,11 @@ def handle_wave(args, session, monitor=None):
 def _usage():
     return """📋 분할매매 명령어
 
-wave set buy {a} {b} {c} sell {d} {e} {f}   퍼센티지 설정
-  예: wave set buy 3 6 2 sell 3 6 2
-wave view                                     설정 조회
-wave add {종목코드} {투자금액}               감시 종목 추가
-wave list                                     목록 조회
-wave remove {일련번호}                        항목 제거
-start wave                                    감시 시작
-stop wave                                     감시 중단"""
+분할매매 set buy {a} {b} {c} sell {d} {e} {f}   퍼센티지 설정
+  예: 분할매매 set buy 3 6 2 sell 3 6 2
+분할매매 view                                     설정 조회
+분할매매 add {종목코드} {투자금액}               감시 종목 추가
+분할매매 list                                     목록 조회
+분할매매 remove {일련번호}                        항목 제거
+감시시작 분할매매                                 감시 시작
+감시중단 분할매매                                 감시 중단"""

@@ -53,6 +53,7 @@ from src.commands.trst_command import handle_trst
 from src.commands.investor_command import handle_investor
 from src.commands.api_command import handle_api
 from src.utils.direct_api_command import resolve_direct_command, execute_direct_command
+from src.commands.command_meta import korean_command_map, AUTOTRADE_FEATURE_ALIASES, AUTOTRADE_FEATURES_KR
 from src.msgr.telegram.tel_send import send_document, send_photo
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils.session import SessionManager
@@ -163,6 +164,9 @@ class WebClient(CommandPipelineMixin):
             "start": self.handle_command_start,
             "stop": self.handle_command_stop,
         }
+        # 한글 명령 등록: command_meta의 한글 이름을 같은 핸들러로 매핑 (영문 키는 별칭으로 유지)
+        # 웹에는 종료(power)가 없다 — 브라우저에서 서버를 끄면 다른 사용자에게 영향을 주기 때문.
+        self.commands.update(korean_command_map(self.commands))
 
     # ── 알림 큐 (모니터 콜백 → 프론트 폴링) ─────────────────────────────
     def _notify(self, message):
@@ -362,17 +366,18 @@ class WebClient(CommandPipelineMixin):
 
     def handle_command_start(self, args):
         if not args:
-            return f"❌ 사용법: /start {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시시작 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "start")
 
     def handle_command_stop(self, args):
         if not args:
-            return f"❌ 사용법: /stop {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시중단 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "stop")
 
     def _dispatch_monitor(self, feature, action):
+        feature = AUTOTRADE_FEATURE_ALIASES.get(feature, feature)  # 한글 전략명(골든크로스 등) → 내부키
         if feature not in _AUTOTRADE_FEATURES:
-            return f"❌ 알 수 없는 기능: {feature}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 알 수 없는 전략: {feature}\n\n전략: {AUTOTRADE_FEATURES_KR}"
 
         if feature == "brk":
             monitor = self.brk_monitor
@@ -401,7 +406,7 @@ class WebClient(CommandPipelineMixin):
                 self.hold_monitor = HoldingsMonitor(self.session, self._notify)
             monitor = self.hold_monitor
         else:
-            return f"❌ 알 수 없는 기능: {feature}"
+            return f"❌ 알 수 없는 전략: {feature}"
 
         return monitor.start() if action == "start" else monitor.stop()
 

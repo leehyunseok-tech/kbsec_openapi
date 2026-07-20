@@ -42,6 +42,7 @@ from src.commands.gdcrs_command import handle_gdcrs
 from src.commands.trst_command import handle_trst
 from src.commands.investor_command import handle_investor
 from src.commands.api_command import handle_api
+from src.commands.command_meta import korean_command_map, AUTOTRADE_FEATURE_ALIASES, AUTOTRADE_FEATURES_KR
 from src.utils.direct_api_command import resolve_direct_command, execute_direct_command
 from src.msgr.telegram.tel_send import send_document, send_photo
 from src.run.command_pipeline import CommandPipelineMixin
@@ -70,78 +71,79 @@ _AUTOTRADE_FEATURES = ("stls", "gdcrs", "ddcrs", "trst", "hold", "brk", "wave", 
 HELP_TEXT = """🤖 KB증권 Open API Agent - 사용 가능한 명령어
 
 ℹ️  / 로 시작하면 아래 명령어로 즉시 실행되고, / 없이 입력하면 자연어로 인식되어
-   AI가 명령어로 변환한 뒤 확인을 거쳐 실행됩니다 (예: "삼성전자 10주 사줘").
+   AI가 명령어로 변환한 뒤 확인을 거쳐 실행됩니다 (예: "KB금융 10주 사줘").
+   명령어는 한글이 기본이며, 기존 영문 명령(srch/buy 등)도 그대로 사용할 수 있습니다.
 
 ━━━━━━━━━━━━━━━
 📝 인증 및 상태
 /login real            로그인 (운영환경 — KB증권 개발환경(모의투자)은 아직 미제공)
-/status                현재 로그인 상태 확인
+/상태                  현재 로그인 상태 확인
 
 ━━━━━━━━━━━━━━━
 📊 조회
-/srch {종목코드}        종목 현재가/기본정보 조회 (예: /srch 005930)
-/rank                  상위 종목 랭킹 메뉴
-/rank {1~4}            거래대금/등락률/거래량/업종 상위
-/report 또는 /r         계좌 현황(보유종목+미체결) 조회
-/mst                   종목마스터 로드 현황
-/stcd {키워드}          종목명 키워드 검색 (예: /stcd 삼성)
+/종목정보 {종목코드}    종목 현재가/기본정보 조회 (예: /종목정보 105560)
+/순위                  상위 종목 랭킹 메뉴
+/순위 {1~4}            거래대금/등락률/거래량/업종 상위
+/잔고                  계좌 현황(보유종목+미체결) 조회
+/종목마스터            종목마스터 로드 현황
+/종목검색 {키워드}      종목명 키워드 검색 (예: /종목검색 KB금융)
 
 ━━━━━━━━━━━━━━━
 💰 매매
-/buy {종목코드} {수량}                시장가 매수
-/buy {종목코드} {수량} {지정가}       지정가 매수
-/buy {종목코드} max {금액}            금액 범위 내 최대 매수
-/sell all                             보유 전체 종목 시장가 매도
-/sell {종목코드}                      전량 매도 (시장가)
-/sell {종목코드} {수량} [{지정가}]    수량 지정 매도
-/ccl pend                             미체결 주문 전체 취소
+/매수 {종목코드} {수량}                시장가 매수
+/매수 {종목코드} {수량} {지정가}       지정가 매수
+/매수 {종목코드} max {금액}            금액 범위 내 최대 매수
+/매도 all                             보유 전체 종목 시장가 매도
+/매도 {종목코드}                      전량 매도 (시장가)
+/매도 {종목코드} {수량} [{지정가}]    수량 지정 매도
+/취소 pend                            미체결 주문 전체 취소
 
 ━━━━━━━━━━━━━━━
 ⚙️  설정
-/mkhr [{시작} {종료}]   장 시간 조회/설정
+/장시간 [{시작} {종료}]  장 시간 조회/설정
 /익절 [{퍼센티지}]      익절 기준 조회/설정
 /손절 [{퍼센티지}]      손절 기준 조회/설정
-/time {초} cancel|market  주문 타임아웃 설정
-/cooldown {시간}        매도 후 재매수 금지 시간
-/blacklist add|list|remove  블랙리스트 관리
-/mxhold {개수}          최대 보유 종목 수
-/stts                  전체 설정값 조회
+/타임아웃 {초} cancel|market  주문 타임아웃 설정
+/쿨다운 {시간}          매도 후 재매수 금지 시간
+/금지종목 add|list|remove  매매 금지 종목 관리
+/최대보유 {개수}        최대 보유 종목 수
+/설정                  전체 설정값 조회
 
 ━━━━━━━━━━━━━━━
 📅 예약 / 기록
-/rsv {시간} {명령어}    매일 반복 예약
-/rsv once {시간} {명령어}  한 번만 예약
-/rsv list / remove      예약 조회/삭제
-/log [{일수}]           체결 내역 CSV 파일 전송
-/anss [{일수}]          체결 내역 AI 분석 (Claude)
-/investor {종목코드} {개월수}  투자자별 누적 순매수 차트
+/예약 {시간} {명령어}   매일 반복 예약
+/예약 once {시간} {명령어}  한 번만 예약
+/예약 list / remove     예약 조회/삭제
+/체결기록 [{일수}]      체결 내역 CSV 파일 전송
+/분석 [{일수}]          체결 내역 AI 분석 (Claude)
+/투자자 {종목코드} {개월수}  투자자별 누적 순매수 차트
 
 ━━━━━━━━━━━━━━━
-🔧 API 직접호출
-/api {API코드}          docs/api/md 명세 기반 API 직접 호출 (API 직접호출)
-/api info {API코드}     실행 전 파라미터 미리보기, 실행하지 않음 (API 직접호출)
-/api list [키워드]      코드/API명/업무구분으로 검색 (API 직접호출)
+🔧 API 직접호출 (개발자용 — 영문 유지)
+/api {API코드}          docs/api/md 명세 기반 API 직접 호출
+/api info {API코드}     실행 전 파라미터 미리보기, 실행하지 않음
+/api list [키워드]      코드/API명/업무구분으로 검색
 
 ━━━━━━━━━━━━━━━
 🤖 자동매매 (폴링 기반, 09:00~15:30)
-/gdcrs intv|add|list|remove|clear   골든크로스 설정
-/ddcrs                              데드크로스 (설정은 gdcrs 분봉 공유)
-/trst [{하락율} {최소수익률}]        트레일링 스탑 설정
-/brk rate|add|list|remove           돌파매수 설정
-/wave set|view|add|list|remove      분할매매 설정
-/grid add|list|remove               그리드 트레이딩 설정
-/start {stls|gdcrs|ddcrs|trst|hold|brk|wave|grid}   감시 시작
-/stop {stls|gdcrs|ddcrs|trst|hold|brk|wave|grid}    감시 중단
+/골든크로스 intv|add|list|remove|clear   골든크로스 설정
+/데드크로스                             데드크로스 (설정은 골든크로스 분봉 공유)
+/트레일링 [{하락율} {최소수익률}]        트레일링 스탑 설정
+/돌파매수 rate|add|list|remove          돌파매수 설정
+/분할매매 set|view|add|list|remove      분할매매 설정
+/그리드 add|list|remove                 그리드 트레이딩 설정
+/감시시작 {전략}        감시 시작 (전략: 골든크로스|데드크로스|트레일링|돌파매수|분할매매|그리드|손절매|보유감시)
+/감시중단 {전략}        감시 중단
 ※ 조건검색식 실시간거래(jggs)·VI감시(vi)·테마(theme)·공매도(short/loan)는
    KB API에 대응 API가 없어 지원하지 않습니다.
 
 ━━━━━━━━━━━━━━━
 🛠️  기타
-/help                  도움말 표시
-/power off             봇 종료
+/도움말                도움말 표시
+/종료                  봇 종료 (터미널/텔레그램)
 
 💡 자연어 입력도 지원합니다 (Claude API 키 설정 시).
-예: "삼성전자 10주 사줘"
+예: "KB금융 10주 사줘"
 ━━━━━━━━━━━━━━━
 """
 
@@ -210,6 +212,9 @@ class TelegramBot(CommandPipelineMixin):
             "stop": self.handle_command_stop,
             "power": self.handle_command_power,
         }
+        # 한글 명령 등록: command_meta의 한글 이름을 같은 핸들러로 매핑 (영문 키는 별칭으로 유지)
+        self.commands.update(korean_command_map(self.commands))
+        self.commands["종료"] = self.handle_command_quit  # /종료 는 인자 없이 즉시 종료 (/power off 와 별개)
         self.last_executed_schedules = {}
 
     def handle_command_login(self, args):
@@ -307,17 +312,18 @@ class TelegramBot(CommandPipelineMixin):
 
     def handle_command_start(self, args):
         if not args:
-            return f"❌ 사용법: /start {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시시작 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "start")
 
     def handle_command_stop(self, args):
         if not args:
-            return f"❌ 사용법: /stop {{기능}}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 사용법: /감시중단 {{전략}}\n\n전략: {AUTOTRADE_FEATURES_KR}"
         return self._dispatch_monitor(args[0].lower(), "stop")
 
     def _dispatch_monitor(self, feature, action):
+        feature = AUTOTRADE_FEATURE_ALIASES.get(feature, feature)  # 한글 전략명(골든크로스 등) → 내부키
         if feature not in _AUTOTRADE_FEATURES:
-            return f"❌ 알 수 없는 기능: {feature}\n\n지원: {', '.join(_AUTOTRADE_FEATURES)}"
+            return f"❌ 알 수 없는 전략: {feature}\n\n전략: {AUTOTRADE_FEATURES_KR}"
 
         if feature == "brk":
             monitor = self.brk_monitor
@@ -346,13 +352,18 @@ class TelegramBot(CommandPipelineMixin):
                 self.hold_monitor = HoldingsMonitor(self.session, send_message)
             monitor = self.hold_monitor
         else:
-            return f"❌ 알 수 없는 기능: {feature}"
+            return f"❌ 알 수 없는 전략: {feature}"
 
         return monitor.start() if action == "start" else monitor.stop()
 
     def handle_command_power(self, args):
         if not args or args[0].lower() != "off":
-            return "사용법: /power off"
+            return "사용법: /power off  (또는 /종료)"
+        send_message("👋 봇이 종료됩니다.")
+        sys.exit(0)
+
+    def handle_command_quit(self, args):
+        """/종료 — 인자 없이 즉시 종료. (오작동 방지 가드가 있는 /power off 와 별개 진입점)"""
         send_message("👋 봇이 종료됩니다.")
         sys.exit(0)
 
@@ -384,7 +395,7 @@ class TelegramBot(CommandPipelineMixin):
             return self._handle_ai_commands(commands, chat_id)
         if error:
             return f"❌ {error}"
-        return f"❌ '{text}'를 이해하지 못했습니다.\n\n💡 팁: /help로 명령어를 확인하거나, 자연어로 요청하세요.\n예: '삼성전자 10주 사줘'"
+        return f"❌ '{text}'를 이해하지 못했습니다.\n\n💡 팁: /help로 명령어를 확인하거나, 자연어로 요청하세요.\n예: 'KB금융 10주 사줘'"
 
     def _buttons_for_session(self, session):
         """

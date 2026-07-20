@@ -53,14 +53,14 @@ def handle_login(args, session):
 유효기간: {format_duration(expires_in)}
 유효시간: {expires_at.strftime(_DATETIME_FMT) if expires_at else 'N/A'} 까지
 
-/status 명령으로 상태를 확인할 수 있습니다."""
+/상태 명령으로 상태를 확인할 수 있습니다."""
     else:
         error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
         return f"""❌ {env_name} 로그인 실패
 
 오류: {error_msg}
 
-/help를 입력하여 도움말을 확인하세요."""
+/도움말을 입력하여 도움말을 확인하세요."""
 
 
 def handle_status(args, session):

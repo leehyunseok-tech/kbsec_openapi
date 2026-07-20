@@ -198,6 +198,17 @@ def get_pending(request: Request, response: Response):
     return {"pending": client.describe_pending_session()}
 
 
+@app.get("/api/commands")
+def get_commands():
+    """명령 실행 입력칸의 "/" 자동완성용 한글 명령어 목록 (로그인 불필요, 정적).
+
+    src/commands/command_meta.py 의 COMMANDS_META 를 그대로 노출한다 — 프론트엔드
+    (app.js)가 "/{접두어}" 입력 시 name 접두어 매칭에 사용한다."""
+    from src.commands.command_meta import COMMANDS_META
+
+    return {"commands": COMMANDS_META}
+
+
 # ── 토큰 재발급 / 로그아웃 ─────────────────────────────────────────────
 
 
@@ -273,7 +284,7 @@ def stock_search(q: str = "", exact: str = ""):
 
 @app.get("/api/stock/detect")
 def stock_detect(text: str = ""):
-    """자유 문장(자연어 명령) 속 종목 인식 — '삼성전자 10주 사줘' → 삼성전자(005930)."""
+    """자유 문장(자연어 명령) 속 종목 인식 — 'KB금융 10주 사줘' → KB금융(105560)."""
     stocks = stock_master.detect_in_text(text, limit=5)
     return {
         "stocks": [

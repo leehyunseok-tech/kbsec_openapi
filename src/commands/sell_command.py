@@ -74,7 +74,7 @@ def _handle_overseas_sell(overseas_stock, args, session):
         return f"❌ {ticker}은(는) 블랙리스트 종목입니다."
 
     if len(args) < 2:
-        return f"❌ 해외 종목은 수량을 반드시 입력해야 합니다.\n사용법: /sell {ticker} {{수량}} [{{지정가}}]"
+        return f"❌ 해외 종목은 수량을 반드시 입력해야 합니다.\n사용법: /매도 {ticker} {{수량}} [{{지정가}}]"
 
     try:
         quantity = int(args[1])
@@ -119,10 +119,10 @@ def handle_sell(args, session):
     sell 명령 처리 - 종목 매도주문 (국내 6자리 코드 또는 해외 티커)
 
     사용법:
-      /sell all                        - 보유 전체 종목 시장가 매도 (국내만 해당)
-      /sell {종목코드}                 - 전량 매도 (국내만; 시장가)
-      /sell {종목코드} {수량}          - 시장가 매도 (해외는 현재가 조회 후 지정가로 제출)
-      /sell {종목코드} {수량} {지정가} - 지정가 매도
+      /매도 all                        - 보유 전체 종목 시장가 매도 (국내만 해당)
+      /매도 {종목코드}                 - 전량 매도 (국내만; 시장가)
+      /매도 {종목코드} {수량}          - 시장가 매도 (해외는 현재가 조회 후 지정가로 제출)
+      /매도 {종목코드} {수량} {지정가} - 지정가 매도
 
     해외 종목은 종목코드 자리에 티커(예: IONQ)를 입력하고, 수량을 반드시 명시해야 합니다
     (보유수량 자동조회 미지원 — "sell IONQ" 전량 매도 불가, "sell IONQ 5"처럼 입력).
@@ -133,10 +133,10 @@ def handle_sell(args, session):
     if not args:
         return (
             "❌ 사용법:\n"
-            "/sell all                        - 보유 전체 종목 시장가 매도 (국내만 해당)\n"
-            "/sell {종목코드}                 - 전량 매도 (국내만)\n"
-            "/sell {종목코드} {수량}          - 시장가 매도\n"
-            "/sell {종목코드} {수량} {지정가} - 지정가 매도"
+            "/매도 all                        - 보유 전체 종목 시장가 매도 (국내만 해당)\n"
+            "/매도 {종목코드}                 - 전량 매도 (국내만)\n"
+            "/매도 {종목코드} {수량}          - 시장가 매도\n"
+            "/매도 {종목코드} {수량} {지정가} - 지정가 매도"
         )
 
     if args[0].lower() == "all":
@@ -151,7 +151,7 @@ def handle_sell(args, session):
     if overseas_stock:
         return _handle_overseas_sell(overseas_stock, args, session)
 
-    return f"❌ '{stock_code}'는 국내 6자리 종목코드도, 등록된 해외 티커도 아닙니다.\n/stcd {stock_code} 로 종목명을 확인해보세요."
+    return f"❌ '{stock_code}'는 국내 6자리 종목코드도, 등록된 해외 티커도 아닙니다.\n/종목검색 {stock_code} 로 종목명을 확인해보세요."
 
 
 def _handle_domestic_sell(stock_code, args, session):

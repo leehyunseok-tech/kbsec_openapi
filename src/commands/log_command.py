@@ -15,15 +15,15 @@ def handle_log(args, session, send_document_fn=None):
     log 명령 처리 - 지정한 날짜의 체결 내역 CSV 파일 전송
 
     사용법:
-      /log        → 당일
-      /log 3      → 3일 전
+      /체결기록        → 당일
+      /체결기록 3      → 3일 전
     """
     days_ago = 0
     if args:
         try:
             days_ago = abs(int(args[0]))
         except ValueError:
-            return "❌ 사용법: /log {일수}\n예: /log 0 (오늘), /log 3 (3일 전)"
+            return "❌ 사용법: /체결기록 {일수}\n예: /체결기록 0 (오늘), /체결기록 3 (3일 전)"
 
     path, date_label = _resolve_log_path(days_ago)
     if not path.exists():

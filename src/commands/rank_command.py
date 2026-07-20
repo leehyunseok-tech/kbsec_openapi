@@ -20,11 +20,11 @@ def handle_rank(args, session, execute_command=None):
     rank 명령 처리 - 상위 종목 랭킹 조회
 
     사용법:
-      /rank            - 메뉴 표시
-      /rank 1          - 거래대금상위 Top 20
-      /rank 2          - 등락률상위 Top 20
-      /rank 3          - 거래량상위 Top 20
-      /rank 4          - 업종랭킹
+      /순위            - 메뉴 표시
+      /순위 1          - 거래대금상위 Top 20
+      /순위 2          - 등락률상위 Top 20
+      /순위 3          - 거래량상위 Top 20
+      /순위 4          - 업종랭킹
     """
     if not session.is_logged_in():
         return "❌ 먼저 로그인을 해야 합니다.\n/login real을 입력하세요."
@@ -53,10 +53,10 @@ def handle_rank(args, session, execute_command=None):
 def _show_menu():
     return """📊 종목 랭킹 조회
 
-1️⃣  /rank 1   →  💰 거래대금상위
-2️⃣  /rank 2   →  📈 등락률상위
-3️⃣  /rank 3   →  📊 거래량상위
-4️⃣  /rank 4   →  🏭 업종랭킹"""
+1️⃣  /순위 1   →  💰 거래대금상위
+2️⃣  /순위 2   →  📈 등락률상위
+3️⃣  /순위 3   →  📊 거래량상위
+4️⃣  /순위 4   →  🏭 업종랭킹"""
 
 
 def _format_stock_rank(name, result):

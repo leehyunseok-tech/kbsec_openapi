@@ -19,10 +19,10 @@ def handle_srch(args, session):
     """
     srch 명령 처리 - 종목 현재가/기본정보 조회 (국내 6자리 코드 또는 해외 티커)
 
-    사용법: /srch {종목코드}  (예: /srch 005930, /srch IONQ)
+    사용법: /종목정보 {종목코드}  (예: /종목정보 105560, /종목정보 IONQ)
     """
     if not args:
-        return "사용법: /srch {종목코드}\n예: /srch 005930 (국내)  /srch IONQ (해외)"
+        return "사용법: /종목정보 {종목코드}\n예: /종목정보 105560 (국내)  /종목정보 IONQ (해외)"
 
     if not session.is_logged_in():
         return "❌ 먼저 로그인을 해야 합니다.\n/login real을 입력하세요."
@@ -39,10 +39,10 @@ def handle_srch(args, session):
     return f"""❌ '{stock_code}'는 국내 6자리 종목코드도, 등록된 해외 티커도 아닙니다.
 
 예시:
-/srch 005930  → 삼성전자
-/srch IONQ    → 아이온큐
+/종목정보 105560  → KB금융 (국내)
+/종목정보 IONQ    → 아이온큐
 
-/stcd {stock_code} 로 종목명을 확인해보세요."""
+/종목검색 {stock_code} 로 종목명을 확인해보세요."""
 
 
 def _handle_domestic_srch(stock_code, session):
