@@ -6,7 +6,7 @@
 </p>
 <p align="center"><sub>왼쪽: 웹 브라우저 실행 화면 · 오른쪽: 터미널 실행 화면</sub></p>
 
-KB증권 [OpenAPI](https://developer.kbsec.com)(REST, 74개 API)를 활용한 **텔레그램 기반 자동매매 시스템**입니다.
+KB증권 [OpenAPI](https://developer.kbsec.com)(REST, 74개 API)를 활용한 **자동매매 시스템**입니다.
 텔레그램/터미널/웹 브라우저에서 명령어(또는 자연어)로 조회·매매·자동매매 전략을 실행할 수 있습니다. API 호출 코드는
 명세서(md)로부터 **자동 생성**되어, 명세가 바뀌어도 스크립트 재실행만으로 갱신됩니다.
 
@@ -20,11 +20,11 @@ KB증권 [OpenAPI](https://developer.kbsec.com)(REST, 74개 API)를 활용한 **
 
 Git이나 GitHub을 몰라도 괜찮습니다. 아래 링크를 클릭하면 소스 코드 전체가 압축파일(zip)로 바로 다운로드됩니다.
 
-**➡️ [소스 코드 다운로드 (zip)](https://github.com/leehyunseok-tech/kbsec_openapi_trading/archive/refs/heads/master.zip)**
+**➡️ [소스 코드 다운로드 (zip)](https://github.com/leehyunseok-tech/kbsec_openapi_trading/archive/refs/heads/main.zip)**
 
-1. 위 링크를 클릭하면 `kbsec_openapi_trading-master.zip` 파일이 바로 다운로드됩니다(별도 로그인/가입 불필요).
+1. 위 링크를 클릭하면 `kbsec_openapi_trading-main.zip` 파일이 바로 다운로드됩니다(별도 로그인/가입 불필요).
 2. 다운로드된 zip 파일을 **마우스 오른쪽 클릭 → "압축 풀기"**(Windows) 또는 더블클릭(macOS)으로 압축을 풉니다.
-3. 압축이 풀린 `kbsec_openapi_trading-master` 폴더로 들어갑니다. **이후 모든 명령/스크립트는 이 폴더 안에서 실행합니다.**
+3. 압축이 풀린 `kbsec_openapi_trading-main` 폴더로 들어갑니다. **이후 모든 명령/스크립트는 이 폴더 안에서 실행합니다.**
 4. 아래 "1. 원클릭 설치"로 이어서 진행하세요.
 
 > 💡 Git에 익숙하다면 `git clone https://github.com/leehyunseok-tech/kbsec_openapi_trading.git`으로 받아도 동일합니다.
@@ -39,6 +39,33 @@ manage\install\install-project.bat      # Windows
 ```
 
 설치가 끝나면 `config/config.py`에 실제 키만 채우고 `manage/run/run-*.bat`/`manage/run/run-*.sh`로 바로 실행할 수 있습니다. 이미 설치된 환경에서 다시 실행해도 안전합니다(있는 것은 건너뜀). 수동으로 설치하려면 아래 2~3단계를 따르세요.
+
+> 💡 **설치가 끝나면 프로젝트 최상단에 통합 런처 `run-kbsec-openapi.bat`(Windows)/`run-kbsec-openapi.sh`(macOS·Linux)가 자동으로 생성됩니다** (저장소에는 커밋되지 않는 로컬 생성물입니다). 뒤에 나오는 "실행 스크립트 (bat/sh)" 표의 개별 스크립트(`manage/run/run-*.*`)를 그대로 감싸는 상위 래퍼로, 매번 `manage\run\...` 경로를 치지 않고 프로젝트 루트에서 바로 실행할 수 있게 해줍니다. 인자로 `web`/ `main`/`terminal`을 받으며, 생략하면 기본값은 `web`입니다.
+>
+> ```bash
+> # 설치즉시 확인 방법
+> # config/config.py 에 client_key/client_secret 입력 후 실행
+>
+> # Windows
+> run-kbsec-openapi.bat web token # 로그인(토큰발급)상태로 웹화면 실행
+> # macOS / Linux
+> ./run-kbsec-openapi.sh web token # 로그인(토큰발급)상태로 웹화면 실행
+>
+> # 통합 런처  실행 방법
+> # Windows
+> run-kbsec-openapi.bat web
+> run-kbsec-openapi.bat main
+> run-kbsec-openapi.bat terminal
+> run-kbsec-openapi.bat            # 인자 생략 → web과 동일
+>
+> # macOS / Linux
+> ./run-kbsec-openapi.sh web
+> ./run-kbsec-openapi.sh main
+> ./run-kbsec-openapi.sh terminal
+> ./run-kbsec-openapi.sh           # 인자 생략 → web과 동일
+> ```
+>
+> `web` 뒤에 `token`을 추가로 붙이면(`run-kbsec-openapi.bat web token` / `./run-kbsec-openapi.sh web token`) `config/config.py`에 채운 키로 웹 화면이 자동 로그인되어 바로 뜹니다 — 로컬 1인 사용 전용이니 자세한 주의사항은 뒤에 나오는 "🌐 웹 클라이언트 사용법" 섹션을 참고하세요.
 
 ### 2. 사전 요구사항
 
@@ -106,14 +133,15 @@ uv run python -m src.run.web
 
 모든 실행/설치 스크립트는 `manage/` 아래(운영 스크립트 폴더, 자세한 구조는 [docs/개발환경/manage.md](docs/개발환경/manage.md) 참고)에 모여 있습니다.
 
-| 스크립트 | 대상 OS | 역할 | 실행 대상 |
-|---|---|---|---|
-| `manage/run/run-terminal.bat` | Windows 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `manage/run/run-main.bat` | Windows 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
-| `manage/run/run-web.bat` | Windows 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
-| `manage/run/run-terminal.sh` | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `manage/run/run-main.sh` | macOS·Linux 전용 | 텔레그램 Agent 실행 | `src/run/main.py` |
-| `manage/run/run-web.sh` | macOS·Linux 전용 | 웹 클라이언트 실행 | `src/run/web.py` |
+
+| 스크립트                      | 대상 OS           | 역할                   | 실행 대상             |
+| ------------------------------- | ------------------- | ------------------------ | ----------------------- |
+| `manage/run/run-terminal.bat` | Windows 전용      | 터미널 클라이언트 실행 | `src/run/terminal.py` |
+| `manage/run/run-main.bat`     | Windows 전용      | 텔레그램 Agent 실행    | `src/run/main.py`     |
+| `manage/run/run-web.bat`      | Windows 전용      | 웹 클라이언트 실행     | `src/run/web.py`      |
+| `manage/run/run-terminal.sh`  | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
+| `manage/run/run-main.sh`      | macOS·Linux 전용 | 텔레그램 Agent 실행    | `src/run/main.py`     |
+| `manage/run/run-web.sh`       | macOS·Linux 전용 | 웹 클라이언트 실행     | `src/run/web.py`      |
 
 ```bash
 # Windows (탐색기에서 더블클릭해도 됨)
@@ -147,41 +175,43 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 
 ## 📁 어떤 파일을 봐야 하나요? (파일 가이드)
 
-| 알고 싶은 것                                             | 봐야 할 파일                                                                                                             |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **전체 API 목록** (코드/이름/URL)                  | [docs/api/api-list.md](docs/api/api-list.md) — 사람/AI용 표[docs/api/api-list.json](docs/api/api-list.json) — 프로그램용 |
-| **특정 API의 상세 명세** (파라미터/응답 필드/예시) | [docs/api/md/](docs/api/md/) 아래 해당 API 코드로 시작하는 `.md` 파일예: `GSS10030-현재가-*.md`                       |
-| **API를 호출하는 파이썬 함수**                     | [src/api/](src/api/) 아래 카테고리별 모듈 (아래 표 참고)                                                                          |
-| **어떤 코드가 어떤 모듈에 있는지**                 | [src/api/registry.py](src/api/registry.py)의 `REGISTRY` 또는 CLI의 `list` 명령                                                |
-| **인증(토큰 발급) 로직**                           | [src/api/auth.py](src/api/auth.py)                                                                                                |
-| **공통 요청 봉투(dataHeader/dataBody) 구성**       | [src/api/client.py](src/api/client.py)                                                                                            |
-| **앱키/시크릿 설정**                               | [config/config.py](config/config.py) (없으면 `config.example.py` 복사)                                                  |
-| **터미널에서 바로 테스트**                         | [src/run/terminal.py](src/run/terminal.py) (또는 `manage/run/run-terminal.bat`/`manage/run/run-terminal.sh`로 바로 실행)                                      |
-| **텔레그램 Agent 원클릭 실행**                     | `manage/run/run-main.bat`(Windows) / `manage/run/run-main.sh`(macOS·Linux)                                                                     |
-| **웹 브라우저에서 사용**                           | `manage/run/run-web.bat`/`manage/run/run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)              |
-| **코드 생성 방법/규칙**                            | [manage/generate/generate_api_client.py](manage/generate/generate_api_client.py), [docs/api/README.md](docs/api/README.md)               |
-| **개발 환경(uv 등) 안내**                          | [docs/개발환경/개발환경.md](docs/개발환경/개발환경.md)                                                                        |
-| **슬래시(`/`) 명령어 요약/예시**                    | [docs/개발환경/command_summary.md](docs/개발환경/command_summary.md)                                                        |
-| **운영/관리 스크립트(`manage/`) 설명·실행 시점** | [docs/개발환경/manage.md](docs/개발환경/manage.md)                                                                  |
-| **텔레그램 Agent 명령어 전체 목록**                | [src/run/main.py](src/run/main.py)의 `HELP_TEXT`, 또는 Agent/CLI에서 `help` 입력                                                      |
-| **명령 핸들러 구현체**                             | [src/commands/](src/commands/) — 파일 1개 = 명령 1개                                                           |
-| **AI 자연어 → 명령어 변환 규칙**                  | [docs/command_guide_for_ai.md](docs/command_guide_for_ai.md) (런타임에 실제로 참조되는 문서)                                            |
-| **자동매매 전략(폴링 모니터) 구현체**              | [src/utils/monitor_base.py](src/utils/monitor_base.py) + `src/utils/*_monitor.py`                                                   |
-| **전체 기능 목록/현황**                            | [docs/features.md](docs/features.md)                                                                                      |
+
+| 알고 싶은 것                                       | 봐야 할 파일                                                                                                                                                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **전체 API 목록** (코드/이름/URL)                  | [docs/api/api-list.md](docs/api/api-list.md) — 사람/AI용 표[docs/api/api-list.json](docs/api/api-list.json) — 프로그램용                                                                     |
+| **특정 API의 상세 명세** (파라미터/응답 필드/예시) | [docs/api/md/](docs/api/md/) 아래 해당 API 코드로 시작하는 `.md` 파일예: `GSS10030-현재가-*.md`                                                                                                |
+| **API를 호출하는 파이썬 함수**                     | [src/api/](src/api/) 아래 카테고리별 모듈 (아래 표 참고)                                                                                                                                       |
+| **어떤 코드가 어떤 모듈에 있는지**                 | [src/api/registry.py](src/api/registry.py)의 `REGISTRY` 또는 CLI의 `list` 명령                                                                                                                 |
+| **인증(토큰 발급) 로직**                           | [src/api/auth.py](src/api/auth.py)                                                                                                                                                             |
+| **공통 요청 봉투(dataHeader/dataBody) 구성**       | [src/api/client.py](src/api/client.py)                                                                                                                                                         |
+| **앱키/시크릿 설정**                               | [config/config.py](config/config.py) (없으면 `config.example.py` 복사)                                                                                                                         |
+| **터미널에서 바로 테스트**                         | [src/run/terminal.py](src/run/terminal.py) (또는 `manage/run/run-terminal.bat`/`manage/run/run-terminal.sh`로 바로 실행)                                                                       |
+| **텔레그램 Agent 원클릭 실행**                     | `manage/run/run-main.bat`(Windows) / `manage/run/run-main.sh`(macOS·Linux)                                                                                                                    |
+| **웹 브라우저에서 사용**                           | `manage/run/run-web.bat`/`manage/run/run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)                                                           |
+| **코드 생성 방법/규칙**                            | [manage/generate/generate_api_client.py](manage/generate/generate_api_client.py), [docs/api/README.md](docs/api/README.md)                                                                     |
+| **개발 환경(uv 등) 안내**                          | [docs/개발환경/개발환경.md](docs/개발환경/개발환경.md)                                                                                                                                         |
+| **슬래시(`/`) 명령어 요약/예시**                   | [docs/개발환경/command_summary.md](docs/개발환경/command_summary.md)                                                                                                                           |
+| **운영/관리 스크립트(`manage/`) 설명·실행 시점**  | [docs/개발환경/manage.md](docs/개발환경/manage.md)                                                                                                                                             |
+| **텔레그램 Agent 명령어 전체 목록**                | [src/run/main.py](src/run/main.py)의 `HELP_TEXT`, 또는 Agent/CLI에서 `help` 입력                                                                                                               |
+| **명령 핸들러 구현체**                             | [src/commands/](src/commands/) — 파일 1개 = 명령 1개                                                                                                                                          |
+| **AI 자연어 → 명령어 변환 규칙**                  | [docs/command_guide_for_ai.md](docs/command_guide_for_ai.md) (런타임에 실제로 참조되는 문서)                                                                                                   |
+| **자동매매 전략(폴링 모니터) 구현체**              | [src/utils/monitor_base.py](src/utils/monitor_base.py) + `src/utils/*_monitor.py`                                                                                                              |
+| **전체 기능 목록/현황**                            | [docs/features.md](docs/features.md)                                                                                                                                                           |
 | **다른 코딩 에이전트용 Agent Skill 패키지**        | [agent-skill/](agent-skill/) — Claude Code/Codex 등이 KB증권 Open API를 바로 쓰도록 만든 별도 배포용 패키지(장기적으로 별도 공개 저장소로 분리 예정), 자체 문서(`agent-skill/README.md`) 참고 |
 
 ### src/api/ 모듈별 담당 API
 
-| 모듈                                          | 담당                             | 포함 API 코드                                                                                      |
-| --------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [src/api/auth.py](src/api/auth.py)                     | 토큰 발급 (수기 작성)            | `/oauth2/token`                                                                                  |
+
+| 모듈                                                   | 담당                             | 포함 API 코드                                                                                      |
+| -------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [src/api/auth.py](src/api/auth.py)                     | 토큰 발급 (수기 작성)            | `/oauth2/token`                                                                                    |
 | [src/api/price_info.py](src/api/price_info.py)         | 시세 (현재가/호가/체결/시장종합) | GSS10030, GSS10040, GSA10020, IVU10070, IVU10080, IVU10140, IVSA0070                               |
 | [src/api/rank_info.py](src/api/rank_info.py)           | 순위/상위 조회                   | GSA10150, GSA10170, IVS10910, IVS11190, IVU10210, IVU10240, IVU10270, IVU10280, IVU10550, IVM30010 |
 | [src/api/chart.py](src/api/chart.py)                   | 통합차트                         | GSC10060, IVS11560                                                                                 |
 | [src/api/stock_info.py](src/api/stock_info.py)         | 종목 기본정보/기업개요           | SIAM4983, SIQM4900, IVM10050                                                                       |
 | [src/api/market_info.py](src/api/market_info.py)       | 시장/거시 정보                   | IVA10370, IVA60140, IVA60190, SZQM0771, GSA10600                                                   |
 | [src/api/investor_chart.py](src/api/investor_chart.py) | 거래원/투자자/프로그램           | IVU10420, IVU10430, IVU10450                                                                       |
-| [src/api/order.py](src/api/order.py)                   | 매매주문 (국내/해외, 소수점)     | SSAM1801~1806, SSAM5762~5764, SKAM2101~2202                                                       |
+| [src/api/order.py](src/api/order.py)                   | 매매주문 (국내/해외, 소수점)     | SSAM1801~1806, SSAM5762~5764, SKAM2101~2202                                                        |
 | [src/api/reserve_order.py](src/api/reserve_order.py)   | 예약주문 (국내/미국)             | SSAM0831, SSQM0831, SSQM0834, SPAO2104, SPAO2106, SPQO2105                                         |
 | [src/api/account.py](src/api/account.py)               | 계좌/잔고/손익/예수금            | SSQM*, SPQM*, SPQN5472, SPQO2226, SRQM3051, SKQM*, SKQO3390 (23개)                                 |
 | [src/api/withdraw.py](src/api/withdraw.py)             | 거래내역/출금가능금액            | SWQA2301, SWQM2412, SWQN2302                                                                       |
@@ -192,20 +222,28 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 
 ## 🌐 웹 클라이언트 사용법
 
-`manage/run/run-web.*`(또는 `uv run python -m src.run.web`)을 실행하고 브라우저에서 http://localhost:8000 에 접속합니다.
-프론트엔드는 프레임워크 없이 **순수 HTML + CSS + JS(fetch)**, 백엔드는 FastAPI JSON API로만 구성되어 있습니다 (`src/web/`).
+```bash
+manage\run\run-web.bat      # Windows
+./manage/run/run-web.sh     # macOS / Linux
+```
 
-- **다중 사용자**: 브라우저(쿠키)마다 독립 세션이 만들어져, 여러 사람이 같은 서버에 접속해 **각자 자기 앱키로** 로그인/매매할 수 있습니다.
-- **별도 로그인 화면 없음**: "설정" 화면에서 KB증권 **앱키(client_key)/앱시크릿(client_secret)** (필수)을 입력하고 저장하면 즉시 로그인됩니다. 거래 환경(운영/개발)도 여기서 선택합니다 (개발환경은 KB증권 미제공으로 현재 동작하지 않음). Claude API 키·텔레그램 토큰은 선택 입력입니다.
-- **입력한 키는 서버 메모리에만** 보관됩니다 — 파일로 저장되지 않으며, 서버를 재시작하면 다시 입력해야 합니다. 서버는 시크릿 원문을 응답으로 되돌려주지 않습니다.
-- **명령 입력은 터미널/텔레그램과 동일**: `/`로 시작하면 즉시 실행, `/` 없이 입력하면 AI 자연어 변환 후 확인. 확인/선택이 필요하면 화면에 버튼이 뜹니다 (터미널의 화살표 메뉴, 텔레그램의 인라인 버튼과 같은 역할). 화면 상단의 사용 방법 카드에서 예시 명령을 클릭하면 입력창에 자동으로 채워집니다. 명령 입력창에서 **↑/↓** 키로 이전에 입력한 명령을 다시 불러올 수 있습니다.
-- **실행 화면 상태 유지**: 명령 출력 이력·입력 히스토리(↑/↓)·진행 중이던 확인/선택 프롬프트는 "API 명세"/"설정"으로 이동했다가 돌아오거나 새로고침해도 그대로 유지됩니다(같은 브라우저 탭 기준, 탭을 닫으면 사라짐). 로그인/토큰도 세션 쿠키로 유지되어 페이지를 오가도 다시 발급받지 않습니다.
-- **토큰재발급 / 로그아웃 / 화면초기화**: 로그인하면 상단 헤더(상태 배지 옆, 실행·API 명세·설정 모든 화면 공통)에 **🔑 토큰재발급**(마지막 로그인에 쓴 앱키로 새 토큰 발급)과 **⏻ 로그아웃**(KB 토큰폐기 API로 토큰을 즉시 무효화하고 화면·히스토리 초기화. 로그아웃 후에는 `token` 모드라도 자동 재로그인되지 않으며, 설정 화면에서 다시 로그인) 버튼이 나타납니다. **🧹 화면초기화**(출력창만 비움 — 로그인/토큰/히스토리는 유지)는 "명령 실행" 패널 제목줄 오른쪽에 항상 표시됩니다.
-- **종목 검색창**: 두 글자 이상 입력하면 글자를 칠 때마다 국내(종목명·종목코드)/해외(티커·이름) 종목이 실시간으로 검색됩니다 (예: "삼성전" → 삼성전기/삼성전자..., "IO" → IONQ..., 대소문자 무관 — "kb금융"도 KB금융 검색). 종목마스터는 서버 시작 시 메모리에 미리 로드되어 빠르게 응답하고, 검색 결과를 클릭하면 그 종목만 목록에 남고 명령 입력창에 종목코드가 들어갑니다(↑/↓ 이동 후 Enter 선택도 동일). 하이라이트 없이 Enter를 누르면 정확일치 종목만 표시됩니다. 자연어 명령("KB금융 10주 사줘")을 입력하는 동안에는 입력창 아래에 인식된 종목(KB금융 105560)이 칩으로 표시됩니다.
-- **API 명세 탐색/테스트 (`/api.html`)**: `docs/api/md`의 업무구분 폴더 구조(OAuth/국내주식/해외주식 → 계좌잔고/기본시세/...)를 그대로 트리로 탐색하면서 명세 문서를 웹에서 읽고, INPUT 파라미터가 기본값으로 채워진 폼을 수정해 **실제 KB API를 테스트 호출**하고 원본 JSON 응답을 확인할 수 있습니다. `dataHeader`(ipAddr/macAddr)는 일반 주문/조회와 동일하게 서버가 자동 구성합니다. ⚠️ 운영환경(실거래)이므로 주문 계열(SSAM/SKAM) API는 전송 전에 확인 대화상자와 경고가 표시됩니다.
-- **주의(서버 공용 데이터)**: 로그인/토큰/자동매매 모니터 스레드는 사용자별로 분리되지만, 설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록(`config/data/settings.json`)은 **서버 전체 공용**입니다. 여러 사람이 쓸 때는 자동매매 기능 사용을 조율하세요.
-- **호스트/포트 변경**: 환경변수 `KBSEC_WEB_HOST`(기본 `127.0.0.1` — 로컬 전용) / `KBSEC_WEB_PORT`(기본 `8000`). 같은 네트워크의 다른 기기나 클라우드 배포 시 `KBSEC_WEB_HOST=0.0.0.0`으로 실행하되, 반드시 신뢰할 수 있는 네트워크(VPN 등)나 인증 프록시 뒤에서만 노출하세요 — 웹 화면 자체에는 접근 인증이 없습니다.
-- **로컬 1인 사용 편의 — `token` 옵션**: `manage\run\run-web.bat token`(Windows) / `./manage/run/run-web.sh token`(macOS·Linux)으로 실행하면 `config/config.py`의 앱키(client_key/client_secret)와 선택 항목(Claude API 키, 텔레그램 토큰)으로 새 브라우저 세션이 자동으로 설정·로그인되고, 브라우저가 실행 화면(`/`)으로 자동으로 열립니다 — 매번 값을 다시 입력할 필요가 없습니다. 다만 이 옵션은 "설정 화면에서 각자 자기 키를 입력"하는 다중 사용자 원칙의 예외라서, **접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동 로그인됩니다** — 반드시 로컬(`127.0.0.1`)에서 혼자 쓸 때만 사용하고, `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출된 상태에서는 절대 켜지 마세요. 자동 설정 후에도 설정 화면의 입력칸 자체에는 시크릿 원문이 표시되지 않습니다(다중 사용자 모드와 동일하게, 응답으로 시크릿을 절대 돌려주지 않는 설계를 그대로 유지) — 로그인 상태만 즉시 반영됩니다.
+실행 후 브라우저에서 http://localhost:8000 에 접속합니다. 프론트엔드는 프레임워크 없는 순수 HTML+CSS+JS,
+백엔드는 FastAPI JSON API입니다(`src/web/`). UI가 직관적이라 대부분 별도 설명 없이 사용할 수 있어, 핵심만 정리합니다.
+
+### 주요 사용법
+
+- **로그인**: 별도 가입/로그인 화면 없이, "설정" 화면에서 앱키(client_key)/앱시크릿(client_secret)만 입력하면 즉시 로그인됩니다.
+- **명령 입력**: 터미널/텔레그램과 동일 — `/`로 시작하면 즉시 실행, 아니면 자연어로 인식되어 Claude 변환 후 확인합니다.
+- **종목 검색**: 입력창에 이름/코드/티커를 두 글자 이상 입력하면 국내·해외 종목이 실시간 자동완성됩니다.
+- **API 명세 탐색/테스트**: `/api.html`에서 API 명세를 문서 트리로 탐색하고, 폼에 파라미터를 채워 실제 호출까지 해볼 수 있습니다.
+- **다중 사용자**: 브라우저(쿠키)마다 독립 세션이 생성되어, 여러 사람이 각자 자기 앱키로 접속해 쓸 수 있습니다.
+
+### 주의사항
+
+- **입력한 키는 서버 메모리에만** 보관됩니다 — 파일로 저장되지 않으며, 서버 재시작 시 사라져 다시 입력해야 합니다.
+- **설정값·자동매매 감시목록은 서버 전체 공용**입니다(`config/data/settings.json`) — 다중 사용자 간 공유되니 조율이 필요합니다.
+- **웹 화면 자체에는 접근 인증이 없습니다.** `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출할 경우 반드시 신뢰 네트워크(VPN 등)나 인증 프록시 뒤에서만 사용하세요.
+- `run-web.* token` 옵션(로컬 1인용 자동 로그인 편의 기능)은 **로컬(127.0.0.1) 전용**입니다 — 접속하는 모든 브라우저가 운영자의 실제 KB 계정으로 자동 로그인되므로, 외부에 노출된 상태에서는 절대 켜지 마세요.
 
 ---
 
@@ -304,15 +342,16 @@ IONQ  시장가(현재가 $12.34 기준)  10주 ...
 
 ### 명령어 요약
 
-| 명령어                    | 설명                                      |
-| ------------------------- | ----------------------------------------- |
-| `/login real`           | 운영환경 로그인 (토큰 발급) — KB증권 개발환경(모의투자)은 아직 미제공 |
-| `/list [키워드]`        | API 코드/이름/업무구분 검색 (키워드 생략 시 전체 74개) |
-| `/info <API코드>`       | 해당 API의 파라미터(타입/길이/필수여부/선택지) 미리보기 |
-| `/call <API코드> ['<json>']` | 지정한 필드만 값을 채워 API 호출, 나머지는 공백 자동 입력 |
-| `/api <API코드>`        | `/call`과 달리 필수+선택지 있는 필드는 대화형으로 번호 선택하며 실행 (텔레그램 자연어로도 이름으로 실행 가능 — `/help` 참고) |
-| `/help`                 | 도움말                                    |
-| `/power off` / `exit` / `quit` | 종료                                |
+
+| 명령어                         | 설명                                                                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `/login real`                  | 운영환경 로그인 (토큰 발급) — KB증권 개발환경(모의투자)은 아직 미제공                                                        |
+| `/list [키워드]`               | API 코드/이름/업무구분 검색 (키워드 생략 시 전체 74개)                                                                        |
+| `/info <API코드>`              | 해당 API의 파라미터(타입/길이/필수여부/선택지) 미리보기                                                                       |
+| `/call <API코드> ['<json>']`   | 지정한 필드만 값을 채워 API 호출, 나머지는 공백 자동 입력                                                                     |
+| `/api <API코드>`               | `/call`과 달리 필수+선택지 있는 필드는 대화형으로 번호 선택하며 실행 (텔레그램 자연어로도 이름으로 실행 가능 — `/help` 참고) |
+| `/help`                        | 도움말                                                                                                                        |
+| `/power off` / `exit` / `quit` | 종료                                                                                                                          |
 
 ### 사용 예시 — 기본 흐름
 
