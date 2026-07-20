@@ -26,8 +26,7 @@ manage/
   스크립트는 `docs/`가 아니라 `manage/generate/`에 모으는 것으로 정리됨).
 
 모든 `manage/generate/` 스크립트는 `uv run python -m manage.generate.<파일명(확장자 제외)>`
-형태로 **모듈 실행**한다(프로젝트 루트를 `sys.path`에 올려야 절대 임포트가 풀리므로 `python
-manage/generate/xxx.py`처럼 파일 경로로 직접 실행하지 말 것 — `src/run/*.py`와 동일한 이유,
+형태로 **모듈 실행**한다(프로젝트 루트를 `sys.path`에 올려야 절대 임포트가 풀리므로 `python manage/generate/xxx.py`처럼 파일 경로로 직접 실행하지 말 것 — `src/run/*.py`와 동일한 이유,
 `CLAUDE.md` "소스 레이아웃" 참고).
 
 ```
@@ -260,14 +259,14 @@ uv run python -m manage.generate.generate_api_docs "국내주식/계좌잔고/SS
 `docs/api/api-list.json`은 `generate_api_list.py`의 **산출물**이지만, 그와 별개로
 애플리케이션 런타임(`src/`)에서도 실제로 읽는다 — 삭제하면 아래 기능이 전부 깨진다.
 
-| 사용 위치 | 용도 |
-|---|---|
-| `src/utils/api_spec.py` (`_load_api_list`, `find_api_entry`, `search_api_entries`) | `api-list.json`을 mtime 기반으로 캐싱해 읽는 **단일 진입점**. 아래 모든 사용처가 결국 이 함수들을 거친다 |
-| `src/commands/api_command.py` | `/api {코드}`, `/api list [키워드]` 등 API 직접호출 명령이 `search_api_entries`로 코드/이름/업무구분 검색 |
-| `src/run/terminal.py` (`/list` 명령) | 저수준 직접 호출(`call`/`info`/`list`)의 `list`가 동일하게 `search_api_entries` 사용 |
-| `src/utils/api_resolver.py` | AI가 변환한 `api {한글이름}` 토큰을 실제 API 코드로 로컬에서 결정적으로 매칭(이름이 여러 API와 겹치면 번호 선택 세션으로 연결) |
-| `src/utils/ai_command_converter.py` (`_build_api_name_list`) | Claude 시스템 프롬프트에 삽입할 "API 직접호출 가능한 전체 API 이름 목록"을 매 호출마다 `api-list.json`에서 동적으로 구성(`docs/command_guide_for_ai.md`에 하드코딩하지 않음) |
-| `src/run/command_pipeline.py` | 위 흐름(자연어 → `api {이름}` → 코드 해석)을 있는 그대로 설명하는 주석 |
+| 사용 위치                                                                                  | 용도                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/utils/api_spec.py` (`_load_api_list`, `find_api_entry`, `search_api_entries`) | `api-list.json`을 mtime 기반으로 캐싱해 읽는 **단일 진입점**. 아래 모든 사용처가 결국 이 함수들을 거친다                                                                |
+| `src/commands/api_command.py`                                                            | `/api {코드}`, `/api list [키워드]` 등 API 직접호출 명령이 `search_api_entries`로 코드/이름/업무구분 검색                                                                 |
+| `src/run/terminal.py` (`/list` 명령)                                                   | 저수준 직접 호출(`call`/`info`/`list`)의 `list`가 동일하게 `search_api_entries` 사용                                                                                  |
+| `src/utils/api_resolver.py`                                                              | AI가 변환한`api {한글이름}` 토큰을 실제 API 코드로 로컬에서 결정적으로 매칭(이름이 여러 API와 겹치면 번호 선택 세션으로 연결)                                                 |
+| `src/utils/ai_command_converter.py` (`_build_api_name_list`)                           | Claude 시스템 프롬프트에 삽입할 "API 직접호출 가능한 전체 API 이름 목록"을 매 호출마다`api-list.json`에서 동적으로 구성(`docs/command_guide_for_ai.md`에 하드코딩하지 않음) |
+| `src/run/command_pipeline.py`                                                            | 위 흐름(자연어 →`api {이름}` → 코드 해석)을 있는 그대로 설명하는 주석                                                                                                       |
 
 **명시적으로 쓰지 않는 곳**: `src/web/spec_browser.py`(웹 "API 명세" 탐색 화면)는
 `api-list.json`이 아니라 `docs/api/md`의 **폴더 구조 그대로**를 트리로 보여준다고
