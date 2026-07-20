@@ -1,4 +1,4 @@
-# kbsec_api — KB증권 OpenAPI 텔레그램 자동매매 Agent
+# KB증권 OpenAPI 검증 및 자동매매 시스템 AI Agent
 
 <p align="center">
   <img src="docs/개발환경/img/kbsecOpenapiWeb.gif" width="420" alt="웹 브라우저 실행 화면 — 종목 검색, 명령 실행, 확인 프롬프트">
