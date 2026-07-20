@@ -147,7 +147,8 @@ function renderFields(fields) {
     label.textContent = f.name_kr + " ";
     const en = document.createElement("span");
     en.className = "en";
-    en.textContent = f.name_en + (f.required ? " *" : "");
+    // KB 명세의 필수여부(Y/N)는 부정확해 '*' 표시를 하지 않는다.
+    en.textContent = f.name_en;
     label.appendChild(en);
     row.appendChild(label);
 

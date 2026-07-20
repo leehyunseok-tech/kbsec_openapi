@@ -159,13 +159,11 @@ def render_function(item):
     func_name = code.lower()
     path = endpoint_path(entry["prod_url"] or entry["dev_url"])
 
-    required_fields = [f for f in fields if f["required"]]
-    optional_fields = [f for f in fields if not f["required"]]
-
+    # KB 명세의 필수여부(Y/N)는 부정확해 무시한다 — 모든 필드를 INPUT 표 순서대로
+    # 기본값("") 있는 선택 인자로 생성하고, call_business_api에는 required=[]를 넘겨
+    # 사전 "필수 파라미터 누락" 검증도 하지 않는다(실제 필수 여부는 KB 서버가 판단).
     params = []
-    for f in required_fields:
-        params.append(safe_ident(f["name"]))
-    for f in optional_fields:
+    for f in fields:
         params.append(f'{safe_ident(f["name"])}=""')
     params.append("*")
     params.append("extra: dict | None = None")
@@ -176,10 +174,9 @@ def render_function(item):
     doc_lines = [f'{code} {entry["name"]} — {entry["description"]}', ""]
     if fields:
         doc_lines.append("Args:")
-        for f in required_fields + optional_fields:
-            req = "필수" if f["required"] else "선택"
+        for f in fields:
             desc = f' — {f["desc"]}' if f["desc"] else ""
-            doc_lines.append(f'    {safe_ident(f["name"])}: {f["label"]} ({req}){desc}')
+            doc_lines.append(f'    {safe_ident(f["name"])}: {f["label"]}{desc}')
     else:
         doc_lines.append("Args: (문서화된 요청 파라미터 없음)")
     doc_lines.append("    extra: INPUT 표에 없는 추가 dataBody 필드")
@@ -187,13 +184,13 @@ def render_function(item):
     docstring = "\n    ".join(doc_lines)
 
     body_lines = ["data_body = {"]
-    for f in required_fields + optional_fields:
+    for f in fields:
         ident = safe_ident(f["name"])
         body_lines.append(f'        "{f["name"]}": {ident},')
     body_lines.append("    }")
     body = "\n    ".join(body_lines)
 
-    required_list = ", ".join(f'"{f["name"]}"' for f in required_fields)
+    required_list = ""  # 필수여부 무시 — 항상 빈 리스트
 
     return f'''def {func_name}({sig}) -> dict:
     """{docstring}
@@ -249,13 +246,13 @@ def write_registry(items):
     for item in sorted(items, key=lambda it: it["entry"]["code"]):
         entry, module, fields = item["entry"], item["module"], item["fields"]
         code = entry["code"]
-        required = [f["name"] for f in fields if f["required"]]
-        optional = [f["name"] for f in fields if not f["required"]]
+        # 필수여부 무시 — required는 항상 빈 리스트, 모든 필드를 optional로 기록
+        optional = [f["name"] for f in fields]
         lines.append(f'    "{code}": {{')
         lines.append(f'        "function": {module}.{code.lower()},')
         lines.append(f'        "name": {entry["name"]!r},')
         lines.append(f'        "module": {module!r},')
-        lines.append(f"        \"required\": {required!r},")
+        lines.append(f'        "required": [],')
         lines.append(f"        \"optional\": {optional!r},")
         lines.append("    },")
     lines.append("}")

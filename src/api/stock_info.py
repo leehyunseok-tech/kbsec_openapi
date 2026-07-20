@@ -13,7 +13,7 @@ def ivm10050(is_cd="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVM10050 기업개요 — 종목의 간략한 기업 정보를 조회하는 API
     
     Args:
-        is_cd: 종목코드 (선택)
+        is_cd: 종목코드
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -37,7 +37,7 @@ def siam4983(Record1="", *, extra: dict | None = None, token, host_url) -> dict:
     """SIAM4983 종목기본정보 — 해외주식 종목 정보를 조회할 수 있는 API 입니다.
     
     Args:
-        Record1: Record1 (선택)
+        Record1: Record1
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -61,7 +61,7 @@ def siqm4900(stnd_is_cd="", *, extra: dict | None = None, token, host_url) -> di
     """SIQM4900 종목기본정보 — 
     
     Args:
-        stnd_is_cd: 표준종목코드 (선택)
+        stnd_is_cd: 표준종목코드
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """

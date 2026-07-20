@@ -69,6 +69,7 @@ from src.commands.investor_command import handle_investor
 from src.commands.api_command import handle_api
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils.api_spec import load_api_spec, describe_spec, search_api_entries, full_blank_body, execute_api_call
+from src.utils.direct_api_command import resolve_direct_command, execute_direct_command
 from src.utils.ai_command_converter import convert_natural_to_commands
 from src.utils import terminal_ui
 from src.utils.command_executor import (
@@ -446,6 +447,13 @@ class TerminalClient(CommandPipelineMixin):
             return self.handle_command_api(rest.split(), interactive=True)
         if command in self.commands:
             return self.commands[command](rest.split())
+
+        direct_entry = resolve_direct_command(command)
+        if direct_entry is not None:
+            if not self.session.is_logged_in():
+                return "❌ 로그인이 필요합니다. /login real 을 먼저 실행하세요."
+            return execute_direct_command(direct_entry, rest.split(), self.session.access_token, self.session.host_url)
+
         return f"❌ 알 수 없는 명령어: /{command} (/help 참고)"
 
     def run(self):

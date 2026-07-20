@@ -5,11 +5,9 @@
 api_spec.py(런타임 /api·/call 실행용)와의 관계:
   - 트리/파일 목록은 api-list.json이 아니라 **폴더 구조 그대로**를 보여준다
     (사용자 요구: OAuth/국내주식/해외주식 → 하위 업무구분 → 파일명 목록).
-  - 필드 파싱은 api_spec의 _parse_input_table을 재사용하되, 기본값 규칙이 다르다:
-    api_spec은 "필수+선택지" 필드만 대화형 선택 대상으로 삼지만, 여기서는 편집
-    가능한 폼을 만드는 것이 목적이라 **필수여부와 무관하게** 설명에서 선택지를
-    파싱하고(첫 번째 선택지를 기본값으로), 나머지는 필수면 공백 채움/선택이면
-    빈 문자열을 기본값으로 준다 — 사용자가 예시로 준 요청 본문 형태와 일치.
+  - 필드 파싱은 api_spec의 _parse_input_table을 재사용한다. KB 명세의 필수여부(Y/N)는
+    부정확해 무시하며, 편집 폼 기본값은 선택지가 있으면 첫 번째 선택지, 없으면 빈
+    문자열로 둔다(사용자가 값을 채워 넣도록).
 """
 
 import re
@@ -19,7 +17,6 @@ from src.utils.api_spec import (
     DOCS_API_DIR,
     _parse_choices,
     _parse_input_table,
-    blank_fill,
     find_api_entry,
 )
 
@@ -76,12 +73,10 @@ def _safe_md_path(rel_path: str) -> Path | None:
 
 
 def _field_default(field) -> str:
-    """편집 폼의 기본값 — 선택지 있으면 첫 코드, 필수면 공백 채움, 그 외 빈 문자열."""
+    """편집 폼의 기본값 — 선택지 있으면 첫 코드, 그 외 빈 문자열(필수여부는 무시)."""
     choices = field.choices or _parse_choices(field.description)
     if choices:
         return choices[0][0]
-    if field.required:
-        return blank_fill(field)
     return ""
 
 

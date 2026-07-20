@@ -7,11 +7,16 @@ CODE_TO_MODULE을 수동으로 갱신해야 새 API가 반영되지만, 이 모�
 docs/api/api-list.json + docs/api/md/*.md를 그때그때 직접 읽으므로 명세
 문서만 최신이면 코드 재생성 없이 곧바로 "/api {코드}"로 실행할 수 있다.
 
-INPUT 파라미터 채움 규칙 (사용자 지정):
-  - 필수여부 Y 이고 설명에서 "코드:라벨" 형태의 선택지가 2개 이상 파싱되면
+INPUT 파라미터 채움 규칙:
+  - **필수여부(Y/N) 컬럼은 신뢰할 수 없어 완전히 무시한다** (KB 명세가 조회 API의
+    핵심 파라미터 — 종목코드 등 — 도 N으로 표기하는 등 실제와 어긋나는 경우가 많음).
+  - 설명에서 "코드:라벨" 형태의 선택지가 2개 이상 파싱되면(필수여부 무관)
     → 사용자가 번호로 선택 (ApiField.choices)
-  - 그 외(설명이 있어도 선택지가 없거나, 필수가 아닌 경우) → 타입(길이)만큼
-    공백(" ")으로 채워 그대로 요청 (blank_fill)
+  - 그 외(설명에 선택지가 없는 필드) → 타입(길이)만큼 공백(" ")으로 채워 요청 (blank_fill)
+  - 요청 전 "필수 파라미터 누락" 검증도 하지 않는다(필수여부가 부정확하므로) —
+    실제 필수 여부는 KB 서버 응답으로 판단한다.
+
+ApiField.required는 파싱은 해두되(원본 표기 참고용) 어떤 로직/표시에도 쓰지 않는다.
 """
 
 import json
@@ -34,9 +39,9 @@ class ApiField:
     name_en: str
     name_kr: str
     length: int
-    required: bool
+    required: bool  # 원본 표기 참고용 — 신뢰할 수 없어 로직/표시에 쓰지 않음
     description: str
-    choices: list  # list[tuple[str, str]] — required=True이고 선택지가 2개 이상일 때만 채워짐
+    choices: list  # list[tuple[str, str]] — 설명에서 선택지가 2개 이상 파싱될 때 채워짐(필수여부 무관)
 
 
 @dataclass(frozen=True)
@@ -147,7 +152,7 @@ def _parse_input_table(text: str):
                 length=_parse_length(type_len),
                 required=required,
                 description=description,
-                choices=_parse_choices(description) if required else [],
+                choices=_parse_choices(description),  # 필수여부 무관하게 항상 파싱
             )
         )
     return fields
@@ -194,15 +199,15 @@ def blank_fill(api_field: ApiField) -> str:
 
 
 def selection_fields(spec: ApiSpec):
-    """사용자가 번호로 골라야 하는 필드만 반환 (필수 + 선택지 2개 이상)."""
-    return [f for f in spec.fields if f.required and f.choices]
+    """사용자가 번호로 골라야 하는 필드만 반환 (선택지가 있는 필드 — 필수여부 무관)."""
+    return [f for f in spec.fields if f.choices]
 
 
 def default_data_body(spec: ApiSpec) -> dict:
-    """선택이 필요 없는 필드는 전부 기본값(공백 채움)으로 채운 dataBody. 선택 필요 필드는 제외."""
+    """선택이 필요 없는 필드는 전부 기본값(공백 채움)으로 채운 dataBody. 선택지 있는 필드는 제외."""
     body = {}
     for f in spec.fields:
-        if f.required and f.choices:
+        if f.choices:
             continue
         body[f.name_en] = blank_fill(f)
     return body
@@ -219,13 +224,14 @@ def full_blank_body(spec: ApiSpec) -> dict:
 
 
 def execute_api_call(spec: ApiSpec, data_body: dict, token: str, host_url: str) -> dict:
-    required = [f.name_en for f in spec.fields if f.required]
+    # 필수여부(Y/N)가 부정확하므로 사전 "필수 파라미터 누락" 검증을 하지 않는다 —
+    # 실제 필수 여부는 KB 서버 응답으로 판단한다(required=[]).
     return call_business_api(
         api_name=spec.name,
         api_code=spec.code,
         endpoint=spec.endpoint,
         data_body=data_body,
-        required=required,
+        required=[],
         token=token,
         host_url=host_url,
     )
@@ -239,15 +245,14 @@ def describe_spec(spec: ApiSpec) -> str:
         lines.append(f"\n/api {spec.code} 로 실행하세요.")
         return "\n".join(lines)
 
-    lines.append("\nINPUT 파라미터:")
+    lines.append("\nINPUT 파라미터: (KB 명세의 필수여부는 부정확해 표시하지 않음)")
     for f in spec.fields:
-        req = "필수" if f.required else "선택"
-        if f.required and f.choices:
+        if f.choices:
             choice_str = ", ".join(f"{c}:{label}" for c, label in f.choices)
-            lines.append(f"  • {f.name_en}({f.name_kr}) [{req}] → 실행 시 선택 필요: {choice_str}")
+            lines.append(f"  • {f.name_en}({f.name_kr}) → 실행 시 선택 필요: {choice_str}")
         else:
             desc_note = f" — {f.description}" if f.description else ""
-            lines.append(f"  • {f.name_en}({f.name_kr}) [{req}] → 공백 {f.length}자 자동 입력{desc_note}")
+            lines.append(f"  • {f.name_en}({f.name_kr}) → 공백 {f.length}자 자동 입력{desc_note}")
 
     lines.append(f"\n/api {spec.code} 로 실행하세요.")
     return "\n".join(lines)

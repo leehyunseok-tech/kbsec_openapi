@@ -40,7 +40,7 @@
           · <b>/명령어</b> + [Enter] 즉시 실행 <br>
           · <b>자연어 입력</b> + [Enter] AI가 명령어로 바꿔준 뒤 실행 (Claude API 키 설정 필요).<br>
           · 예시 명령 <b>클릭시 명령창에 입력</b><br>
-          · 설명 추가 예정( 추가 API 적용시 )
+          · 하단 <b>전체 API 명령어</b>를 펼치면 API 74개를 전부 클릭으로 실행할 수 있습니다.
           <!-- · ⚠️ 로그인/토큰은 사용자(브라우저)별로 분리되지만, <b>설정값(익절·손절, 블랙리스트 등)과 자동매매 감시목록은 서버 공용</b>입니다 — 여러 사람이 같은 서버를 쓸 때는 자동매매 기능을 조율해서 사용하세요. -->
         </p>
         <div class="guide-grid">
@@ -83,6 +83,17 @@
             <code>/log</code>
           </div>
         </div>
+
+        <details class="guide" id="direct-cmd-guide">
+          <summary>전체 API 명령어 (자동생성, 74개)</summary>
+          <p class="hint">
+            <b>국내주식 → 시세분석 → ...</b> 순서로 펼쳐서 원하는 API를 클릭하면 명령 실행 입력창에
+            <code>/{API코드}-{API명} {"파라미터명":"설명"} ...</code> 형태로 채워집니다.
+            <code>{"..":".."}</code> 부분은 실행되는 문법이 아니라 <b>실제 값으로 바꿔 입력하라는 안내</b>입니다.
+            ⚠️ 매수/매도 등 주문 계열 API도 실제 값을 넣으면 그대로 실거래로 실행되니 주의하세요.
+          </p>
+          <div id="direct-cmd-tree" class="spec-tree"></div>
+        </details>
       </div>
     </aside>
 
@@ -134,5 +145,6 @@
 
   <script src="/js/api.js"></script>
   <script src="/js/app.js"></script>
+  <script src="/js/guide-tree.js"></script>
 </body>
 </html>

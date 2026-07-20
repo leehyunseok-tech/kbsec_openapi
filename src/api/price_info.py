@@ -13,9 +13,9 @@ def gsa10020(krx_cd="", is_cd="", rcrd_c="", *, extra: dict | None = None, token
     """GSA10020 체결 — 시간대별체결
     
     Args:
-        krx_cd: 거래소코드 KRX_CD (선택) — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
-        is_cd: 종목코드 IS_CD (선택)
-        rcrd_c: 레코드수 RCRD_C (선택)
+        krx_cd: 거래소코드 KRX_CD — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
+        is_cd: 종목코드 IS_CD
+        rcrd_c: 레코드수 RCRD_C
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -41,8 +41,8 @@ def gss10030(krx_cd="", is_cd="", *, extra: dict | None = None, token, host_url)
     """GSS10030 현재가 — 현재가
     
     Args:
-        krx_cd: 거래소코드 (선택) — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
-        is_cd: 종목코드 (선택)
+        krx_cd: 거래소코드 — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
+        is_cd: 종목코드
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -67,8 +67,8 @@ def gss10040(krx_cd="", is_cd="", *, extra: dict | None = None, token, host_url)
     """GSS10040 호가 — 호가
     
     Args:
-        krx_cd: 거래소코드 (선택) — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
-        is_cd: 종목코드 (선택)
+        krx_cd: 거래소코드 — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
+        is_cd: 종목코드
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -115,8 +115,8 @@ def ivu10070(is_cd="", ovtm_mkt_clsf="", *, extra: dict | None = None, token, ho
     """IVU10070 호가 — 
     
     Args:
-        is_cd: 종목코드 (선택)
-        ovtm_mkt_clsf: 시간외장구분 (선택) — 0:정규장, 1:시간외
+        is_cd: 종목코드
+        ovtm_mkt_clsf: 시간외장구분 — 0:정규장, 1:시간외
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -141,10 +141,10 @@ def ivu10080(excg_clsf="", is_cd="", ovtm_mkt_clsf="", inq_cnt="", *, extra: dic
     """IVU10080 체결 — 
     
     Args:
-        excg_clsf: 거래소구분 (선택) — 0:통합, 1:KRX, 2:NXT
-        is_cd: 종목코드 (선택)
-        ovtm_mkt_clsf: 시간외장구분 (선택) — 0:정규장, 1:시간외
-        inq_cnt: 조회건수 (선택)
+        excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
+        is_cd: 종목코드
+        ovtm_mkt_clsf: 시간외장구분 — 0:정규장, 1:시간외
+        inq_cnt: 조회건수
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -171,8 +171,8 @@ def ivu10140(excg_clsf="", shrt_cd="", *, extra: dict | None = None, token, host
     """IVU10140 현재가 — 조회 시점의 주식 현재가를 조회 하는 API
     
     Args:
-        excg_clsf: 거래소구분 (선택) — 0:통합, 1:KRX, 2:NXT
-        shrt_cd: 단축코드 (선택)
+        excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
+        shrt_cd: 단축코드
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """

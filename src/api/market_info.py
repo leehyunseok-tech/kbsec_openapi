@@ -13,10 +13,10 @@ def gsa10600(frex_clsf="", clsf="", rnk="", is_cnt="", *, extra: dict | None = N
     """GSA10600 해외시세분석 — 해외시세분석
     
     Args:
-        frex_clsf: 해외거래소구분 (선택) — AA:미국전체 AB:나스닥 AC:뉴욕 AD:아멕스
-        clsf: 구분 (선택) — 1:전일대비 2: 시가총액 3:거래량 4:52주 신고가 5:52주 신저가 6:PER 7:EPS, 8:배당수익률, a:거래대금
-        rnk: 순위 (선택) — 1:상위 2:하위
-        is_cnt: 종목건수 (선택)
+        frex_clsf: 해외거래소구분 — AA:미국전체 AB:나스닥 AC:뉴욕 AD:아멕스
+        clsf: 구분 — 1:전일대비 2: 시가총액 3:거래량 4:52주 신고가 5:52주 신저가 6:PER 7:EPS, 8:배당수익률, a:거래대금
+        rnk: 순위 — 1:상위 2:하위
+        is_cnt: 종목건수
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
@@ -65,7 +65,7 @@ def iva60140(lnd_clsf="", *, extra: dict | None = None, token, host_url) -> dict
     """IVA60140 세계지수 — 세계지수
     
     Args:
-        lnd_clsf: 대륙구분 (선택) — S: 아시아, C: 아메라키, E: 유럽
+        lnd_clsf: 대륙구분 — S: 아시아, C: 아메라키, E: 유럽
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
