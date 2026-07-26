@@ -39,3 +39,13 @@ claude_api_key = "YOUR_CLAUDE_API_KEY"
 # 가능한 모델: "claude-opus-4-8" (최고 성능), "claude-sonnet-4-6" (균형), "claude-haiku-4-5-20251001" (빠름)
 # 모델의 상세 스팩은 https://platform.claude.com/dashboard 에서 확인 가능
 claude_model = "claude-haiku-4-5-20251001"
+
+# (선택) 웹 클라이언트 접속 관문 — HTTP Basic Auth. 웹 화면(정적 파일+/api/*) 전체에
+# 아이디/비밀번호를 요구한다. 두 값 다 빈 문자열("")이면 비활성 — 지금처럼 관문
+# 없이 그대로 동작한다. 둘 다 값을 채우면 그 즉시 켜진다(하나만 채우면 비활성
+# 유지). KB 계좌 로그인(설정 화면의 앱키)과는 별개다. 환경변수
+# KBSEC_WEB_BASIC_AUTH_USER/KBSEC_WEB_BASIC_AUTH_PASS가 설정되어 있으면 그쪽이
+# 우선이고, 여기 값은 그 환경변수가 없을 때만 쓰인다. 외부(클라우드 등)에 노출할
+# 때는 반드시 채울 것(영문/숫자 권장 — 한글 등은 도구에 따라 인코딩이 달라질 수 있음).
+web_basic_auth_user = ""
+web_basic_auth_pass = ""

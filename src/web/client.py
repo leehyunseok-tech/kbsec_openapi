@@ -249,7 +249,7 @@ class WebClient(CommandPipelineMixin):
 
     # ── 명령 핸들러 (main.py/terminal.py와 동일하게 self.session 위임) ──
     def handle_command_login(self, args):
-        return "ℹ️ 웹에서는 좌측 상단 '설정' 화면에서 앱키(client_key)/시크릿(client_secret)을 입력하면 자동으로 로그인됩니다."
+        return "ℹ️ 웹에서는 우측 상단 '설정' 화면에서 앱키(client_key)/시크릿(client_secret)을 입력하면 자동으로 로그인됩니다."
 
     def handle_command_status(self, args):
         return handle_status(args, self.session)

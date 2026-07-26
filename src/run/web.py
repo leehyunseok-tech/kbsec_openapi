@@ -16,9 +16,17 @@ main.py(텔레그램)/terminal.py(터미널)와 동일한 src/commands/*.py 핸�
     매번 값을 다시 입력하지 않아도 되는 편의 기능이다.
 
 옵션 (환경변수):
-  KBSEC_WEB_HOST  바인딩 주소 (기본 127.0.0.1 — 로컬 전용.
-                  같은 네트워크의 다른 기기/배포 환경에서 접속하려면 0.0.0.0)
-  KBSEC_WEB_PORT  포트 (기본 8000)
+  KBSEC_WEB_HOST             바인딩 주소 (기본 127.0.0.1 — 로컬 전용.
+                             같은 네트워크의 다른 기기/배포 환경에서 접속하려면 0.0.0.0)
+  KBSEC_WEB_PORT             포트 (기본 8000)
+  KBSEC_WEB_BASIC_AUTH_USER  접속 관문(HTTP Basic Auth) 아이디 — PASS와 함께 설정해야 켜짐
+  KBSEC_WEB_BASIC_AUTH_PASS  접속 관문(HTTP Basic Auth) 비밀번호
+
+KBSEC_WEB_BASIC_AUTH_USER/PASS를 둘 다 설정하면 브라우저 표준 로그인 팝업이 웹
+서버 전체(정적 파일+/api/*) 앞을 막는다 — KB 계좌 로그인과는 별개로, "이 서버에
+누가 접속할 수 있는가"를 다루는 관문이다(자세한 설계는 src/web/app.py 참고). 로컬
+개발 시에는 기본값(빈 문자열)이라 관문 없이 지금까지와 동일하게 동작하며,
+KBSEC_WEB_HOST=0.0.0.0 등으로 외부에 노출할 때는 반드시 설정할 것을 권장한다.
 
 터미널/텔레그램과 달리 기본적으로는 config.py의 앱키로 자동 로그인하지 않는다 —
 다중 사용자 전제이므로 각 사용자가 브라우저 설정 화면에서 자기 앱키/시크릿을

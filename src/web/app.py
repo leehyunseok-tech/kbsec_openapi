@@ -15,10 +15,28 @@ FastAPI 웹 백엔드 — 순수 JSON API + 정적 파일 서빙.
     (_autoload_from_config 참고) — 다중 사용자 원칙에서 벗어나는 예외이므로 로컬
     단일 운영자 용도로만 쓴다(src/run/web.py의 경고 참고).
 
+접속 관문(HTTP Basic Auth, 선택):
+  - 위 "인증/세션 모델"은 전부 KB 계좌 로그인 얘기다 — 그 이전에 "이 웹 화면 자체를
+    누가 열어볼 수 있는가"에는 원래 아무 장치가 없었다(URL만 알면 누구나 설정
+    화면에서 자기 앱키를 넣거나, token 모드면 곧장 운영자 계정으로 로그인됨).
+  - KBSEC_WEB_BASIC_AUTH_USER/KBSEC_WEB_BASIC_AUTH_PASS 환경변수를 **둘 다** 설정하면
+    모든 경로(정적 파일 + /api/*)에 브라우저 표준 Basic Auth 팝업이 걸린다. 환경변수가
+    없으면 config.py의 web_basic_auth_user/web_basic_auth_pass를 대신 읽는다(둘 중
+    하나라도 없거나 placeholder "YOUR_..."면 비활성) — 매번 터미널에서 환경변수를
+    치지 않아도 로컬에서 계속 켜두고 쓸 수 있게 하기 위함. 전부 비어 있으면(기본값)
+    지금까지와 동일하게 관문 없이 그대로 동작한다 — 로컬 개발 편의를 해치지 않기
+    위한 opt-in 설계.
+  - KB 계좌 로그인과는 완전히 별개 계층이다 — Basic Auth를 통과해야 그 다음에 설정
+    화면에서 KB 앱키를 입력하는 단계로 넘어간다. 클라우드 등 외부에 노출할 때
+    (KBSEC_WEB_HOST=0.0.0.0) 반드시 켤 것을 권장한다 — HTTPS 없이 쓰면 자격증명이
+    평문으로 오가므로, 외부 공개 시에는 리버스 프록시로 TLS를 함께 적용해야 한다.
+
 실행은 src/run/web.py (또는 manage/run/run-web.bat / manage/run/run-web.sh) 참고.
 """
 
+import base64
 import os
+import secrets
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, JSONResponse
@@ -33,17 +51,63 @@ from src.utils import stock_master
 from src.utils.api_spec import execute_api_call, load_api_spec
 AUTOLOAD = os.environ.get("KBSEC_WEB_AUTOLOAD") == "1"
 
+
+def _configured(value):
+    """config.py 값이 실제로 채워졌는지 확인(placeholder "YOUR_..."/빈 값 제외)."""
+    return bool(value) and not str(value).startswith("YOUR_")
+
+
+def _env_or_config(env_name, config_attr):
+    """환경변수가 있으면 그 값, 없으면 config.py의 해당 값(placeholder 제외)을 쓴다."""
+    env_value = os.environ.get(env_name, "")
+    if env_value:
+        return env_value
+    config_value = getattr(app_config, config_attr, "")
+    return config_value if _configured(config_value) else ""
+
+
+BASIC_AUTH_USER = _env_or_config("KBSEC_WEB_BASIC_AUTH_USER", "web_basic_auth_user")
+BASIC_AUTH_PASS = _env_or_config("KBSEC_WEB_BASIC_AUTH_PASS", "web_basic_auth_pass")
+BASIC_AUTH_ENABLED = bool(BASIC_AUTH_USER and BASIC_AUTH_PASS)
+
 app = FastAPI(title="kbsec_api web", docs_url=None, redoc_url=None)
+
+
+@app.middleware("http")
+async def basic_auth(request: Request, call_next):
+    """전체 화면(정적 파일 + /api/*) 앞을 막는 HTTP Basic Auth 관문.
+
+    KB 계좌 로그인(위 "인증/세션 모델")과는 별개 계층이다 — 이 관문은 "이 웹 서버에
+    누가 접속할 수 있는가"만 다루고, KB 앱키 로그인은 그 다음 단계(설정 화면)에서
+    각자 처리한다. KBSEC_WEB_BASIC_AUTH_USER/PASS가 둘 다 설정된 경우에만 켜지며,
+    기본은 비활성(로컬 개발 편의 유지) — 외부에 노출할 때만 켤 것.
+    """
+    if not BASIC_AUTH_ENABLED:
+        return await call_next(request)
+
+    user, pw = "", ""
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.startswith("Basic "):
+        try:
+            decoded = base64.b64decode(auth_header[6:]).decode("utf-8")
+            user, _, pw = decoded.partition(":")
+        except Exception:
+            pass
+
+    # compare_digest로 타이밍 공격에 안전하게 비교. str 버전은 non-ASCII(한글 등)를
+    # 지원하지 않아 TypeError가 나므로 UTF-8 바이트로 인코딩해 비교한다.
+    user_ok = secrets.compare_digest(user.encode("utf-8"), BASIC_AUTH_USER.encode("utf-8"))
+    pass_ok = secrets.compare_digest(pw.encode("utf-8"), BASIC_AUTH_PASS.encode("utf-8"))
+    if user_ok and pass_ok:
+        return await call_next(request)
+
+    return Response(status_code=401, headers={"WWW-Authenticate": 'Basic realm="kbsec_api"'})
+
 
 # 서버 시작(uvicorn이 이 모듈을 import하는 시점)에 종목마스터를 미리 메모리에 올린다 —
 # load_all()은 lru_cache라 이후 모든 검색(/api/stock/*)이 파일을 다시 읽지 않고
 # 첫 요청부터 빠르게 응답한다 (mst/api/openapi_field_*.mst 두 파일).
 stock_master.load_all()
-
-
-def _configured(value):
-    """config.py 값이 실제로 채워졌는지 확인(placeholder "YOUR_..."/빈 값 제외)."""
-    return bool(value) and not str(value).startswith("YOUR_")
 
 
 def _autoload_from_config(client):
