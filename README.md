@@ -31,16 +31,18 @@ Git이나 GitHub을 몰라도 괜찮습니다. 아래 링크를 클릭하면 소
 
 ### 1. 원클릭 설치 (권장)
 
-GitHub에서 처음 받은 상태라면 설치 스크립트 하나로 개발환경 전체(uv 설치 → 의존성 설치 → `config/config.py` 템플릿 생성)가 준비됩니다. **Python만 미리 설치되어 있으면 됩니다** — 없으면 스크립트가 [python.org 다운로드 링크](https://www.python.org/downloads/)를 안내하고 종료합니다.
+GitHub에서 처음 받은 상태라면 프로젝트 최상단의 설치 스크립트 하나로 개발환경 전체(uv 설치 → 의존성 설치 → `config/config.py` 템플릿 생성)가 준비됩니다. **Python만 미리 설치되어 있으면 됩니다** — 없으면 스크립트가 [python.org 다운로드 링크](https://www.python.org/downloads/)를 안내하고 종료합니다.
 
 ```bash
-manage\install\install-project.bat      # Windows
-./manage/install/install-project.sh     # macOS / Linux (최초 1회: chmod +x manage/install/install-project.sh)
+install-kbsec-openapi.bat      # Windows (탐색기에서 더블클릭해도 됨)
+./install-kbsec-openapi.sh     # macOS / Linux (최초 1회: chmod +x install-kbsec-openapi.sh)
 ```
 
-설치가 끝나면 `config/config.py`에 실제 키만 채우고 `manage/run/run-*.bat`/`manage/run/run-*.sh`로 바로 실행할 수 있습니다. 이미 설치된 환경에서 다시 실행해도 안전합니다(있는 것은 건너뜀). 수동으로 설치하려면 아래 2~3단계를 따르세요.
+> 💡 이 스크립트는 내부적으로 `manage\install\install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공적으로 끝나면 자기 자신을 삭제합니다** — 최초 1회용이라 반복 실행할 필요가 없기 때문입니다. 설치가 실패하면 재시도할 수 있도록 삭제하지 않고 남겨둡니다. 이후 다시 설치를 돌리고 싶다면(재설치/복구) `manage\install\install-project.bat`/`.sh`를 직접 실행하면 됩니다 — 이미 설치된 항목은 건너뛰므로 다시 실행해도 안전합니다.
 
-> 💡 **설치가 끝나면 프로젝트 최상단에 통합 런처 `run-kbsec-openapi.bat`(Windows)/`run-kbsec-openapi.sh`(macOS·Linux)가 자동으로 생성됩니다** (저장소에는 커밋되지 않는 로컬 생성물입니다). 뒤에 나오는 "실행 스크립트 (bat/sh)" 표의 개별 스크립트(`manage/run/run-*.*`)를 그대로 감싸는 상위 래퍼로, 매번 `manage\run\...` 경로를 치지 않고 프로젝트 루트에서 바로 실행할 수 있게 해줍니다. 인자로 `web`/ `main`/`terminal`을 받으며, 생략하면 기본값은 `web`입니다.
+설치가 끝나면 `config/config.py`에 실제 키만 채우고 `manage/run/run-*.bat`/`manage/run/run-*.sh`로 바로 실행할 수 있습니다. 수동으로 설치하려면 아래 2~3단계를 따르세요.
+
+> 💡 **설치가 끝나면 프로젝트 최상단에 통합 런처 `run-kbsec-openapi.bat`(Windows)/`run-kbsec-openapi.sh`(macOS·Linux)가 자동으로 생성됩니다** (저장소에는 커밋되지 않는 로컬 생성물입니다). 뒤에 나오는 "실행 스크립트 (bat/sh)" 표의 개별 스크립트(`manage/run/run-*.*`)를 그대로 감싸는 상위 래퍼로, 매번 `manage\run\...` 경로를 치지 않고 프로젝트 루트에서 바로 실행할 수 있게 해줍니다. 인자로 `web`/ `telegram`/`terminal`을 받으며, 생략하면 기본값은 `web`입니다.
 >
 > ```bash
 > # 설치즉시 확인 방법
@@ -54,13 +56,13 @@ manage\install\install-project.bat      # Windows
 > # 통합 런처  실행 방법
 > # Windows
 > run-kbsec-openapi.bat web
-> run-kbsec-openapi.bat main
+> run-kbsec-openapi.bat telegram
 > run-kbsec-openapi.bat terminal
 > run-kbsec-openapi.bat            # 인자 생략 → web과 동일
 >
 > # macOS / Linux
 > ./run-kbsec-openapi.sh web
-> ./run-kbsec-openapi.sh main
+> ./run-kbsec-openapi.sh telegram
 > ./run-kbsec-openapi.sh terminal
 > ./run-kbsec-openapi.sh           # 인자 생략 → web과 동일
 > ```
@@ -93,7 +95,7 @@ real_host_url = "https://developer.kbsec.com:32484"
 real_client_key = "실전용_앱키"
 real_client_secret = "실전용_앱시크릿"
 
-# (선택) 텔레그램 Agent — src/run/main.py(운영용 Agent) 사용 시 필요, src/run/terminal.py만 쓰면 불필요
+# (선택) 텔레그램 Agent — src/run/telegram.py(운영용 Agent) 사용 시 필요, src/run/terminal.py만 쓰면 불필요
 telegram_token = "텔레그램_봇_토큰"
 telegram_chat_id = "텔레그램_챗ID"
 
@@ -122,17 +124,17 @@ web_basic_auth_pass = ""
 uv run python -m src.run.terminal
 
 # 운영: 텔레그램 Agent (무한 폴링, telegram_token/telegram_chat_id 필요)
-uv run python -m src.run.main
+uv run python -m src.run.telegram
 
 # 웹: 브라우저 인터페이스 (http://localhost:8000, 다중 사용자 지원)
 uv run python -m src.run.web
 ```
 
-> `src/run/main.py`·`src/run/terminal.py`는 반드시 `-m src.run.<모듈>` 형태(모듈 실행)로 실행해야 합니다.
-> `python src/run/main.py`처럼 파일 경로로 직접 실행하면 `from src...` 임포트가 깨집니다. 아래 실행
+> `src/run/telegram.py`·`src/run/terminal.py`는 반드시 `-m src.run.<모듈>` 형태(모듈 실행)로 실행해야 합니다.
+> `python src/run/telegram.py`처럼 파일 경로로 직접 실행하면 `from src...` 임포트가 깨집니다. 아래 실행
 > 스크립트를 쓰면 이 부분을 신경 쓸 필요 없습니다.
 
-`src/run/main.py`와 `src/run/terminal.py`는 `src/commands/*.py`의 **동일한 명령 핸들러를 공유**합니다 — 텔레그램 없이
+`src/run/telegram.py`와 `src/run/terminal.py`는 `src/commands/*.py`의 **동일한 명령 핸들러를 공유**합니다 — 텔레그램 없이
 `terminal.py`에서 먼저 명령을 테스트한 뒤, 그대로 텔레그램 Agent에서도 사용할 수 있습니다.
 
 #### 실행 스크립트 (bat/sh)
@@ -145,31 +147,31 @@ uv run python -m src.run.web
 | 스크립트                      | 대상 OS           | 역할                   | 실행 대상             |
 | ------------------------------- | ------------------- | ------------------------ | ----------------------- |
 | `manage/run/run-terminal.bat` | Windows 전용      | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `manage/run/run-main.bat`     | Windows 전용      | 텔레그램 Agent 실행    | `src/run/main.py`     |
+| `manage/run/run-telegram.bat` | Windows 전용      | 텔레그램 Agent 실행    | `src/run/telegram.py` |
 | `manage/run/run-web.bat`      | Windows 전용      | 웹 클라이언트 실행     | `src/run/web.py`      |
 | `manage/run/run-terminal.sh`  | macOS·Linux 전용 | 터미널 클라이언트 실행 | `src/run/terminal.py` |
-| `manage/run/run-main.sh`      | macOS·Linux 전용 | 텔레그램 Agent 실행    | `src/run/main.py`     |
+| `manage/run/run-telegram.sh`  | macOS·Linux 전용 | 텔레그램 Agent 실행    | `src/run/telegram.py` |
 | `manage/run/run-web.sh`       | macOS·Linux 전용 | 웹 클라이언트 실행     | `src/run/web.py`      |
 
 ```bash
 # Windows (탐색기에서 더블클릭해도 됨)
 manage\run\run-terminal.bat
-manage\run\run-main.bat
+manage\run\run-telegram.bat
 manage\run\run-web.bat
 
 # macOS / Linux
 ./manage/run/run-terminal.sh
-./manage/run/run-main.sh
+./manage/run/run-telegram.sh
 ./manage/run/run-web.sh
 ```
 
-> 처음 한 번은 `chmod +x manage/run/run-terminal.sh manage/run/run-main.sh manage/run/run-web.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux, `install-project.sh`를 실행했다면 이미 부여되어 있습니다). Windows에서는 필요 없습니다.
+> 처음 한 번은 `chmod +x manage/run/run-terminal.sh manage/run/run-telegram.sh manage/run/run-web.sh`로 실행 권한을 부여해야 할 수 있습니다 (macOS/Linux, `install-project.sh`를 실행했다면 이미 부여되어 있습니다). Windows에서는 필요 없습니다.
 
 ---
 
 ## ✨ 주요 기능
 
-- **삼중 클라이언트**: `src/run/main.py`(텔레그램 Agent, 운영용) / `src/run/terminal.py`(터미널, 개발·테스트용) / `src/run/web.py`(웹 브라우저, 다중 사용자) — 동일한 명령 핸들러 공유
+- **삼중 클라이언트**: `src/run/telegram.py`(텔레그램 Agent, 운영용) / `src/run/terminal.py`(터미널, 개발·테스트용) / `src/run/web.py`(웹 브라우저, 다중 사용자) — 동일한 명령 핸들러 공유
 - **자연어 명령**: Claude AI가 "KB금융 10주 사줘" → `buy 105560 10`으로 변환 (실행 전 확인 필요)
 - **조회**: 현재가(국내+미국), 랭킹, 계좌현황, 종목마스터/검색(로컬 파일), 투자자별 매매 차트(국내 전용)
 - **매매**: 시장가/지정가/금액기반 매수, 전량/부분 매도, 미체결 취소 (국내 + 미국 주식, 티커로 매매 가능. 해외는 보유수량 자동조회 미지원이라 매도 시 수량 필수)
@@ -194,7 +196,7 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 | **공통 요청 봉투(dataHeader/dataBody) 구성**                                   | [src/api/client.py](src/api/client.py)                                                                                                                                                         |
 | **앱키/시크릿 설정**                                                           | [config/config.py](config/config.py) (없으면 `config.example.py` 복사)                                                                                                                         |
 | **터미널에서 바로 테스트**                                                     | [src/run/terminal.py](src/run/terminal.py) (또는 `manage/run/run-terminal.bat`/`manage/run/run-terminal.sh`로 바로 실행)                                                                       |
-| **텔레그램 Agent 원클릭 실행**                                                 | `manage/run/run-main.bat`(Windows) / `manage/run/run-main.sh`(macOS·Linux)                                                                                                                    |
+| **텔레그램 Agent 원클릭 실행**                                                 | `manage/run/run-telegram.bat`(Windows) / `manage/run/run-telegram.sh`(macOS·Linux)                                                                                                            |
 | **웹 브라우저에서 사용**                                                       | `manage/run/run-web.bat`/`manage/run/run-web.sh` 실행 후 http://localhost:8000 접속 ([src/web/](src/web/) — FastAPI + 순수 HTML/JS)                                                           |
 | **코드 생성 방법/규칙**                                                        | [manage/generate/generate_api_client.py](manage/generate/generate_api_client.py), [docs/api/README.md](docs/api/README.md)                                                                     |
 | **개발 환경(uv 등) 안내**                                                      | [docs/개발환경/개발환경.md](docs/개발환경/개발환경.md)                                                                                                                                         |
@@ -203,7 +205,7 @@ KB API에는 대응 기능이 없어 **지원하지 않는 것**: 조건검색�
 | **전체 구조와 데이터 흐름을 그림(mermaid)으로**                                | [docs/개발환경/프로젝트구조.md](docs/개발환경/프로젝트구조.md)                                                                                                                                 |
 | **프로그래밍 초보자용 상세 안내**                                              | [docs/개발환경/초보자가이드.md](docs/개발환경/초보자가이드.md)                                                                                                                                 |
 | **경로 상수(`src/paths.py`)란?**                                               | [docs/개발환경/paths.md](docs/개발환경/paths.md) — 참조 파일 경로의 단일 소스, 변경 절차                                                                                                      |
-| **텔레그램 Agent 명령어 전체 목록**                                            | [src/run/main.py](src/run/main.py)의 `HELP_TEXT`, 또는 Agent/CLI에서 `help` 입력                                                                                                               |
+| **텔레그램 Agent 명령어 전체 목록**                                            | [src/run/telegram.py](src/run/telegram.py)의 `HELP_TEXT`, 또는 Agent/CLI에서 `help` 입력                                                                                                       |
 | **명령 핸들러 구현체**                                                         | [src/commands/](src/commands/) — 파일 1개 = 명령 1개                                                                                                                                          |
 | **AI 자연어 → 명령어 변환 규칙**                                              | [docs/command_guide_for_ai.md](docs/command_guide_for_ai.md) (런타임에 실제로 참조되는 문서)                                                                                                   |
 | **자동매매 전략(폴링 모니터) 구현체**                                          | [src/utils/monitor_base.py](src/utils/monitor_base.py) + `src/utils/*_monitor.py`                                                                                                              |
@@ -267,7 +269,7 @@ manage\run\run-web.bat      # Windows
 
 ### 기본 흐름
 
-`manage/run/run-terminal.*`/`manage/run/run-main.*`은 시작하자마자 **운영환경으로 자동 로그인**합니다 (KB증권 모의투자가
+`manage/run/run-terminal.*`/`manage/run/run-telegram.*`은 시작하자마자 **운영환경으로 자동 로그인**합니다 (KB증권 모의투자가
 아직 없어 `login`을 직접 입력할 필요가 없습니다 — 실패하면 결과 메시지가 표시되니 그때 `/login real`로
 재시도하면 됩니다).
 
@@ -562,7 +564,7 @@ HTTP는 성공했지만 KB 쪽 처리 결과(`dataHeader.resultCode`)가 실패�
 KB API에는 실시간 웹소켓이 없어 REST 폴링 방식입니다 — 전략별로 15~30초 주기로 확인하며, 장 시간(09:00~15:30, 평일)에만 동작합니다. 정확한 주기는 `docs/features.md` 참고.
 
 **Q. 새 명령어를 추가하려면?**
-`CLAUDE.md`의 "필수 규칙" 섹션을 따르세요 — 명령 핸들러, `src/run/main.py`/`src/run/terminal.py` 등록, `docs/command_guide_for_ai.md` 갱신을 모두 함께 해야 합니다.
+`CLAUDE.md`의 "필수 규칙" 섹션을 따르세요 — 명령 핸들러, `src/run/telegram.py`/`src/run/terminal.py` 등록, `docs/command_guide_for_ai.md` 갱신을 모두 함께 해야 합니다.
 
 ---
 

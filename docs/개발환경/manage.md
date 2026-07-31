@@ -8,7 +8,7 @@
 ```
 manage/
 ├── generate/    데이터·코드 생성 스크립트 (이 문서에서 상세히 다룸, 아래 참고)
-├── run/         클라이언트 실행 스크립트 (run-main/run-terminal/run-web, .bat + .sh)
+├── run/         클라이언트 실행 스크립트 (run-telegram/run-terminal/run-web, .bat + .sh)
 └── install/     신규 클론 환경 설치 스크립트 (install-project, .bat + .sh)
 ```
 
@@ -19,6 +19,12 @@ manage/
   아니며, 프로젝트 루트에서 두 단계 아래로 옮겨졌기 때문에 스크립트 내부의 `cd`가
   `%~dp0..\..`(bat)/`$(dirname "${BASH_SOURCE[0]}")/../..`(sh)로 프로젝트 루트까지
   되짚어가도록 되어 있다.
+- **프로젝트 루트의 대표 진입점 두 종류(둘 다 이 두 폴더를 감싸는 얇은 래퍼)**:
+  `run-kbsec-openapi.bat`/`.sh`(`manage/run/run-*.*` 실행, **gitignore 대상** — `install-project.*`가
+  설치 시점에 OS에 맞게 생성하는 로컬 산출물)와 `install-kbsec-openapi.bat`/`.sh`
+  (`manage/install/install-project.bat`/`.sh` 실행, **커밋 대상** — 설치가 성공하면 자기 자신을
+  삭제하는 1회용 스크립트). 전자는 없으면 다시 만들면 안 되는 로컬 생성물이고, 후자는 정상
+  설치 후 로컬에 없는 게 정상인 1회용 스크립트라 — 성격이 반대이니 혼동하지 말 것.
 - **`manage/generate/`**: 아래부터 이 문서가 상세히 다루는 대상. 데이터/원본이 갱신됐을 때
   **사람이 손으로 한 번 실행**해 산출물(문서·런타임 데이터·자동 생성 코드)을 최신 상태로
   맞추는 스크립트 5개. `docs/` 아래에는 더 이상 `.py` 파일이 하나도 없다 — 예전에는 API
