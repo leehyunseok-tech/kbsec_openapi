@@ -4,11 +4,12 @@
 장 시간 중 10초마다 보유 종목을 조회해 이전 조회와 비교, 변경 시 알림 + 체결로그 기록.
 """
 
+import contextlib
 from datetime import datetime
 
 from src.api.account import ssqm1801, ssqm2341
-from src.utils.monitor_base import MonitorBase
 from src.utils import trade_logger
+from src.utils.monitor_base import MonitorBase
 
 
 def _normalize_code(is_no: str) -> str:
@@ -42,7 +43,9 @@ class HoldingsMonitor(MonitorBase):
         self._thread.start()
 
         stock_list = ", ".join(f"{info['name']}({code})" for code, info in snapshot.items()) or "없음"
-        return f"✅ 보유 종목 모니터링 시작\n\n현재 보유: {stock_list}\n10초마다 갱신 · 변경 시 알림\n\n/stop hold 로 중단"
+        return (
+            f"✅ 보유 종목 모니터링 시작\n\n현재 보유: {stock_list}\n10초마다 갱신 · 변경 시 알림\n\n/stop hold 로 중단"
+        )
 
     def _get_snapshot(self):
         result = ssqm1801(token=self.session.access_token, host_url=self.session.host_url)
@@ -97,17 +100,22 @@ class HoldingsMonitor(MonitorBase):
 
         for msg in messages:
             print(msg, flush=True)
-            try:
+            # 알림 전송 실패(텔레그램 장애 등)로 감시 루프 자체가 죽으면 안 된다.
+            with contextlib.suppress(Exception):
                 self.send_message(msg)
-            except Exception:
-                pass
 
     def _log_execution(self, code, name, side, qty_diff, remaining):
         """SSQM2341로 당일 체결내역 조회 후 CSV 기록 (매칭 실패 시 가격 0으로 기록)."""
         try:
             today = datetime.now().strftime("%Y%m%d")
             # inq_clsf는 2026-07-17 재수출 명세에서 INPUT에서 빠졌지만 운영 검증된 페이로드 유지를 위해 extra로 전송.
-            result = ssqm2341(ccls_clsf="1", ordr_dt=today, extra={"inq_clsf": "9"}, token=self.session.access_token, host_url=self.session.host_url)
+            result = ssqm2341(
+                ccls_clsf="1",
+                ordr_dt=today,
+                extra={"inq_clsf": "9"},
+                token=self.session.access_token,
+                host_url=self.session.host_url,
+            )
             strategy = trade_logger.consume_strategy(code)
             if not result["success"]:
                 trade_logger.log_trade(code, name, side, 0, qty_diff, strategy, remaining)
@@ -116,8 +124,10 @@ class HoldingsMonitor(MonitorBase):
             records = result["body"].get("dataBody", {}).get("Record1", []) or []
             side_name = "매수" if side == "매수" else "매도"
             matched = [
-                r for r in records
-                if _normalize_code(r.get("is_cd") or r.get("stnd_is_cd")) == code and side_name in (r.get("trd_dl_ccd_nm") or "")
+                r
+                for r in records
+                if _normalize_code(r.get("is_cd") or r.get("stnd_is_cd")) == code
+                and side_name in (r.get("trd_dl_ccd_nm") or "")
             ]
             if matched:
                 ex = matched[-1]

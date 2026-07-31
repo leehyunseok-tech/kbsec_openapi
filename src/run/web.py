@@ -36,6 +36,7 @@ KBSEC_WEB_HOST=0.0.0.0 등으로 외부에 노출할 때는 반드시 설정할 
 계정으로 자동 로그인된다.
 """
 
+import contextlib
 import os
 import sys
 import threading
@@ -53,10 +54,9 @@ def _open_browser_later(url, delay=1.2):
 
     def _run():
         time.sleep(delay)
-        try:
+        # 브라우저 자동 실행은 편의 기능일 뿐 — 실패해도 서버는 정상 동작해야 하므로 무시한다.
+        with contextlib.suppress(Exception):
             webbrowser.open(url)
-        except Exception:
-            pass
 
     threading.Thread(target=_run, daemon=True).start()
 

@@ -5,6 +5,7 @@ KB IVU10430은 acml_clsf(누적구분)/trd_clsf(매매구분) 파라미터로 �
 직접 내려주므로, 일별 데이터를 받아 직접 누적합(cumsum)할 필요가 없다.
 """
 
+import contextlib
 import os
 import tempfile
 from datetime import datetime, timedelta
@@ -50,7 +51,9 @@ def handle_investor(args, session, send_photo_fn=None):
         host_url=session.host_url,
     )
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 투자자별 매매 조회 실패\n\n오류: {error_msg}"
 
     rows = result["body"].get("dataBody", {}).get("out", []) or []
@@ -67,10 +70,8 @@ def handle_investor(args, session, send_photo_fn=None):
 
     if send_photo_fn:
         result = send_photo_fn(img_path, caption)
-        try:
-            os.unlink(img_path)
-        except OSError:
-            pass
+        with contextlib.suppress(OSError):
+            os.unlink(img_path)  # 임시 파일 정리 — 이미 지워졌거나 잠겨 있어도 전송은 성공 처리
         if result["success"]:
             return f"✅ {stk_cd} 투자자별 차트 전송 완료"
         err_msg = result["body"].get("error") or result["body"].get("description", "알 수 없는 오류")
@@ -92,9 +93,9 @@ def _generate_chart(rows, stk_cd, months):
         import matplotlib
 
         matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-        import matplotlib.font_manager as fm
         import matplotlib.dates as mdates
+        import matplotlib.font_manager as fm
+        import matplotlib.pyplot as plt
 
         korean_fonts = ["Malgun Gothic", "NanumGothic", "AppleGothic", "Gulim", "Dotum"]
         available = {f.name for f in fm.fontManager.ttflist}
@@ -137,7 +138,10 @@ def _generate_chart(rows, stk_cd, months):
         fig.autofmt_xdate(rotation=40)
         plt.tight_layout()
 
-        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False, prefix=f"investor_{stk_cd}_")
+        # noqa: SIM115 — 컨텍스트 매니저를 쓰면 블록을 벗어날 때 파일이 닫히고 정리되지만,
+        # 여기서는 경로만 얻어 matplotlib이 쓰게 한 뒤 호출자가 전송할 때까지 파일이 살아
+        # 있어야 하므로 delete=False + 즉시 close()가 의도된 패턴이다.
+        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False, prefix=f"investor_{stk_cd}_")  # noqa: SIM115
         tmp_name = tmp.name
         tmp.close()
         fig.savefig(tmp_name, dpi=130, bbox_inches="tight")

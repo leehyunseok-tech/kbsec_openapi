@@ -36,9 +36,10 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
 sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths/manage.generate import가 풀리도록
-from src.paths import API_SPEC_XLSX_DIR as XLSX_DIR, API_SPEC_MD_DIR as MD_DIR  # noqa: E402
-from manage.generate.convert_xlsx_to_md import convert_single_file  # noqa: E402
 from manage.generate import generate_api_list  # noqa: E402
+from manage.generate.convert_xlsx_to_md import convert_single_file  # noqa: E402
+from src.paths import API_SPEC_MD_DIR as MD_DIR
+from src.paths import API_SPEC_XLSX_DIR as XLSX_DIR  # noqa: E402
 
 
 def resolve_target(arg: str | None) -> Path:
@@ -58,9 +59,7 @@ def resolve_target(arg: str | None) -> Path:
     if candidate.exists():
         return candidate
 
-    raise FileNotFoundError(
-        f"경로를 찾을 수 없습니다: {arg} (docs/api/xlsx 기준 상대경로 또는 절대경로를 입력하세요)"
-    )
+    raise FileNotFoundError(f"경로를 찾을 수 없습니다: {arg} (docs/api/xlsx 기준 상대경로 또는 절대경로를 입력하세요)")
 
 
 def xlsx_to_md_path(xlsx_path: Path) -> Path:
@@ -71,10 +70,7 @@ def xlsx_to_md_path(xlsx_path: Path) -> Path:
 
 def convert_target(target: Path) -> int:
     """target이 파일이면 1개, 폴더면 하위 모든 xlsx를 변환. 변환된 개수 반환."""
-    if target.is_file():
-        xlsx_files = [target]
-    else:
-        xlsx_files = sorted(target.rglob("*.xlsx"))
+    xlsx_files = [target] if target.is_file() else sorted(target.rglob("*.xlsx"))
 
     if not xlsx_files:
         print(f"변환할 xlsx 파일이 없습니다: {target}")

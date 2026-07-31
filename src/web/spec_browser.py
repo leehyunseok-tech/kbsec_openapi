@@ -113,7 +113,7 @@ def load_detail(rel_path: str):
                 "length": f.length,
                 "required": f.required,
                 "description": f.description,
-                "choices": [{"code": c, "label": l} for c, l in choices],
+                "choices": [{"code": code, "label": label} for code, label in choices],
                 "default": default,
             }
         )

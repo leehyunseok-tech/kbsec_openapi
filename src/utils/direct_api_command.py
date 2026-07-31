@@ -118,7 +118,7 @@ def _build_body(spec: ApiSpec, fields: list, args: list):
         kr_to_en = {f.name_kr: f.name_en for f in fields}
         matches = _JSON_OBJ_RE.findall(raw)
         if not matches:
-            return body, f"파라미터 형식 오류: '{raw}'  (예: {{\"{fields[0].name_kr}\":\"값\"}})"
+            return body, f'파라미터 형식 오류: \'{raw}\'  (예: {{"{fields[0].name_kr}":"값"}})'
         for token in matches:
             try:
                 obj = json.loads(token)
@@ -137,7 +137,9 @@ def _build_body(spec: ApiSpec, fields: list, args: list):
     # 위치(bare) 방식
     if len(args) > len(fields):
         return body, "TOO_MANY"
-    for f, value in zip(fields, args):
+    # strict=False 의도적 — 위에서 args가 fields보다 많은 경우만 막았고, 적게 준 경우는
+    # "나머지 필드는 미입력(공백 유지)"이라는 정상 동작이라 길이 불일치를 허용해야 한다.
+    for f, value in zip(fields, args, strict=False):
         body[f.name_en] = value
     return body, None
 

@@ -17,14 +17,16 @@ src/api/ 디렉토리에 카테고리별 파이썬 모듈(함수 1개 = API 1개
 
 import keyword
 import re
+import subprocess
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
 sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths/manage.generate import가 풀리도록
-from src.paths import DOCS_API_DIR, SRC_API_DIR as API_DIR  # noqa: E402
-from manage.generate.generate_api_list import SPEC_DIR, collect_entries, dedupe  # noqa: E402
+from manage.generate.generate_api_list import collect_entries, dedupe  # noqa: E402
+from src.paths import DOCS_API_DIR  # noqa: E402
+from src.paths import SRC_API_DIR as API_DIR
 
 # INPUT 표는 "### 요청 예시"(구형 md) 또는 "---"(신형 md, 요청 예시 없음) 앞에서 끝난다.
 # "\n\n###"만 가정하면 요청 예시가 없는 md에서 표 전체를 못 찾아 파라미터가 전부
@@ -35,40 +37,90 @@ IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 # 코드 -> 모듈 매핑 (74개, 토큰발급은 code=None이라 별도 처리하고 여기 없음)
 CODE_TO_MODULE = {
     # price_info.py — 시세 조회 (현재가/호가/체결/시장종합)
-    "GSS10030": "price_info", "GSS10040": "price_info", "GSA10020": "price_info",
-    "IVU10070": "price_info", "IVU10080": "price_info", "IVU10140": "price_info",
+    "GSS10030": "price_info",
+    "GSS10040": "price_info",
+    "GSA10020": "price_info",
+    "IVU10070": "price_info",
+    "IVU10080": "price_info",
+    "IVU10140": "price_info",
     "IVSA0070": "price_info",
     # rank_info.py — 각종 상위/순위 조회
-    "GSA10150": "rank_info", "GSA10170": "rank_info", "IVS10910": "rank_info",
-    "IVS11190": "rank_info", "IVU10210": "rank_info", "IVU10240": "rank_info",
-    "IVU10270": "rank_info", "IVU10280": "rank_info", "IVU10550": "rank_info",
-    "IVM30010": "rank_info", "GSS10180": "rank_info", "IVS10920": "rank_info",
+    "GSA10150": "rank_info",
+    "GSA10170": "rank_info",
+    "IVS10910": "rank_info",
+    "IVS11190": "rank_info",
+    "IVU10210": "rank_info",
+    "IVU10240": "rank_info",
+    "IVU10270": "rank_info",
+    "IVU10280": "rank_info",
+    "IVU10550": "rank_info",
+    "IVM30010": "rank_info",
+    "GSS10180": "rank_info",
+    "IVS10920": "rank_info",
     "IVU10020": "rank_info",
     # chart.py — 통합차트
-    "GSC10060": "chart", "IVS11560": "chart",
+    "GSC10060": "chart",
+    "IVS11560": "chart",
     # stock_info.py — 종목 기본정보/기업개요
-    "SIAM4983": "stock_info", "SIQM4900": "stock_info", "IVM10050": "stock_info",
+    "SIAM4983": "stock_info",
+    "SIQM4900": "stock_info",
+    "IVM10050": "stock_info",
     # market_info.py — 시장/거시 정보
-    "IVA10370": "market_info", "IVA60140": "market_info", "IVA60190": "market_info",
-    "SZQM0771": "market_info", "GSA10600": "market_info",
+    "IVA10370": "market_info",
+    "IVA60140": "market_info",
+    "IVA60190": "market_info",
+    "SZQM0771": "market_info",
+    "GSA10600": "market_info",
     # investor_chart.py — 거래원/투자자/프로그램매매
-    "IVU10420": "investor_chart", "IVU10430": "investor_chart", "IVU10450": "investor_chart",
+    "IVU10420": "investor_chart",
+    "IVU10430": "investor_chart",
+    "IVU10450": "investor_chart",
     # order.py — 국내 매매주문 (소수점 포함)
-    "SSAM1801": "order", "SSAM1802": "order", "SSAM1805": "order", "SSAM1806": "order",
-    "SSAM5762": "order", "SSAM5763": "order", "SSAM5764": "order",
-    "SKAM2101": "order", "SKAM2102": "order", "SKAM2201": "order", "SKAM2202": "order",
+    "SSAM1801": "order",
+    "SSAM1802": "order",
+    "SSAM1805": "order",
+    "SSAM1806": "order",
+    "SSAM5762": "order",
+    "SSAM5763": "order",
+    "SSAM5764": "order",
+    "SKAM2101": "order",
+    "SKAM2102": "order",
+    "SKAM2201": "order",
+    "SKAM2202": "order",
     # reserve_order.py — 예약주문 (국내/미국)
-    "SSAM0831": "reserve_order", "SSQM0831": "reserve_order", "SSQM0834": "reserve_order",
-    "SPAO2104": "reserve_order", "SPAO2106": "reserve_order", "SPQO2105": "reserve_order",
+    "SSAM0831": "reserve_order",
+    "SSQM0831": "reserve_order",
+    "SSQM0834": "reserve_order",
+    "SPAO2104": "reserve_order",
+    "SPAO2106": "reserve_order",
+    "SPQO2105": "reserve_order",
     # account.py — 계좌/잔고/손익/증거금/예수금 조회
-    "SSQM0004": "account", "SSQM1801": "account", "SSQM1802": "account", "SSQM2121": "account",
-    "SSQM2341": "account", "SSQM2392": "account", "SSQM2442": "account", "SSQM2932": "account",
-    "SSQM2952": "account", "SSQM5765": "account", "SPQM2103": "account", "SPQM2106": "account",
-    "SPQM2204": "account", "SPQM2205": "account", "SPQM2206": "account", "SPQM2207": "account",
-    "SPQM3390": "account", "SPQN5472": "account", "SPQM2226": "account", "SRQM3051": "account",
-    "SKQM2106": "account", "SKQM3350": "account",
+    "SSQM0004": "account",
+    "SSQM1801": "account",
+    "SSQM1802": "account",
+    "SSQM2121": "account",
+    "SSQM2341": "account",
+    "SSQM2392": "account",
+    "SSQM2442": "account",
+    "SSQM2932": "account",
+    "SSQM2952": "account",
+    "SSQM5765": "account",
+    "SPQM2103": "account",
+    "SPQM2106": "account",
+    "SPQM2204": "account",
+    "SPQM2205": "account",
+    "SPQM2206": "account",
+    "SPQM2207": "account",
+    "SPQM3390": "account",
+    "SPQN5472": "account",
+    "SPQM2226": "account",
+    "SRQM3051": "account",
+    "SKQM2106": "account",
+    "SKQM3350": "account",
     # withdraw.py — 거래내역/출금가능금액 조회
-    "SWQA2301": "withdraw", "SWQM2412": "withdraw", "SWQN2302": "withdraw",
+    "SWQA2301": "withdraw",
+    "SWQM2412": "withdraw",
+    "SWQN2302": "withdraw",
 }
 
 MODULE_LABELS = {
@@ -85,8 +137,7 @@ MODULE_LABELS = {
 }
 
 GENERATED_HEADER = (
-    "# 자동 생성 파일 — 수동 수정 금지.\n"
-    "# manage/generate/generate_api_client.py 재실행으로 갱신하세요.\n"
+    "# 자동 생성 파일 — 수동 수정 금지.\n# manage/generate/generate_api_client.py 재실행으로 갱신하세요.\n"
 )
 
 
@@ -171,12 +222,12 @@ def render_function(item):
     params.append("host_url")
     sig = ", ".join(params)
 
-    doc_lines = [f'{code} {entry["name"]} — {entry["description"]}', ""]
+    doc_lines = [f"{code} {entry['name']} — {entry['description']}", ""]
     if fields:
         doc_lines.append("Args:")
         for f in fields:
-            desc = f' — {f["desc"]}' if f["desc"] else ""
-            doc_lines.append(f'    {safe_ident(f["name"])}: {f["label"]}{desc}')
+            desc = f" — {f['desc']}" if f["desc"] else ""
+            doc_lines.append(f"    {safe_ident(f['name'])}: {f['label']}{desc}")
     else:
         doc_lines.append("Args: (문서화된 요청 파라미터 없음)")
     doc_lines.append("    extra: INPUT 표에 없는 추가 dataBody 필드")
@@ -239,8 +290,11 @@ def write_registry(items):
         "",
     ]
     modules = sorted({it["module"] for it in items})
-    for module in modules:
-        lines.append(f"from src.api import {module}")
+    # ruff(isort)가 기대하는 괄호 묶음 형태로 내보낸다 — 모듈당 한 줄로 쓰면 생성 직후
+    # `ruff check`가 I001로 잡아 CI가 깨진다.
+    lines.append("from src.api import (")
+    lines.extend(f"    {module}," for module in modules)
+    lines.append(")")
     lines.append("")
     lines.append("REGISTRY = {")
     for item in sorted(items, key=lambda it: it["entry"]["code"]):
@@ -252,8 +306,8 @@ def write_registry(items):
         lines.append(f'        "function": {module}.{code.lower()},')
         lines.append(f'        "name": {entry["name"]!r},')
         lines.append(f'        "module": {module!r},')
-        lines.append(f'        "required": [],')
-        lines.append(f"        \"optional\": {optional!r},")
+        lines.append('        "required": [],')
+        lines.append(f'        "optional": {optional!r},')
         lines.append("    },")
     lines.append("}")
     lines.append("")
@@ -261,20 +315,41 @@ def write_registry(items):
     lines.append("def list_apis(module: str | None = None):")
     lines.append('    """등록된 API 코드/이름 목록. module 지정 시 해당 모듈만 필터링."""')
     lines.append("    items = REGISTRY.items()")
-    lines.append("    if module:")
-    lines.append('        items = [(c, v) for c, v in items if v["module"] == module]')
-    lines.append("    else:")
-    lines.append("        items = list(items)")
+    lines.append('    items = [(c, v) for c, v in items if v["module"] == module] if module else list(items)')
     lines.append('    return [(code, v["name"], v["module"]) for code, v in items]')
     lines.append("")
     (API_DIR / "registry.py").write_text("\n".join(lines), encoding="utf-8")
+
+
+def format_generated():
+    """생성 직후 산출물에 `ruff format`을 적용한다 (codegen → format).
+
+    문자열 조립으로 코드를 찍어내면 들여쓰기·빈 줄·후행 공백이 포매터 기준과 미세하게
+    어긋난다. 템플릿을 손으로 맞추는 대신 포매터에 맡기면, 생성 코드도 나머지 코드와
+    똑같은 규칙을 따르게 되어 `ruff format --check`를 쓰는 CI가 재생성 후에도 통과한다.
+    ruff가 없으면(런타임 의존성이 아니라 dev 의존성이므로) 조용히 건너뛴다.
+    """
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "ruff", "format", "--quiet", str(API_DIR)],
+            check=True,
+            capture_output=True,
+        )
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        print("  ⚠️  ruff format 생략 (ruff 미설치) — `uv sync` 후 재실행하면 서식이 정리됩니다.")
+        return False
 
 
 def main():
     items = build_entries()
     write_modules(items)
     write_registry(items)
-    print(f"{len(items)}개 API 함수를 {len({it['module'] for it in items})}개 모듈 + registry.py에 생성했습니다.")
+    formatted = format_generated()
+    suffix = " (ruff format 적용됨)" if formatted else ""
+    print(
+        f"{len(items)}개 API 함수를 {len({it['module'] for it in items})}개 모듈 + registry.py에 생성했습니다.{suffix}"
+    )
 
 
 if __name__ == "__main__":

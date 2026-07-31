@@ -7,7 +7,6 @@ docs/command_guide_for_ai.md를 시스템 프롬프트에 그대로 삽입해 �
 """
 
 import json
-from typing import List, Tuple
 
 from anthropic import Anthropic
 
@@ -86,7 +85,7 @@ def _build_system_prompt() -> str:
 중요: JSON 배열만 반환하고, 추가 설명이나 주석은 절대 포함하지 마세요."""
 
 
-def convert_natural_to_commands(text: str, api_key: str = None, model: str = None) -> Tuple[List[str], str]:
+def convert_natural_to_commands(text: str, api_key: str = None, model: str = None) -> tuple[list[str], str]:
     """
     자연어를 명령어로 변환
 
@@ -99,7 +98,10 @@ def convert_natural_to_commands(text: str, api_key: str = None, model: str = Non
     """
     client = _get_client(api_key)
     if client is None:
-        return [], "❌ Claude API 키가 설정되지 않았습니다. (터미널/텔레그램은 config/config.py의 claude_api_key, 웹은 설정 화면을 확인하세요)"
+        return (
+            [],
+            "❌ Claude API 키가 설정되지 않았습니다. (터미널/텔레그램은 config/config.py의 claude_api_key, 웹은 설정 화면을 확인하세요)",
+        )
 
     try:
         message = client.messages.create(
@@ -111,7 +113,7 @@ def convert_natural_to_commands(text: str, api_key: str = None, model: str = Non
 
         response_text = message.content[0].text.strip()
         if response_text.startswith("```"):
-            lines = [l for l in response_text.split("\n") if not l.strip().startswith("```")]
+            lines = [line for line in response_text.split("\n") if not line.strip().startswith("```")]
             response_text = "\n".join(lines).strip()
 
         try:
