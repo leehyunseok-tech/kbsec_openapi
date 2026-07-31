@@ -1,29 +1,26 @@
 """매도 후 재매수 쿨다운 추적 (브로커 무관)."""
 
-import json
 from datetime import datetime, timedelta
 
 from src.paths import COOLDOWN_LOG_JSON as LOG_PATH
+from src.utils import json_store
 
 
 def _load():
-    if LOG_PATH.exists():
-        try:
-            return json.loads(LOG_PATH.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    return {}
+    return json_store.read_json(LOG_PATH, {})
 
 
 def _save(data: dict):
-    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-    LOG_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return json_store.write_json(LOG_PATH, data)
 
 
 def record_sell(stk_cd: str):
-    data = _load()
-    data[stk_cd] = datetime.now().isoformat()
-    _save(data)
+    """매도 시각 기록 — 읽기-수정-쓰기를 원자적으로 처리해 동시 매도 기록이 유실되지 않게 한다."""
+
+    def _mutate(data):
+        data[stk_cd] = datetime.now().isoformat()
+
+    json_store.update_json(LOG_PATH, _mutate, {})
 
 
 def is_in_cooldown(stk_cd: str, cooldown_hours: int) -> bool:

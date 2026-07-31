@@ -4,9 +4,8 @@
 SettingsManager는 순수 정적 메서드만 제공한다 — 인스턴스화하지 않는다.
 """
 
-import json
-
-from src.paths import CONFIG_DATA_DIR as DATA_DIR, SETTINGS_JSON as SETTINGS_PATH
+from src.paths import SETTINGS_JSON as SETTINGS_PATH
+from src.utils import json_store
 
 DEFAULTS = {
     "market_hours": {"start_time": "09:00", "end_time": "15:30", "description": "한국 정규 거래시간"},
@@ -46,22 +45,22 @@ class SettingsManager:
 
     @staticmethod
     def load_settings():
-        if SETTINGS_PATH.exists():
-            try:
-                return json.loads(SETTINGS_PATH.read_text(encoding="utf-8"))
-            except Exception as e:
-                print(f"[설정] 로드 실패: {e}", flush=True)
-        return dict(DEFAULTS)
+        return json_store.read_json(SETTINGS_PATH, DEFAULTS)
 
     @staticmethod
     def save_settings(settings):
-        try:
-            DATA_DIR.mkdir(parents=True, exist_ok=True)
-            SETTINGS_PATH.write_text(json.dumps(settings, ensure_ascii=False, indent=2), encoding="utf-8")
-            return True
-        except Exception as e:
-            print(f"[설정] 저장 실패: {e}", flush=True)
-            return False
+        return json_store.write_json(SETTINGS_PATH, settings)
+
+    @staticmethod
+    def update_settings(mutate):
+        """읽기-수정-쓰기를 한 번의 임계 구역으로 처리한다 (lost update 방지).
+
+        load_settings() → 수정 → save_settings()를 따로 호출하면 그 사이에 다른 모니터
+        스레드가 저장한 변경이 덮어써질 수 있다. 여러 스레드가 같은 설정을 고칠 수 있는
+        자리(감시목록 추가/삭제 등)에서는 이 메서드를 쓴다.
+        """
+        ok, _ = json_store.update_json(SETTINGS_PATH, mutate, DEFAULTS)
+        return ok
 
     # ── 장 시간 ──────────────────────────────────────────────────────────────
     @staticmethod
@@ -137,7 +136,10 @@ class SettingsManager:
             "description": "트레일링 스탑 설정",
         }
         if SettingsManager.save_settings(settings):
-            return True, f"✅ 트레일링 스탑 설정 완료\n  고점 대비 하락율: -{drop_rate}%\n  최소 발동 수익률: +{min_profit}%"
+            return (
+                True,
+                f"✅ 트레일링 스탑 설정 완료\n  고점 대비 하락율: -{drop_rate}%\n  최소 발동 수익률: +{min_profit}%",
+            )
         return False, "트레일링 스탑 설정 저장 실패"
 
     # ── 주문 타임아웃 ─────────────────────────────────────────────────────────

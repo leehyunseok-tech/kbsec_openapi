@@ -1,9 +1,9 @@
 """명령 예약 관리 (브로커 무관)."""
 
-import json
 from datetime import datetime
 
 from src.paths import SCHEDULES_JSON as SCHEDULES_PATH
+from src.utils import json_store
 
 
 class ScheduleManager:
@@ -28,22 +28,11 @@ class ScheduleManager:
 
     @staticmethod
     def load_schedules():
-        if SCHEDULES_PATH.exists():
-            try:
-                return json.loads(SCHEDULES_PATH.read_text(encoding="utf-8"))
-            except Exception as e:
-                print(f"[예약] 로드 오류: {e}", flush=True)
-        return []
+        return json_store.read_json(SCHEDULES_PATH, [])
 
     @staticmethod
     def save_schedules(schedules):
-        try:
-            SCHEDULES_PATH.parent.mkdir(parents=True, exist_ok=True)
-            SCHEDULES_PATH.write_text(json.dumps(schedules, ensure_ascii=False, indent=2), encoding="utf-8")
-            return True
-        except Exception as e:
-            print(f"[예약] 저장 오류: {e}", flush=True)
-            return False
+        return json_store.write_json(SCHEDULES_PATH, schedules)
 
     @staticmethod
     def get_next_schedule_id():
