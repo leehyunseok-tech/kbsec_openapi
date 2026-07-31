@@ -37,12 +37,22 @@ Repository = "https://github.com/leehyunseok-tech/kbsec_openapi"
 Issues = "https://github.com/leehyunseok-tech/kbsec_openapi/issues"
 
 [dependency-groups]
-dev = ["ruff>=0.14.0"]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.14.0",
+]
 
 # 이 저장소는 라이브러리가 아니라 애플리케이션이다 — `uv run python -m src.run.<모듈>`처럼
 # 프로젝트 루트를 sys.path에 올려 실행하므로 자기 자신을 빌드/설치하지 않는다.
 [tool.uv]
 package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# 프로젝트 루트를 sys.path에 올려야 `from src...` 절대 임포트가 풀린다
+# (런타임의 `python -m src.run.<모듈>` 실행 방식과 동일한 이유).
+pythonpath = ["."]
+addopts = "-q --strict-markers"
 
 [tool.ruff]
 line-length = 120
