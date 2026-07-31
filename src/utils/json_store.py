@@ -38,6 +38,10 @@ import tempfile
 import threading
 from pathlib import Path
 
+from src.utils.logging_config import get_logger
+
+logger = get_logger(__name__)
+
 # 파일 경로별 RLock. 재진입 가능(RLock)이라 update_json 안에서 read_json을 불러도 안전하다.
 _locks: dict[str, threading.RLock] = {}
 _locks_guard = threading.Lock()
@@ -62,7 +66,7 @@ def read_json(path: Path, default):
             try:
                 return json.loads(path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError) as e:
-                print(f"[json_store] 로드 실패({path.name}): {e}", flush=True)
+                logger.warning(f"[json_store] 로드 실패({path.name}): {e} — 기본값으로 복구합니다")
     if isinstance(default, dict):
         return dict(default)
     if isinstance(default, list):
@@ -96,7 +100,7 @@ def write_json(path: Path, data) -> bool:
                 raise
             return True
         except OSError as e:
-            print(f"[json_store] 저장 실패({path.name}): {e}", flush=True)
+            logger.error(f"[json_store] 저장 실패({path.name}): {e}")
             return False
 
 

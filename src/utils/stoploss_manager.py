@@ -12,8 +12,11 @@ from datetime import datetime
 
 from src.utils import trade_logger
 from src.utils.holdings_valuation import get_holdings_with_profit
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 
 class StopLossManager(MonitorBase):
@@ -78,11 +81,11 @@ class StopLossManager(MonitorBase):
 
     def _trigger_sell(self, code, name, qty, profit_rate, reason):
         reason_kr = "익절" if reason == "take_profit" else "손절"
-        print(f"[stls] 🎯 {reason_kr} 기준 도달: {code}({name}) {profit_rate:+.2f}% → 전량 매도", flush=True)
+        logger.info(f"[stls] 🎯 {reason_kr} 기준 도달: {code}({name}) {profit_rate:+.2f}% → 전량 매도")
         trade_logger.register_order(code, f"{reason_kr}매")
         try:
             result = self._execute(f"sell {code}")
             self.sold_today[code] = {"name": name, "reason": reason, "profit_rate": profit_rate}
-            print(f"[stls] 매도 결과: {str(result)[:100]}", flush=True)
-        except Exception as e:
-            print(f"[stls] 매도 오류: {e}", flush=True)
+            logger.info(f"[stls] 매도 결과: {str(result)[:100]}")
+        except Exception:
+            logger.exception("[stls] 손절 매도 오류")

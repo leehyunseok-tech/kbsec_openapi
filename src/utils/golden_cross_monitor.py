@@ -2,8 +2,11 @@
 
 from src.utils import trade_logger
 from src.utils.chart_analysis import detect_golden_cross, get_minute_closes
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 
 class GoldenCrossMonitor(MonitorBase):
@@ -40,10 +43,10 @@ class GoldenCrossMonitor(MonitorBase):
             prev_state = self.last_crossed.get(stk_cd, False)
 
             if is_crossed and not prev_state:
-                print(f"[gdcrs] ⭐ {stk_cd} 골든크로스 감지!", flush=True)
+                logger.info(f"[gdcrs] ⭐ {stk_cd} 골든크로스 감지!")
                 trade_logger.register_order(stk_cd, "골든크로스")
                 cmd = f"buy {stk_cd} max {amount}"
                 response = self._execute(cmd)
-                print(f"[gdcrs] 매수 응답: {str(response)[:100]}", flush=True)
+                logger.info(f"[gdcrs] 매수 응답: {str(response)[:100]}")
 
             self.last_crossed[stk_cd] = is_crossed

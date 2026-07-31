@@ -7,8 +7,11 @@
 from src.api.account import ssqm1801
 from src.utils import trade_logger
 from src.utils.chart_analysis import detect_dead_cross, get_minute_closes
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 
 def _normalize_code(is_no: str) -> str:
@@ -71,10 +74,10 @@ class DeadCrossMonitor(MonitorBase):
             prev_state = self.last_crossed.get(stk_cd, False)
 
             if is_crossed and not prev_state:
-                print(f"[ddcrs] ⚠️  {stk_cd} 데드크로스 감지! {qty}주 매도", flush=True)
+                logger.info(f"[ddcrs] ⚠️  {stk_cd} 데드크로스 감지! {qty}주 매도")
                 trade_logger.register_order(stk_cd, "데드크로스")
                 cmd = f"sell {stk_cd} {qty}"
                 response = self._execute(cmd)
-                print(f"[ddcrs] 매도 응답: {str(response)[:100]}", flush=True)
+                logger.info(f"[ddcrs] 매도 응답: {str(response)[:100]}")
 
             self.last_crossed[stk_cd] = is_crossed

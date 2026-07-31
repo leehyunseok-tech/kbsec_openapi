@@ -34,10 +34,12 @@ import json
 import sys
 
 from src.utils.console import force_utf8_streams
+from src.utils.logging_config import setup_logging
 
 # Windows 콘솔 기본 코드페이지(cp949)는 이모지/일부 한글 조합을 인코딩하지 못해
 # UnicodeEncodeError가 나므로, 다른 모듈을 import 하기 전에 표준 스트림을 UTF-8로 강제한다.
 force_utf8_streams(include_stdin=True)
+setup_logging()
 
 from src.commands.api_command import handle_api
 from src.commands.brk_command import set_brk_monitor

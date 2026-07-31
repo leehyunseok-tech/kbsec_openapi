@@ -11,8 +11,10 @@ import sys
 import time
 
 from src.utils.console import force_utf8_streams
+from src.utils.logging_config import setup_logging
 
 force_utf8_streams()
+setup_logging()
 
 import schedule as schedule_lib
 

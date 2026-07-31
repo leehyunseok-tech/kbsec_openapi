@@ -8,8 +8,11 @@
 from datetime import datetime
 
 from src.api.price_info import ivu10140
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 _SETTINGS_KEY = "brk_watch_list"
 _RATE_KEY = "brk_rate"
@@ -129,7 +132,7 @@ class BrkMonitor(MonitorBase):
 
             if flu_rt >= rate:
                 self._triggered_today.add(stk_cd)
-                print(f"[brk] 돌파 감지 ({stk_cd} {stk_nm}) +{flu_rt:.2f}% → {command}", flush=True)
+                logger.info(f"[brk] 돌파 감지 ({stk_cd} {stk_nm}) +{flu_rt:.2f}% → {command}")
                 self.send_message(
                     f"🚀 돌파매수 신호\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_prc:,.0f}원\n"
                     f"상승률: +{flu_rt:.2f}%  (기준: +{rate:.1f}%)\n실행: {command}"

@@ -9,7 +9,10 @@ from datetime import datetime
 
 from src.api.account import ssqm1801, ssqm2341
 from src.utils import trade_logger
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
+
+logger = get_logger(__name__)
 
 
 def _normalize_code(is_no: str) -> str:
@@ -99,7 +102,7 @@ class HoldingsMonitor(MonitorBase):
             self._log_execution(code, name, side, qty_diff, remaining)
 
         for msg in messages:
-            print(msg, flush=True)
+            logger.info(msg)
             # 알림 전송 실패(텔레그램 장애 등)로 감시 루프 자체가 죽으면 안 된다.
             with contextlib.suppress(Exception):
                 self.send_message(msg)
@@ -135,5 +138,5 @@ class HoldingsMonitor(MonitorBase):
                 trade_logger.log_trade(code, ex.get("hngl_shrt_nm") or name, side, price, qty_diff, strategy, remaining)
             else:
                 trade_logger.log_trade(code, name, side, 0, qty_diff, strategy, remaining)
-        except Exception as e:
-            print(f"[hold] 체결 기록 오류: {e}", flush=True)
+        except Exception:
+            logger.exception("[hold] 체결 기록 오류")

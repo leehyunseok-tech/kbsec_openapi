@@ -1,8 +1,11 @@
 """그리드 트레이딩 모니터 (MonitorBase + IVU10140 매핑)."""
 
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.price_lookup import get_current_price
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 _WATCH_KEY = "grid_watch_list"
 
@@ -103,7 +106,7 @@ class GridMonitor(MonitorBase):
 
             if stk_cd not in self._states:
                 self._states[stk_cd] = {"buy_triggered": set(), "sell_triggered": set(), "stk_nm": info["name"]}
-                print(f"[grid] ({stk_cd}) 감시 시작 현재가: {cur_price:,.0f}원", flush=True)
+                logger.info(f"[grid] ({stk_cd}) 감시 시작 현재가: {cur_price:,.0f}원")
 
             self._check_levels(stk_cd, cur_price, item, self._states[stk_cd])
 
@@ -124,7 +127,7 @@ class GridMonitor(MonitorBase):
                 qty = max(1, int(order_amount // cur_price))
                 cmd = f"buy {stk_cd} {qty}"
                 st["buy_triggered"].add(n)
-                print(f"[grid] 매수 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}", flush=True)
+                logger.info(f"[grid] 매수 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}")
                 self.send_message(
                     f"🔵 그리드 {n}단계 매수\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}"
                 )
@@ -138,7 +141,7 @@ class GridMonitor(MonitorBase):
                 qty = max(1, int(order_amount // cur_price))
                 cmd = f"sell {stk_cd} {qty}"
                 st["sell_triggered"].add(n)
-                print(f"[grid] 매도 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}", flush=True)
+                logger.info(f"[grid] 매도 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}")
                 self.send_message(
                     f"🔴 그리드 {n}단계 매도\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}"
                 )

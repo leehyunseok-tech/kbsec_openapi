@@ -9,6 +9,10 @@ _stop_event.wait(interval) 폴링 루프와 시작/중단/장중여부 판별 �
 import threading
 from datetime import datetime
 
+from src.utils.logging_config import get_logger
+
+logger = get_logger(__name__)
+
 
 class MonitorBase:
     POLL_INTERVAL = 10
@@ -64,15 +68,15 @@ class MonitorBase:
         return start <= now <= end
 
     def _run_loop(self):
-        print(f"[{self.LABEL}] 감시 루프 시작", flush=True)
+        logger.info(f"[{self.LABEL}] 감시 루프 시작")
         while not self._stop_event.is_set():
             try:
                 if self._is_market_hours():
                     self._check_all()
-            except Exception as e:
-                print(f"[{self.LABEL}] 루프 오류: {e}", flush=True)
+            except Exception:
+                logger.exception(f"[{self.LABEL}] 폴링 루프 오류 — 다음 주기에 재시도합니다")
             self._stop_event.wait(self.POLL_INTERVAL)
-        print(f"[{self.LABEL}] 감시 루프 종료", flush=True)
+        logger.info(f"[{self.LABEL}] 감시 루프 종료")
 
     def _check_all(self):
         raise NotImplementedError

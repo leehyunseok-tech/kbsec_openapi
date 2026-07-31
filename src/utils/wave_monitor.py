@@ -1,8 +1,11 @@
 """분할매매(wave) 모니터 (MonitorBase + IVU10140 매핑)."""
 
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.price_lookup import get_current_price
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 _CONFIG_KEY = "wave_config"
 _WATCH_KEY = "wave_watch_list"
@@ -128,7 +131,7 @@ class WaveMonitor(MonitorBase):
                     "per_stage_amt": per_stage_amt,
                     "stk_nm": info["name"],
                 }
-                print(f"[wave] ({stk_cd}) 기준가 설정: {cur_price:,.0f}원", flush=True)
+                logger.info(f"[wave] ({stk_cd}) 기준가 설정: {cur_price:,.0f}원")
                 continue
 
             st = self._states[stk_cd]
@@ -154,7 +157,7 @@ class WaveMonitor(MonitorBase):
         st["buy_stage"] = stage
         st["total_bought_qty"] += qty
         cmd = f"buy {stk_cd} {qty}"
-        print(f"[wave] {stage}차 매수 ({stk_cd}) {cur_price:,.0f}원 × {qty}주 → {cmd}", flush=True)
+        logger.info(f"[wave] {stage}차 매수 ({stk_cd}) {cur_price:,.0f}원 × {qty}주 → {cmd}")
         self.send_message(
             f"📊 분할매매 {stage}차 매수\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n실행: {cmd}"
         )
@@ -183,7 +186,7 @@ class WaveMonitor(MonitorBase):
                 else (max(1, int(per_stage_amt // cur_price)) if per_stage_amt > 0 else 1)
             )
             cmd, qty_desc = f"sell {stk_cd} {qty}", f"{qty}주"
-        print(f"[wave] {stage}차 매도 ({stk_cd}) {cur_price:,.0f}원 {qty_desc} → {cmd}", flush=True)
+        logger.info(f"[wave] {stage}차 매도 ({stk_cd}) {cur_price:,.0f}원 {qty_desc} → {cmd}")
         self.send_message(
             f"📊 분할매매 {stage}차 매도\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty_desc}\n실행: {cmd}"
         )

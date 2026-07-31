@@ -11,8 +11,11 @@ from datetime import datetime
 
 from src.utils import trade_logger
 from src.utils.holdings_valuation import get_holdings_with_profit
+from src.utils.logging_config import get_logger
 from src.utils.monitor_base import MonitorBase
 from src.utils.settings_manager import SettingsManager
+
+logger = get_logger(__name__)
 
 
 class TrailingStopMonitor(MonitorBase):
@@ -74,6 +77,6 @@ class TrailingStopMonitor(MonitorBase):
         trade_logger.register_order(code, "트레일링스탑")
         try:
             result = self._execute(f"sell {code}")
-            print(f"[trst] 매도 결과: {str(result)[:100]}", flush=True)
-        except Exception as e:
-            print(f"[trst] 매도 오류: {e}", flush=True)
+            logger.info(f"[trst] 매도 결과: {str(result)[:100]}")
+        except Exception:
+            logger.exception("[trst] 트레일링 매도 오류")
