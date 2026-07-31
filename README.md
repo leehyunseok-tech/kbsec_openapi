@@ -1,6 +1,14 @@
 # KB증권 OpenAPI 검증 및 자동매매 시스템 AI Agent
 
 <p align="center">
+  <a href="https://github.com/leehyunseok-tech/kbsec_openapi/actions/workflows/ci.yml"><img src="https://github.com/leehyunseok-tech/kbsec_openapi/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
+</p>
+
+<p align="center">
   <img src="docs/개발환경/img/kbsecOpenapiWeb.gif" width="420" alt="웹 브라우저 실행 화면 — 종목 검색, 명령 실행, 확인 프롬프트">
   <img src="docs/개발환경/img/kbsecOpenapiTermianl.gif" width="420" alt="터미널 실행 화면 — 명령어로 시세 조회·매매">
 </p>
@@ -567,6 +575,32 @@ KB API에는 실시간 웹소켓이 없어 REST 폴링 방식입니다 — 전�
 `CLAUDE.md`의 "필수 규칙" 섹션을 따르세요 — 명령 핸들러, `src/run/telegram.py`/`src/run/terminal.py` 등록, `docs/command_guide_for_ai.md` 갱신을 모두 함께 해야 합니다.
 
 ---
+
+## 🛠️ 개발 (기여하기)
+
+```bash
+uv sync                                 # 의존성 + 개발 도구(ruff) 설치
+
+uv run ruff check src manage            # 린트
+uv run ruff format src manage           # 포맷 (--check 를 붙이면 검사만)
+uv run python -m compileall -q src manage   # 문법
+node --check src/web/static/js/app.js   # 웹 JS
+```
+
+- **Python 3.11 이상**을 지원합니다. CI가 3.11/3.12/3.13에서 전체 모듈 import를 검증하므로, 3.12+ 전용 문법·표준 라이브러리 API는 쓰지 마세요.
+- 린터·포매터는 **ruff** 하나로 통일했고 설정은 `pyproject.toml`의 `[tool.ruff]`에 있습니다. 규칙을 끌 때는 이유를 주석으로 남깁니다.
+- `src/api/*.py`는 **자동 생성 파일**입니다. 손으로 고치지 말고 `docs/api/md`를 고친 뒤 `uv run python -m manage.generate.generate_api_client`를 실행하세요 — CI가 "재생성 후 diff 없음"을 검사하므로 재생성을 빠뜨리면 실패합니다.
+- `config/data/*.json`(설정·예약·쿨다운)을 다루는 코드는 반드시 `src/utils/json_store.py`를 경유하세요. 자동매매 모니터 스레드와 웹 사용자가 동시에 쓰는 파일이라 원자적 쓰기 + 락이 필요합니다.
+- 커밋 메시지는 `<타입>: <한글 요약>` 형식입니다(`feat`/`fix`/`docs`/`refactor`/`web`/`mst`/`skill`/`install`).
+- 서식만 바꾼 대규모 커밋은 `.git-blame-ignore-revs`에 등록되어 있습니다. 로컬 blame에서 제외하려면 최초 1회 `git config blame.ignoreRevsFile .git-blame-ignore-revs`를 실행하세요.
+
+자세한 구조·규칙은 [CLAUDE.md](CLAUDE.md)와 [docs/개발환경/](docs/개발환경/)을 참고하세요.
+
+---
+
+## 📄 라이선스
+
+[MIT License](LICENSE) — 자유롭게 사용·수정·배포할 수 있으나, **어떠한 보증도 제공되지 않습니다.**
 
 ## ⚖️ 면책 조항
 

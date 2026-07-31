@@ -13,8 +13,8 @@ KB증권 OpenAPI(REST) 기반 자동매매 시스템 — 텔레그램/터미널/
 
 ## 개발 환경
 
-- Python 프로젝트 의존성/가상환경은 `uv`로 관리한다 (`pyproject.toml`, `.venv`). `requires-python = ">=3.14"`.
-- 패키지 설치: `uv add <패키지명>`, 스크립트 실행: `uv run <파일>` 또는 `uv run python ...`.
+- Python 프로젝트 의존성/가상환경은 `uv`로 관리한다 (`pyproject.toml`, `.venv`). `requires-python = ">=3.11"` — 3.12+ 전용 문법/stdlib API를 쓰지 않으므로 공개 배포 시 사용자 진입장벽을 낮추기 위해 3.11을 하한으로 둔다. 새 코드도 이 하한을 지킬 것(CI가 3.11/3.12/3.13에서 import를 검증한다).
+- 패키지 설치: `uv add <패키지명>`, 개발 도구는 `uv add --dev <패키지명>`, 스크립트 실행: `uv run <파일>` 또는 `uv run python ...`.
 - 최초 셋업: `config/config.example.py`를 `config/config.py`로 복사해 실제 키를 채운다 (`config.py`는 gitignore 대상 — 실제 앱키/텔레그램 토큰/Claude 키가 들어 있으므로 **어떤 응답/로그/커밋에도 원문을 노출하지 않는다**. 프로젝트는 GitHub 공개 예정).
 
 ## 자주 쓰는 명령어
@@ -37,7 +37,19 @@ uv run python -m manage.generate.generate_mst         # mst/origin → 종목마
 
 - 프로젝트 루트의 통합 런처 `run-kbsec-openapi.bat`/`.sh`(인자: `telegram`/`terminal`/`web [token]`, 기본 `web`)는 `manage/run/run-*.*`를 감싸는 래퍼일 뿐이며 **gitignore 대상 — `manage/install/install-project.*` 실행 시 OS에 맞게 생성되는 로컬 산출물**이다. 저장소에 없다고 지우거나 다시 만들어 커밋하지 말 것.
 - 프로젝트 루트의 `install-kbsec-openapi.bat`/`.sh`는 위 런처와 성격이 **정반대**다 — **커밋 대상(gitignore 아님)**이고, `manage/install/install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공하면 어느 쪽을 실행했든 둘 다(`.bat`+`.sh`) 삭제**하도록 설계된 1회용 스크립트다(실패 시엔 둘 다 재시도를 위해 남겨둠 — 설치 성공 여부와 무관하게 한쪽만 지워지는 일은 없다). 따라서 정상 설치를 마친 로컬 작업 트리에는 이 두 파일이 없는 게 정상이고, 그 상태에서 `git status`는 둘 다 "deleted"로 보여준다 — 되살리거나 커밋하지 말 것(저장소/새 클론에는 그대로 남아 있다). 재설치가 필요하면 `manage/install/install-project.*`를 직접 실행하면 된다(멱등 — 이미 설치된 항목은 건너뜀).
-- 자동화된 테스트 스위트/린터는 없다. 변경 검증은 `uv run python -m compileall -q src`(문법), `node --check src/web/static/js/*.js`(웹 JS), 그리고 터미널 클라이언트나 일회성 스크립트로 해당 기능을 직접 호출해 확인하는 방식이다. 실제 API 호출 검증은 운영환경(실거래) 계정이라 주문 계열은 특히 주의.
+### 검증 (커밋 전 이 순서로)
+
+```bash
+uv run ruff check src manage           # 린트 — 0 errors 유지가 기준
+uv run ruff format src manage          # 포맷 (--check 를 붙이면 검사만)
+uv run python -m compileall -q src manage   # 문법
+node --check src/web/static/js/app.js  # 웹 JS (static/js/*.js 전부)
+```
+
+- **린터/포매터는 ruff 하나로 통일**했고 설정은 `pyproject.toml`의 `[tool.ruff]`에 있다. 규칙을 끌 때는 반드시 **이유를 주석으로** 남긴다(현재 `E501`, `generate_mst.py`의 `C408` 등이 그렇게 처리돼 있다).
+- **자동 생성 코드(`src/api/*.py`)도 lint·format 대상**이다. `generate_api_client.py`가 생성 직후 자기 산출물에 `ruff format`을 적용하므로(codegen → format), 재생성해도 CI가 깨지지 않는다. 생성 코드에서 lint 오류가 나면 **파일이 아니라 생성기 템플릿을 고친다**.
+- **아직 자동화된 테스트 스위트는 없다.** 기능 검증은 터미널 클라이언트나 일회성 스크립트로 직접 호출해 확인한다. 실제 API 호출 검증은 운영환경(실거래) 계정이라 주문 계열은 특히 주의.
+- CI는 `.github/workflows/ci.yml` — ruff(lint+format), 3.11/3.12/3.13 import 검증, **생성 코드 최신성 검사**(재생성 후 diff가 나면 실패), 웹 JS 문법을 확인한다. `docs/api/md`만 고치고 `generate_api_client` 재실행을 깜빡하면 여기서 잡힌다.
 
 ## 커밋 메시지 규칙
 
@@ -83,6 +95,7 @@ KB증권 REST API를 활용한 텔레그램/터미널/웹 기반 자동매매 �
 - `src/paths.py` — **런타임 참조 파일/폴더 경로 상수의 단일 소스**. `docs/command_guide_for_ai.md`, `docs/api/`(md/api-list), `mst/api/`, `config/data/*.json`, `logs/`, `src/web/static/` 등 프로젝트 루트 기준 경로가 필요하면 반드시 여기서 import 한다 — 개별 모듈에서 `Path(__file__).resolve().parent...`로 루트를 다시 계산하지 말 것. 참조 파일을 옮길 때는 이 파일 한 줄만 고치면 된다(절차·상수 목록: `docs/개발환경/paths.md`). `manage/generate/*.py`는 파일 직접 실행 지원용 sys.path 부트스트랩만 자체 유지하고 경로 조합은 전부 `src.paths`를 쓴다.
 - `src/api/client.py`, `src/api/auth.py` — **수기 작성**, 공용 요청 봉투(dataHeader/dataBody) 구성 및 토큰 발급 로직.
 - `src/api/*.py`(그 외 10개 모듈), `src/api/registry.py` — **자동 생성 파일, 수동 수정 금지**. `manage/generate/generate_api_client.py` 재실행으로만 갱신.
+- `src/utils/json_store.py` — **`config/data/*.json`(설정·예약·쿨다운) 읽기/쓰기의 단일 창구**. 이 파일들은 자동매매 모니터 데몬 스레드 여러 개 + 웹 다중 사용자가 동시에 건드리므로, `Path.write_text(json.dumps(...))`로 직접 쓰면 ① 쓰는 도중 죽었을 때 잘린 JSON이 남고 ② read-modify-write 사이에 다른 스레드 변경이 덮어써진다(lost update — 감시목록이 날아가 자동매매가 조용히 멈춘다). `write_json()`은 임시 파일 + `os.replace()`로 원자적 교체를, `update_json()`은 읽기-수정-쓰기를 파일별 RLock으로 감싼다. **`config/data/` 아래 JSON을 새로 다루는 코드는 반드시 이 모듈을 경유할 것** — 직접 `write_text`/`json.dump` 하지 말 것. (한계: 프로세스 내부 락이라 텔레그램 봇과 웹을 별도 프로세스로 띄우면 프로세스 간 lost update는 남는다. 다만 파일 손상은 어느 경우에도 발생하지 않는다.)
 - `src/utils/` — API 클라이언트 유틸(`api_logger.py`, `http_client.py`, `session.py`, `device_info.py`) + 브로커 무관 유틸(`settings_manager.py`, `schedule_manager.py`, `trade_logger.py`, `trade_analyzer.py`, `cooldown_log.py`, `command_executor.py`, `ai_command_converter.py`, `stock_resolver.py`, `api_resolver.py`) + API 직접호출(`api_spec.py` — `docs/api/md` 명세를 런타임 파싱해 `/api`·`/call`이 registry 없이 임의 API를 실행, `direct_api_command.py` — `api_spec.py`를 재사용해 74개 API를 `/{코드}-{API명}` 전용 슬래시 커맨드로 즉시 실행) + 터미널 대화형 입력(`terminal_ui.py` — Enter 확인/화살표+숫자 선택 메뉴, cross-platform raw 키 입력) + 자동매매 폴링 모니터(`monitor_base.py`와 이를 상속하는 `*_monitor.py`, `stoploss_manager.py`) + 조회 헬퍼(`stock_master.py`, `price_lookup.py`, `chart_analysis.py`, `holdings_valuation.py`, `formatting.py`).
 - `mst/` (프로젝트 루트) — 종목마스터 `.mst` 파일(원본 `origin/` + 가공본 `api/`). `src/utils/stock_master.py`가 실제로 로드/검색하는 런타임 데이터는 `mst/api/openapi_field_kospi-kosdaq.mst`(코스피+코스닥 통합)/`mst/api/openapi_field_foren-us.mst`(해외) 두 파일이며, AI 자연어 변환이 생성한 종목명을 실제 코드로 바꾸는 결정적(deterministic) 근거로도 쓰인다(`src/utils/stock_resolver.py`). 이 두 파일은 코드값(예: `ST`, `Y/N`)을 사람이 읽기 좋은 텍스트(`주식`, `거래정지`)로 이미 바꿔둔 상태라 `/stcd` 등에서 그대로 표시해도 된다 — 단 해외 거래소코드(`NAS`/`NYS`/`AMX`)만은 예외로 원본을 유지한다(`buy_command.py`/`sell_command.py`/`srch_command.py`가 KB 주문/시세 API의 `krx_cd` 파라미터로 그대로 전달하기 때문; 표시용 한글명은 `OverseasStock.exchange_name`에 별도로 있음). **생성은 `manage/generate/generate_mst.py` 파이프라인이 전담**: `mst/origin/`에 KB 배포 원본만 갈아 놓고 `uv run python -m manage.generate.generate_mst`를 실행하면 필드 선별 문서(`docs/mst/xlsx/openapi_mst_*.xlsx` + `docs/mst/md/openapi_mst_*.md`)와 런타임 데이터(`mst/api/openapi_field_*.mst`)가 중간 파일 없이 전부 재생성된다. 필드 인덱스/코드표의 근거는 KB 공식 명세(`docs/mst/xlsx/mst_*.xlsx`)이며, 어떤 필드를 쓸지는 스크립트 안 `CURATION` 표가 단일 소스다. 산출 문서·데이터를 손으로 고치지 말 것(재실행 시 덮어써짐). (과거의 `mst/create_openapi_mst.py`+`generate_field_reference_mst.py` 2단계 구조는 타 증권사 레이아웃을 가정한 필드 라벨 오류 — 예: 소수점매매상태를 '주문유형'으로, 현금증거금율구분을 '매매수량단위코드'로 해석 — 가 있어 폐지·교정됨.)
 - `manage/` (프로젝트 루트, **`src/`가 아님** — 런타임 코드가 전혀 아니므로 `config/`·`docs/`·`mst/`와 같은 층위의 독립 폴더) — 운영/관리 스크립트 전체를 모아둔 곳. 세 하위 폴더로 나뉜다: `manage/generate/`(데이터·코드 생성 스크립트, `uv run python -m manage.generate.<파일명>`으로 실행 — `generate_mst.py`는 종목마스터 파이프라인(위 `mst/` 항목 참고), 나머지 4종(`convert_xlsx_to_md.py`/`generate_api_list.py`/`generate_api_client.py`/`generate_api_docs.py`)은 `docs/api/xlsx/*.xlsx` → `docs/api/md/*.md` → `docs/api/api-list.md`/`.json` → `src/api/*.py`+`registry.py` 순으로 이어지는 API 명세 자동 생성 체인이며 `generate_api_docs.py`가 xlsx→md 변환+목록 갱신을 한 번에 묶어 실행함), `manage/run/`(텔레그램/터미널/웹 클라이언트 실행 스크립트, 과거 프로젝트 루트의 `run-*.bat`/`run-*.sh`), `manage/install/`(신규 클론 환경 설치 스크립트, 과거 루트의 `install-project.bat`/`.sh`) — `manage/run/`·`manage/install/`의 `.bat`/`.sh`는 프로젝트 루트에서 두 단계 아래로 옮겨졌으므로 내부 `cd`가 `%~dp0..\..`(bat)/`$(dirname ...)/../..`(sh)로 프로젝트 루트까지 되짚어가도록 되어 있다. `docs/`에는 `.py` 파일이 전혀 없다(전부 `manage/generate/`로 이동됨). 각 스크립트의 상세 역할·삭제 가능 여부·산출물·실행 시점은 `docs/개발환경/manage.md` 참고.
