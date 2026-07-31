@@ -38,7 +38,7 @@ install-kbsec-openapi.bat      # Windows (탐색기에서 더블클릭해도 됨
 ./install-kbsec-openapi.sh     # macOS / Linux (최초 1회: chmod +x install-kbsec-openapi.sh)
 ```
 
-> 💡 이 스크립트는 내부적으로 `manage\install\install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공적으로 끝나면 자기 자신을 삭제합니다** — 최초 1회용이라 반복 실행할 필요가 없기 때문입니다. 설치가 실패하면 재시도할 수 있도록 삭제하지 않고 남겨둡니다. 이후 다시 설치를 돌리고 싶다면(재설치/복구) `manage\install\install-project.bat`/`.sh`를 직접 실행하면 됩니다 — 이미 설치된 항목은 건너뛰므로 다시 실행해도 안전합니다.
+> 💡 이 스크립트는 내부적으로 `manage\install\install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공적으로 끝나면 둘 중 어느 것을 실행했든 `install-kbsec-openapi.bat`/`.sh` 둘 다 삭제합니다** — 최초 1회용이라 반복 실행할 필요가 없기 때문입니다. 설치가 실패하면 재시도할 수 있도록 둘 다 삭제하지 않고 남겨둡니다. 이후 다시 설치를 돌리고 싶다면(재설치/복구) `manage\install\install-project.bat`/`.sh`를 직접 실행하면 됩니다 — 이미 설치된 항목은 건너뛰므로 다시 실행해도 안전합니다.
 
 설치가 끝나면 `config/config.py`에 실제 키만 채우고 `manage/run/run-*.bat`/`manage/run/run-*.sh`로 바로 실행할 수 있습니다. 수동으로 설치하려면 아래 2~3단계를 따르세요.
 

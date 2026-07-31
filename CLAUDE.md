@@ -36,7 +36,7 @@ uv run python -m manage.generate.generate_mst         # mst/origin → 종목마
 - **새 API 명세를 추가하는 표준 순서**: `docs/api/xlsx/<업무구분>/`에 xlsx를 넣고 → `generate_api_docs` → `generate_api_client`. `generate_api_docs`는 인자로 하위 경로/파일 하나만 지정해 부분 재변환도 된다(예: `... generate_api_docs "국내주식/계좌잔고"`).
 
 - 프로젝트 루트의 통합 런처 `run-kbsec-openapi.bat`/`.sh`(인자: `telegram`/`terminal`/`web [token]`, 기본 `web`)는 `manage/run/run-*.*`를 감싸는 래퍼일 뿐이며 **gitignore 대상 — `manage/install/install-project.*` 실행 시 OS에 맞게 생성되는 로컬 산출물**이다. 저장소에 없다고 지우거나 다시 만들어 커밋하지 말 것.
-- 프로젝트 루트의 `install-kbsec-openapi.bat`/`.sh`는 위 런처와 성격이 **정반대**다 — **커밋 대상(gitignore 아님)**이고, `manage/install/install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공하면 자기 자신을 삭제**하도록 설계된 1회용 스크립트다(실패 시엔 재시도를 위해 남겨둠). 따라서 정상 설치를 마친 로컬 작업 트리에는 이 파일이 없는 게 정상이고, 그 상태에서 `git status`는 이 파일을 "deleted"로 보여준다 — 되살리거나 커밋하지 말 것(저장소/새 클론에는 그대로 남아 있다). 재설치가 필요하면 `manage/install/install-project.*`를 직접 실행하면 된다(멱등 — 이미 설치된 항목은 건너뜀).
+- 프로젝트 루트의 `install-kbsec-openapi.bat`/`.sh`는 위 런처와 성격이 **정반대**다 — **커밋 대상(gitignore 아님)**이고, `manage/install/install-project.bat`/`.sh`를 실행하는 대표 진입점이며, **설치가 성공하면 어느 쪽을 실행했든 둘 다(`.bat`+`.sh`) 삭제**하도록 설계된 1회용 스크립트다(실패 시엔 둘 다 재시도를 위해 남겨둠 — 설치 성공 여부와 무관하게 한쪽만 지워지는 일은 없다). 따라서 정상 설치를 마친 로컬 작업 트리에는 이 두 파일이 없는 게 정상이고, 그 상태에서 `git status`는 둘 다 "deleted"로 보여준다 — 되살리거나 커밋하지 말 것(저장소/새 클론에는 그대로 남아 있다). 재설치가 필요하면 `manage/install/install-project.*`를 직접 실행하면 된다(멱등 — 이미 설치된 항목은 건너뜀).
 - 자동화된 테스트 스위트/린터는 없다. 변경 검증은 `uv run python -m compileall -q src`(문법), `node --check src/web/static/js/*.js`(웹 JS), 그리고 터미널 클라이언트나 일회성 스크립트로 해당 기능을 직접 호출해 확인하는 방식이다. 실제 API 호출 검증은 운영환경(실거래) 계정이라 주문 계열은 특히 주의.
 
 ## 커밋 메시지 규칙
