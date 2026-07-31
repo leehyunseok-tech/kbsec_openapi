@@ -16,34 +16,13 @@ force_utf8_streams()
 
 import schedule as schedule_lib
 
-from src.commands.anss_command import handle_anss
 from src.commands.api_command import handle_api
-from src.commands.blacklist_command import handle_blacklist
-from src.commands.brk_command import handle_brk, set_brk_monitor
-from src.commands.buy_command import handle_buy
-from src.commands.ccl_command import handle_ccl
+from src.commands.brk_command import set_brk_monitor
 from src.commands.command_meta import AUTOTRADE_FEATURE_ALIASES, AUTOTRADE_FEATURES_KR, korean_command_map
-from src.commands.cooldown_command import handle_cooldown
-from src.commands.gdcrs_command import handle_gdcrs
-from src.commands.grid_command import handle_grid, set_grid_monitor
-from src.commands.investor_command import handle_investor
-from src.commands.log_command import handle_log
-from src.commands.login_command import handle_login, handle_status
-from src.commands.loss_command import handle_loss
-from src.commands.mkhr_command import handle_mkhr
-from src.commands.mst_command import handle_mst
-from src.commands.mxhold_command import handle_mxhold
-from src.commands.profit_command import handle_profit
-from src.commands.rank_command import handle_rank
-from src.commands.report_command import handle_report
-from src.commands.rsv_command import handle_rsv
-from src.commands.sell_command import handle_sell
-from src.commands.srch_command import handle_srch
-from src.commands.stcd_command import handle_stcd
-from src.commands.stts_command import handle_stts
-from src.commands.time_command import handle_time
-from src.commands.trst_command import handle_trst
-from src.commands.wave_command import handle_wave, set_wave_monitor
+from src.commands.grid_command import set_grid_monitor
+from src.commands.login_command import handle_login
+from src.commands.registry import CommandContext, build_common_commands
+from src.commands.wave_command import set_wave_monitor
 from src.msgr.telegram.tel_receive import get_updates, parse_callback_query, parse_message
 from src.msgr.telegram.tel_send import (
     answer_callback_query,
@@ -155,6 +134,31 @@ HELP_TEXT = """🤖 KB증권 Open API Agent - 사용 가능한 명령어
 """
 
 
+class _TelegramContext(CommandContext):
+    """텔레그램 클라이언트가 공용 명령 핸들러에 넘길 의존성.
+
+    문서/사진은 텔레그램 전송 함수를 그대로 쓰고, 모니터는 프로세스당 하나뿐이라
+    전역 싱글턴에 맡긴다(None 반환 = 핸들러가 set_*_monitor로 등록된 것을 사용).
+    """
+
+    def __init__(self, bot):
+        super().__init__(bot.session)
+        self._bot = bot
+
+    @property
+    def document_sender(self):
+        return send_document
+
+    @property
+    def photo_sender(self):
+        return send_photo
+
+    @property
+    def execute_command(self):
+        # rank가 하위 명령을 실행할 때 사용 — 이미 확정된 문자열이라 AI를 거치지 않는다.
+        return lambda text, chat_id=None: self._bot._dispatch_direct(text)
+
+
 class TelegramBot(CommandPipelineMixin):
     """텔레그램 명령어 기반 KB증권 Open API Agent.
 
@@ -183,42 +187,20 @@ class TelegramBot(CommandPipelineMixin):
         self.stls_monitor = None
         self.hold_monitor = None
 
-        self.commands = {
-            "login": self.handle_command_login,
-            "status": self.handle_command_status,
-            "help": self.handle_command_help,
-            "srch": self.handle_command_srch,
-            "rank": self.handle_command_rank,
-            "buy": self.handle_command_buy,
-            "sell": self.handle_command_sell,
-            "ccl": self.handle_command_ccl,
-            "report": self.handle_command_report,
-            "r": self.handle_command_report,
-            "mst": self.handle_command_mst,
-            "stcd": self.handle_command_stcd,
-            "mkhr": self.handle_command_mkhr,
-            "stts": self.handle_command_stts,
-            "time": self.handle_command_time,
-            "cooldown": self.handle_command_cooldown,
-            "blacklist": self.handle_command_blacklist,
-            "mxhold": self.handle_command_mxhold,
-            "익절": self.handle_command_profit,
-            "손절": self.handle_command_loss,
-            "rsv": self.handle_command_rsv,
-            "log": self.handle_command_log,
-            "anss": self.handle_command_anss,
-            "investor": self.handle_command_investor,
-            "api": self.handle_command_api,
-            "gdcrs": self.handle_command_gdcrs,
-            "ddcrs": self.handle_command_ddcrs,
-            "trst": self.handle_command_trst,
-            "brk": self.handle_command_brk,
-            "wave": self.handle_command_wave,
-            "grid": self.handle_command_grid,
-            "start": self.handle_command_start,
-            "stop": self.handle_command_stop,
-            "power": self.handle_command_power,
-        }
+        # 공용 명령은 src/commands/registry.py 한 곳에 선언돼 있고, 세 클라이언트가
+        # 그대로 가져다 쓴다 — 예전처럼 클라이언트마다 위임 래퍼를 복사하지 않는다.
+        self.commands = build_common_commands(_TelegramContext(self))
+        # 클라이언트마다 동작이 다른 명령만 여기서 직접 등록한다(registry.CLIENT_SPECIFIC).
+        self.commands.update(
+            {
+                "login": self.handle_command_login,
+                "help": self.handle_command_help,
+                "api": self.handle_command_api,
+                "start": self.handle_command_start,
+                "stop": self.handle_command_stop,
+                "power": self.handle_command_power,
+            }
+        )
         # 한글 명령 등록: command_meta의 한글 이름을 같은 핸들러로 매핑 (영문 키는 별칭으로 유지)
         self.commands.update(korean_command_map(self.commands))
         self.commands["종료"] = self.handle_command_quit  # /종료 는 인자 없이 즉시 종료 (/power off 와 별개)
@@ -227,95 +209,11 @@ class TelegramBot(CommandPipelineMixin):
     def handle_command_login(self, args):
         return handle_login(args, self.session)
 
-    def handle_command_status(self, args):
-        return handle_status(args, self.session)
-
     def handle_command_help(self, args):
         return HELP_TEXT.strip()
 
-    def handle_command_srch(self, args):
-        return handle_srch(args, self.session)
-
-    def handle_command_rank(self, args):
-        def execute_cmd(text, chat_id):
-            return self._dispatch_direct(text)
-
-        return handle_rank(args, self.session, execute_cmd)
-
-    def handle_command_buy(self, args):
-        return handle_buy(args, self.session)
-
-    def handle_command_sell(self, args):
-        return handle_sell(args, self.session)
-
-    def handle_command_ccl(self, args):
-        return handle_ccl(args, self.session)
-
-    def handle_command_report(self, args):
-        return handle_report(args, self.session)
-
-    def handle_command_mst(self, args):
-        return handle_mst(args, self.session)
-
-    def handle_command_stcd(self, args):
-        return handle_stcd(args, self.session)
-
-    def handle_command_mkhr(self, args):
-        return handle_mkhr(args)
-
-    def handle_command_stts(self, args):
-        return handle_stts(args)
-
-    def handle_command_time(self, args):
-        return handle_time(args)
-
-    def handle_command_cooldown(self, args):
-        return handle_cooldown(args)
-
-    def handle_command_blacklist(self, args):
-        return handle_blacklist(args)
-
-    def handle_command_mxhold(self, args):
-        return handle_mxhold(args)
-
-    def handle_command_profit(self, args):
-        return handle_profit(args)
-
-    def handle_command_loss(self, args):
-        return handle_loss(args)
-
-    def handle_command_rsv(self, args):
-        return handle_rsv(args)
-
-    def handle_command_log(self, args):
-        return handle_log(args, self.session, send_document)
-
-    def handle_command_anss(self, args):
-        return handle_anss(args, self.session)
-
-    def handle_command_investor(self, args):
-        return handle_investor(args, self.session, send_photo)
-
     def handle_command_api(self, args, chat_id=None):
         return handle_api(args, self.session, get_session_manager(), chat_id)
-
-    def handle_command_gdcrs(self, args):
-        return handle_gdcrs(args, self.session)
-
-    def handle_command_ddcrs(self, args):
-        return "ℹ️ ddcrs는 별도 설정 명령이 없습니다. /gdcrs intv 로 분봉 주기를 설정하면 gdcrs·ddcrs 모두에 적용됩니다.\n/start ddcrs 로 감시를 시작하세요."
-
-    def handle_command_trst(self, args):
-        return handle_trst(args)
-
-    def handle_command_brk(self, args):
-        return handle_brk(args, self.session)
-
-    def handle_command_wave(self, args):
-        return handle_wave(args, self.session)
-
-    def handle_command_grid(self, args):
-        return handle_grid(args, self.session)
 
     def handle_command_start(self, args):
         if not args:

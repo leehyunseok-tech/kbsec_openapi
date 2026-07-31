@@ -25,34 +25,10 @@ from collections import deque
 
 from config import config
 from src.api.auth import get_token, revoke_token
-from src.commands.anss_command import handle_anss
 from src.commands.api_command import handle_api
-from src.commands.blacklist_command import handle_blacklist
-from src.commands.brk_command import handle_brk
-from src.commands.buy_command import handle_buy
-from src.commands.ccl_command import handle_ccl
 from src.commands.command_meta import AUTOTRADE_FEATURE_ALIASES, AUTOTRADE_FEATURES_KR, korean_command_map
-from src.commands.cooldown_command import handle_cooldown
-from src.commands.gdcrs_command import handle_gdcrs
-from src.commands.grid_command import handle_grid
-from src.commands.investor_command import handle_investor
-from src.commands.log_command import handle_log
 from src.commands.login_command import handle_status
-from src.commands.loss_command import handle_loss
-from src.commands.mkhr_command import handle_mkhr
-from src.commands.mst_command import handle_mst
-from src.commands.mxhold_command import handle_mxhold
-from src.commands.profit_command import handle_profit
-from src.commands.rank_command import handle_rank
-from src.commands.report_command import handle_report
-from src.commands.rsv_command import handle_rsv
-from src.commands.sell_command import handle_sell
-from src.commands.srch_command import handle_srch
-from src.commands.stcd_command import handle_stcd
-from src.commands.stts_command import handle_stts
-from src.commands.time_command import handle_time
-from src.commands.trst_command import handle_trst
-from src.commands.wave_command import handle_wave
+from src.commands.registry import CommandContext, build_common_commands
 from src.msgr.telegram.tel_send import send_document, send_photo
 from src.run.command_pipeline import CommandPipelineMixin
 from src.utils import api_spec
@@ -82,6 +58,39 @@ LOW_LEVEL_HELP = """── 저수준 직접 호출 (API 코드 기반) ──
   /info <API코드>           해당 API의 파라미터(타입/길이/필수여부/선택지) 조회 (호출 전 확인용)
   /list [키워드]            등록 API 코드/이름/업무구분 검색 (키워드 생략 시 전체)
 """
+
+
+class _WebContext(CommandContext):
+    """웹 클라이언트가 공용 명령 핸들러에 넘길 의존성.
+
+    다른 두 클라이언트와 결정적으로 다른 점은 **모니터를 전역 싱글턴에 맡기면 안 된다**는
+    것이다 — 브라우저 세션마다 WebClient가 새로 생기므로, 전역 등록 방식을 쓰면 마지막에
+    접속한 사용자의 모니터가 다른 모든 사용자의 brk/wave/grid 명령을 가로챈다.
+    그래서 monitor()가 이 인스턴스의 모니터를 명시적으로 돌려준다.
+    """
+
+    def __init__(self, client):
+        super().__init__(client.session)
+        self._client = client
+
+    @property
+    def document_sender(self):
+        return self._client._telegram_document_sender()
+
+    @property
+    def photo_sender(self):
+        return self._client._telegram_photo_sender()
+
+    @property
+    def execute_command(self):
+        return self._client.process_command_as_text
+
+    def monitor(self, name: str):
+        return {
+            "brk": self._client.brk_monitor,
+            "wave": self._client.wave_monitor,
+            "grid": self._client.grid_monitor,
+        }.get(name)
 
 
 class WebClient(CommandPipelineMixin):
@@ -126,41 +135,20 @@ class WebClient(CommandPipelineMixin):
         self.stls_monitor = None
         self.hold_monitor = None
 
-        self.commands = {
-            "login": self.handle_command_login,
-            "status": self.handle_command_status,
-            "help": self.handle_command_help,
-            "srch": self.handle_command_srch,
-            "rank": self.handle_command_rank,
-            "buy": self.handle_command_buy,
-            "sell": self.handle_command_sell,
-            "ccl": self.handle_command_ccl,
-            "report": self.handle_command_report,
-            "r": self.handle_command_report,
-            "mst": self.handle_command_mst,
-            "stcd": self.handle_command_stcd,
-            "mkhr": self.handle_command_mkhr,
-            "stts": self.handle_command_stts,
-            "time": self.handle_command_time,
-            "cooldown": self.handle_command_cooldown,
-            "blacklist": self.handle_command_blacklist,
-            "mxhold": self.handle_command_mxhold,
-            "익절": self.handle_command_profit,
-            "손절": self.handle_command_loss,
-            "rsv": self.handle_command_rsv,
-            "log": self.handle_command_log,
-            "anss": self.handle_command_anss,
-            "investor": self.handle_command_investor,
-            "api": self.handle_command_api,
-            "gdcrs": self.handle_command_gdcrs,
-            "ddcrs": self.handle_command_ddcrs,
-            "trst": self.handle_command_trst,
-            "brk": self.handle_command_brk,
-            "wave": self.handle_command_wave,
-            "grid": self.handle_command_grid,
-            "start": self.handle_command_start,
-            "stop": self.handle_command_stop,
-        }
+        # 공용 명령은 src/commands/registry.py 한 곳에 선언돼 있다 (telegram/terminal과 공유).
+        # brk/wave/grid 모니터는 _WebContext.monitor()가 이 인스턴스 것을 넘겨준다.
+        self.commands = build_common_commands(_WebContext(self))
+        # 클라이언트마다 동작이 다른 명령만 여기서 직접 등록한다(registry.CLIENT_SPECIFIC).
+        # power/종료는 공유 서버를 브라우저에서 죽이면 안 되므로 웹에는 없다.
+        self.commands.update(
+            {
+                "login": self.handle_command_login,
+                "help": self.handle_command_help,
+                "api": self.handle_command_api,
+                "start": self.handle_command_start,
+                "stop": self.handle_command_stop,
+            }
+        )
         # 한글 명령 등록: command_meta의 한글 이름을 같은 핸들러로 매핑 (영문 키는 별칭으로 유지)
         # 웹에는 종료(power)가 없다 — 브라우저에서 서버를 끄면 다른 사용자에게 영향을 주기 때문.
         self.commands.update(korean_command_map(self.commands))
@@ -252,73 +240,10 @@ class WebClient(CommandPipelineMixin):
     def handle_command_login(self, args):
         return "ℹ️ 웹에서는 우측 상단 '설정' 화면에서 앱키(client_key)/시크릿(client_secret)을 입력하면 자동으로 로그인됩니다."
 
-    def handle_command_status(self, args):
-        return handle_status(args, self.session)
-
     def handle_command_help(self, args):
         from src.run.telegram import HELP_TEXT
 
         return HELP_TEXT.strip() + "\n" + LOW_LEVEL_HELP
-
-    def handle_command_srch(self, args):
-        return handle_srch(args, self.session)
-
-    def handle_command_rank(self, args):
-        return handle_rank(args, self.session, self.process_command_as_text)
-
-    def handle_command_buy(self, args):
-        return handle_buy(args, self.session)
-
-    def handle_command_sell(self, args):
-        return handle_sell(args, self.session)
-
-    def handle_command_ccl(self, args):
-        return handle_ccl(args, self.session)
-
-    def handle_command_report(self, args):
-        return handle_report(args, self.session)
-
-    def handle_command_mst(self, args):
-        return handle_mst(args, self.session)
-
-    def handle_command_stcd(self, args):
-        return handle_stcd(args, self.session)
-
-    def handle_command_mkhr(self, args):
-        return handle_mkhr(args)
-
-    def handle_command_stts(self, args):
-        return handle_stts(args)
-
-    def handle_command_time(self, args):
-        return handle_time(args)
-
-    def handle_command_cooldown(self, args):
-        return handle_cooldown(args)
-
-    def handle_command_blacklist(self, args):
-        return handle_blacklist(args)
-
-    def handle_command_mxhold(self, args):
-        return handle_mxhold(args)
-
-    def handle_command_profit(self, args):
-        return handle_profit(args)
-
-    def handle_command_loss(self, args):
-        return handle_loss(args)
-
-    def handle_command_rsv(self, args):
-        return handle_rsv(args)
-
-    def handle_command_log(self, args):
-        return handle_log(args, self.session, self._telegram_document_sender())
-
-    def handle_command_anss(self, args):
-        return handle_anss(args, self.session)
-
-    def handle_command_investor(self, args):
-        return handle_investor(args, self.session, self._telegram_photo_sender())
 
     def _telegram_document_sender(self):
         """설정 화면에서 telegram_token/telegram_chat_id를 입력했을 때만 실제 전송자를 반환.
@@ -348,24 +273,6 @@ class WebClient(CommandPipelineMixin):
         session_mgr = get_session_manager() if interactive else None
         user_id = self.user_id if interactive else None
         return handle_api(args, self.session, session_mgr, user_id)
-
-    def handle_command_gdcrs(self, args):
-        return handle_gdcrs(args, self.session)
-
-    def handle_command_ddcrs(self, args):
-        return "ℹ️ ddcrs는 별도 설정 명령이 없습니다. /gdcrs intv 로 분봉 주기를 설정하면 gdcrs·ddcrs 모두에 적용됩니다.\n/start ddcrs 로 감시를 시작하세요."
-
-    def handle_command_trst(self, args):
-        return handle_trst(args)
-
-    def handle_command_brk(self, args):
-        return handle_brk(args, self.session, monitor=self.brk_monitor)
-
-    def handle_command_wave(self, args):
-        return handle_wave(args, self.session, monitor=self.wave_monitor)
-
-    def handle_command_grid(self, args):
-        return handle_grid(args, self.session, monitor=self.grid_monitor)
 
     def handle_command_start(self, args):
         if not args:
