@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_blacklist(args):
+def handle_blacklist(args: list[str]) -> str:
     """
     blacklist 명령 처리
 

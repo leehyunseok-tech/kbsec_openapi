@@ -25,7 +25,7 @@ from src.utils.api_spec import (
 )
 
 
-def handle_api(args, session, session_mgr=None, chat_id=None):
+def handle_api(args: list[str], session, session_mgr=None, chat_id=None) -> str:
     if not args:
         return (
             "❌ 사용법: /api {API코드}\n"

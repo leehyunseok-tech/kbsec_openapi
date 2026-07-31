@@ -6,7 +6,7 @@ from src.api.account import ssqm1801, ssqm2341
 from src.utils.formatting import format_number
 
 
-def handle_report(args, session):
+def handle_report(args: list[str], session) -> str:
     """report/r 명령 처리 - 보유종목 + 체결/미체결 주문 조회"""
     if not session.is_logged_in():
         return "❌ 먼저 로그인을 해야 합니다.\n/login real을 입력하세요."

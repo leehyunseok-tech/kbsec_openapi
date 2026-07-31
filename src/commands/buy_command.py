@@ -190,7 +190,7 @@ def _handle_overseas_buy(overseas_stock, args, session):
     return _format_overseas_result(result, order_type, quantity, ticker)
 
 
-def handle_buy(args, session):
+def handle_buy(args: list[str], session) -> str:
     """
     buy 명령 처리 - 종목 매수주문 (국내 6자리 코드 또는 해외 티커)
 

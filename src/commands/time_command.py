@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_time(args):
+def handle_time(args: list[str]) -> str:
     """
     time 명령 처리 - 미체결 주문 타임아웃 설정
 

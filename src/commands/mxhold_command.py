@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_mxhold(args):
+def handle_mxhold(args: list[str]) -> str:
     """
     mxhold 명령 처리
 

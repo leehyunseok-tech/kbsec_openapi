@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_trst(args):
+def handle_trst(args: list[str]) -> str:
     """
     trst 명령 처리
 

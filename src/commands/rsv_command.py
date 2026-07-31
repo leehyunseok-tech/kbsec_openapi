@@ -3,7 +3,7 @@
 from src.utils.schedule_manager import ScheduleManager
 
 
-def handle_rsv(args):
+def handle_rsv(args: list[str]) -> str:
     """
     rsv 명령 처리 - 명령 예약
 

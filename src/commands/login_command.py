@@ -16,7 +16,7 @@ from src.utils.formatting import format_duration
 _DATETIME_FMT = "%Y-%m-%d %H:%M:%S"
 
 
-def handle_login(args, session):
+def handle_login(args: list[str], session) -> str:
     """
     login 명령 처리
 
@@ -65,7 +65,7 @@ def handle_login(args, session):
 /도움말을 입력하여 도움말을 확인하세요."""
 
 
-def handle_status(args, session):
+def handle_status(args: list[str], session) -> str:
     """status 명령 처리 - 현재 로그인 상태 확인"""
     if not session.is_logged_in():
         return "❌ 로그인되지 않음\n\n/login real로 로그인하세요."

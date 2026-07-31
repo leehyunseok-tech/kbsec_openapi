@@ -118,7 +118,7 @@ def _handle_overseas_sell(overseas_stock, args, session):
 메시지: {body.get("o_msg", "")}"""
 
 
-def handle_sell(args, session):
+def handle_sell(args: list[str], session) -> str:
     """
     sell 명령 처리 - 종목 매도주문 (국내 6자리 코드 또는 해외 티커)
 

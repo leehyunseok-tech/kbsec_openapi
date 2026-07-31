@@ -15,7 +15,7 @@ def _is_domestic_code(stock_code: str) -> bool:
     return stock_code.isdigit() and len(stock_code) == 6
 
 
-def handle_srch(args, session):
+def handle_srch(args: list[str], session) -> str:
     """
     srch 명령 처리 - 종목 현재가/기본정보 조회 (국내 6자리 코드 또는 해외 티커)
 

@@ -18,7 +18,7 @@ RANK_FUNCS = {
 }
 
 
-def handle_rank(args, session, execute_command=None):
+def handle_rank(args: list[str], session, execute_command=None) -> str:
     """
     rank 명령 처리 - 상위 종목 랭킹 조회
 

@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_cooldown(args):
+def handle_cooldown(args: list[str]) -> str:
     """
     cooldown 명령 처리
 

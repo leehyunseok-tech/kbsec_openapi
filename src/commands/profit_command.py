@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_profit(args):
+def handle_profit(args: list[str]) -> str:
     """
     익절 명령 처리
 

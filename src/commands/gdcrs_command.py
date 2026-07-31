@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_gdcrs(args, session):
+def handle_gdcrs(args: list[str], session) -> str:
     """
     gdcrs 명령 처리
 

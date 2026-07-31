@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_loss(args):
+def handle_loss(args: list[str]) -> str:
     """
     손절 명령 처리
 

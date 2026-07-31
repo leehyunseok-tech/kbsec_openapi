@@ -3,7 +3,7 @@
 from src.utils.stock_master import search_domestic, search_overseas
 
 
-def handle_stcd(args, session):
+def handle_stcd(args: list[str], session) -> str:
     """
     stcd 명령 처리 - 종목명/종목코드 키워드 검색 (국내 + 해외)
 

@@ -20,7 +20,7 @@ KNOWN_KEYS = {
 }
 
 
-def handle_stts(args):
+def handle_stts(args: list[str]) -> str:
     """stts 명령 처리 - 전체 설정값 조회"""
     settings = SettingsManager.load_settings()
     message = "⚙️  현재 설정값\n\n"

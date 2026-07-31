@@ -18,7 +18,7 @@ def _extract_code(order: dict) -> str:
     return raw[-6:] if len(raw) >= 6 else raw
 
 
-def handle_ccl(args, session):
+def handle_ccl(args: list[str], session) -> str:
     """
     ccl 명령 처리 - 주문 취소
 

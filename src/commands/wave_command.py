@@ -8,7 +8,7 @@ def set_wave_monitor(monitor):
     _wave_monitor = monitor
 
 
-def handle_wave(args, session, monitor=None):
+def handle_wave(args: list[str], session, monitor=None) -> str:
     # monitor 인자는 다중 인스턴스 클라이언트(src/web/client.py — 웹 세션마다 모니터가
     # 따로 있음)가 자기 것을 명시적으로 넘기기 위한 것. 생략하면 set_wave_monitor로
     # 등록된 프로세스 전역 모니터를 쓴다(main.py/terminal.py — 프로세스당 1개라 충분).

@@ -3,7 +3,7 @@
 from src.utils.settings_manager import SettingsManager
 
 
-def handle_mkhr(args):
+def handle_mkhr(args: list[str]) -> str:
     """
     mkhr 명령 처리 - 장 시간 설정
 

@@ -3,7 +3,7 @@
 from src.utils.trade_analyzer import analyze_trades
 
 
-def handle_anss(args, session):
+def handle_anss(args: list[str], session) -> str:
     """
     anss 명령 처리 - 체결 내역 AI 분석
 

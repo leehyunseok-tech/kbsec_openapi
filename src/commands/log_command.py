@@ -10,7 +10,7 @@ def _resolve_log_path(days_ago: int):
     return _LOGS_DIR / f"{target.strftime('%Y%m%d')}.csv", target.strftime("%Y-%m-%d")
 
 
-def handle_log(args, session, send_document_fn=None):
+def handle_log(args: list[str], session, send_document_fn=None) -> str:
     """
     log 명령 처리 - 지정한 날짜의 체결 내역 CSV 파일 전송
 

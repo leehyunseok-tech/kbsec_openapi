@@ -8,7 +8,7 @@ mst/api/openapi_field_*.mst 파일이 이미 로컬에 있으므로 API 호출�
 from src.utils.stock_master import load_all
 
 
-def handle_mst(args, session):
+def handle_mst(args: list[str], session) -> str:
     """mst 명령 처리 - 종목마스터 로드 현황 조회 (API 호출 불필요)"""
     kospi, kosdaq, overseas = load_all()
     return f"""📋 종목마스터 (로컬 파일 기반, API 호출 없음)

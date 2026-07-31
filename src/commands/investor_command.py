@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from src.api.investor_chart import ivu10430
 
 
-def handle_investor(args, session, send_photo_fn=None):
+def handle_investor(args: list[str], session, send_photo_fn=None) -> str:
     """
     investor {종목코드} {개월수} 명령 처리
 
