@@ -4,8 +4,8 @@ import json
 
 import requests as _req
 
-from src.utils.http_client import http_client
 from config.config import telegram_chat_id, telegram_token
+from src.utils.http_client import http_client
 
 MAX_MESSAGE_LENGTH = 4096
 

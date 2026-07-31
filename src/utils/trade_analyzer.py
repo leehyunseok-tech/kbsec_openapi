@@ -38,7 +38,7 @@ def _load_csv_data(days: int) -> tuple:
         path = _LOGS_DIR / f"{target.strftime('%Y%m%d')}.csv"
         if not path.exists():
             continue
-        with open(path, "r", encoding="utf-8-sig") as f:
+        with open(path, encoding="utf-8-sig") as f:
             rows = list(csv.reader(f))
         if len(rows) <= 1:
             continue
@@ -65,7 +65,9 @@ def analyze_trades(days: int) -> tuple:
     try:
         client = Anthropic(api_key=claude_api_key)
         prompt = _ANALYSIS_PROMPT.format(days=days, csv_data=csv_data)
-        message = client.messages.create(model=claude_model, max_tokens=2000, messages=[{"role": "user", "content": prompt}])
+        message = client.messages.create(
+            model=claude_model, max_tokens=2000, messages=[{"role": "user", "content": prompt}]
+        )
         result = message.content[0].text.strip()
         header = f"🤖 AI 거래 분석 결과 ({date_range}, {file_count}일치)\n\n"
         return header + result, ""

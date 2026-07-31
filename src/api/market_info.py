@@ -11,7 +11,7 @@ from src.api.client import call_business_api
 
 def gsa10600(frex_clsf="", clsf="", rnk="", is_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
     """GSA10600 해외시세분석 — 해외시세분석
-    
+
     Args:
         frex_clsf: 해외거래소구분 — AA:미국전체 AB:나스닥 AC:뉴욕 AD:아멕스
         clsf: 구분 — 1:전일대비 2: 시가총액 3:거래량 4:52주 신고가 5:52주 신저가 6:PER 7:EPS, 8:배당수익률, a:거래대금
@@ -21,11 +21,11 @@ def gsa10600(frex_clsf="", clsf="", rnk="", is_cnt="", *, extra: dict | None = N
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "frex_clsf": frex_clsf,
-            "clsf": clsf,
-            "rnk": rnk,
-            "is_cnt": is_cnt,
-        }
+        "frex_clsf": frex_clsf,
+        "clsf": clsf,
+        "rnk": rnk,
+        "is_cnt": is_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -40,14 +40,13 @@ def gsa10600(frex_clsf="", clsf="", rnk="", is_cnt="", *, extra: dict | None = N
 
 
 def iva10370(*, extra: dict | None = None, token, host_url) -> dict:
-    """IVA10370 증시주변자금동향 — 
-    
+    """IVA10370 증시주변자금동향 —
+
     Args: (문서화된 요청 파라미터 없음)
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
-    data_body = {
-        }
+    data_body = {}
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -63,15 +62,15 @@ def iva10370(*, extra: dict | None = None, token, host_url) -> dict:
 
 def iva60140(lnd_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVA60140 세계지수 — 세계지수
-    
+
     Args:
         lnd_clsf: 대륙구분 — S: 아시아, C: 아메라키, E: 유럽
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "lnd_clsf": lnd_clsf,
-        }
+        "lnd_clsf": lnd_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -86,14 +85,13 @@ def iva60140(lnd_clsf="", *, extra: dict | None = None, token, host_url) -> dict
 
 
 def iva60190(*, extra: dict | None = None, token, host_url) -> dict:
-    """IVA60190 환율종합 — 
-    
+    """IVA60190 환율종합 —
+
     Args: (문서화된 요청 파라미터 없음)
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
-    data_body = {
-        }
+    data_body = {}
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -108,14 +106,13 @@ def iva60190(*, extra: dict | None = None, token, host_url) -> dict:
 
 
 def szqm0771(*, extra: dict | None = None, token, host_url) -> dict:
-    """SZQM0771 장운영상태 — 
-    
+    """SZQM0771 장운영상태 —
+
     Args: (문서화된 요청 파라미터 없음)
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
-    data_body = {
-        }
+    data_body = {}
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -127,4 +124,3 @@ def szqm0771(*, extra: dict | None = None, token, host_url) -> dict:
         token=token,
         host_url=host_url,
     )
-

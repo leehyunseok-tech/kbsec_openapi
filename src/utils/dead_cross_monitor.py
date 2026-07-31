@@ -5,10 +5,10 @@
 """
 
 from src.api.account import ssqm1801
-from src.utils.monitor_base import MonitorBase
-from src.utils.chart_analysis import get_minute_closes, detect_dead_cross
-from src.utils.settings_manager import SettingsManager
 from src.utils import trade_logger
+from src.utils.chart_analysis import detect_dead_cross, get_minute_closes
+from src.utils.monitor_base import MonitorBase
+from src.utils.settings_manager import SettingsManager
 
 
 def _normalize_code(is_no: str) -> str:
@@ -61,7 +61,9 @@ class DeadCrossMonitor(MonitorBase):
             return
 
         for stk_cd, qty in holdings.items():
-            closes = get_minute_closes(stk_cd, intv_short, self.session.access_token, self.session.host_url, count=max(60, intv_long + 10))
+            closes = get_minute_closes(
+                stk_cd, intv_short, self.session.access_token, self.session.host_url, count=max(60, intv_long + 10)
+            )
             if not closes:
                 continue
 

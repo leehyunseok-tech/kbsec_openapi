@@ -10,10 +10,10 @@ KB증권 API에는 실시간 웹소켓이 없어, 다른 모니터들과 동일�
 
 from datetime import datetime
 
-from src.utils.monitor_base import MonitorBase
-from src.utils.holdings_valuation import get_holdings_with_profit
-from src.utils.settings_manager import SettingsManager
 from src.utils import trade_logger
+from src.utils.holdings_valuation import get_holdings_with_profit
+from src.utils.monitor_base import MonitorBase
+from src.utils.settings_manager import SettingsManager
 
 
 class StopLossManager(MonitorBase):
@@ -43,10 +43,13 @@ class StopLossManager(MonitorBase):
     def get_status(self) -> str:
         settings = SettingsManager.get_stop_loss_settings()
         status = "✅ 활성화" if self.is_running() else "⏹️  비활성화"
-        sold_lines = "\n".join(
-            f"  #{code} {info['name']} - {'익절' if info['reason'] == 'take_profit' else '손절'} ({info['profit_rate']:+.2f}%)"
-            for code, info in list(self.sold_today.items())[:10]
-        ) or "  없음"
+        sold_lines = (
+            "\n".join(
+                f"  #{code} {info['name']} - {'익절' if info['reason'] == 'take_profit' else '손절'} ({info['profit_rate']:+.2f}%)"
+                for code, info in list(self.sold_today.items())[:10]
+            )
+            or "  없음"
+        )
         return (
             f"{status}\n\n"
             f"익절 기준: +{settings.get('take_profit', 5.0)}%  손절 기준: {settings.get('stop_loss', -5.0)}%\n\n"

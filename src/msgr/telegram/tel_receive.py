@@ -1,7 +1,7 @@
 """텔레그램 메시지 수신 (getUpdates 폴링). 브로커 무관."""
 
-from src.utils.http_client import http_client
 from config.config import telegram_token
+from src.utils.http_client import http_client
 
 
 def get_updates(offset=0):

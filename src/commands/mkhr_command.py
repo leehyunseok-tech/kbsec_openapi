@@ -15,9 +15,9 @@ def handle_mkhr(args):
         hours = SettingsManager.get_market_hours()
         return f"""📊 현재 장 시간 설정
 
-시작 시간: {hours['start_time']}
-종료 시간: {hours['end_time']}
-설명: {hours['description']}
+시작 시간: {hours["start_time"]}
+종료 시간: {hours["end_time"]}
+설명: {hours["description"]}
 
 설정 변경: /장시간 {{시작시간}} {{종료시간}}
 예: /장시간 9:30 15:00"""

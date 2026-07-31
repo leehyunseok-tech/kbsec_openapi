@@ -26,7 +26,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from src.api.client import call_business_api
-from src.paths import DOCS_API_DIR, API_LIST_JSON  # noqa: F401 — DOCS_API_DIR은 spec_browser.py가 여기서 재수입
+from src.paths import API_LIST_JSON, DOCS_API_DIR  # noqa: F401 — DOCS_API_DIR은 spec_browser.py가 여기서 재수입
 
 _LENGTH_RE = re.compile(r"\((\d+)\)")
 # "1:오프라인 2:온라인", "01-매도, 02-매수", "0.전체 1.일반 2.소수점" 등

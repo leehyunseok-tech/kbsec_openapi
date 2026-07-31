@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 종목마스터 파이프라인 — mst/origin/*.mst 원본만 갈아 놓으면 문서와 런타임 데이터를 전부 재생성.
 
@@ -51,25 +50,45 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
 sys.path.insert(0, str(ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths import가 풀리도록
-from src.paths import (  # noqa: E402
-    DOCS_MST_XLSX_DIR as XLSX_DIR,
-    DOCS_MST_MD_DIR as MD_DIR,
-    MST_ORIGIN_DIR as ORIGIN_DIR,
-    MST_RUNTIME_DIR as OUT_DIR,
+from src.paths import (
     API_LIST_MD,
 )
-
+from src.paths import (
+    DOCS_MST_MD_DIR as MD_DIR,
+)
+from src.paths import (  # noqa: E402
+    DOCS_MST_XLSX_DIR as XLSX_DIR,
+)
+from src.paths import (
+    MST_ORIGIN_DIR as ORIGIN_DIR,
+)
+from src.paths import (
+    MST_RUNTIME_DIR as OUT_DIR,
+)
 
 # ── 코드 → 라벨 참조표 (근거: docs/mst/xlsx/mst_*.xlsx 비고 컬럼) ────────────
 
 # 코스피 순번4 증권그룹ID. 'EN'은 공식 코드표에 빠져 있지만, 실데이터에서 EN인
 # 384건 중 381건의 ETP상품구분코드(순번8)가 3(ETN)이라 ETN으로 확정했다.
 SEC_GROUP = {
-    "ST": "주식", "MF": "증권투자회사", "RT": "부동산투자회사", "SC": "선박투자회사",
-    "IF": "사회간접자본투융자회사", "DR": "주식예탁증서", "EW": "ELW", "EF": "ETF",
-    "EN": "ETN", "SW": "신주인수권증권", "SR": "신주인수권증서", "BC": "수익증권",
-    "FE": "해외ETF", "FS": "외국주권", "KN": "코넥스", "PF": "상장형수익증권",
-    "BI": "BDC투자회사", "BB": "BDC수익증권",
+    "ST": "주식",
+    "MF": "증권투자회사",
+    "RT": "부동산투자회사",
+    "SC": "선박투자회사",
+    "IF": "사회간접자본투융자회사",
+    "DR": "주식예탁증서",
+    "EW": "ELW",
+    "EF": "ETF",
+    "EN": "ETN",
+    "SW": "신주인수권증권",
+    "SR": "신주인수권증서",
+    "BC": "수익증권",
+    "FE": "해외ETF",
+    "FS": "외국주권",
+    "KN": "코넥스",
+    "PF": "상장형수익증권",
+    "BI": "BDC투자회사",
+    "BB": "BDC수익증권",
 }
 
 # 코스피 순번26 / 코스닥 순번21 소수점매매상태
@@ -77,14 +96,26 @@ DECIMAL_STATE = {"0": "정상", "1": "매수불가", "2": "매도불가", "3": "
 
 # 미국 순번1 거래소코드 → 표시용 거래소명 (원본 코드는 krx_cd로 그대로 쓰므로 별도 컬럼)
 EXCHANGE_NAME = {
-    "AMX": "아멕스", "NYS": "뉴욕", "NAS": "나스닥", "HKS": "홍콩", "SHS": "상해",
-    "SZS": "심천", "TSE": "도쿄", "HNX": "하노이", "HSX": "호치민",
+    "AMX": "아멕스",
+    "NYS": "뉴욕",
+    "NAS": "나스닥",
+    "HKS": "홍콩",
+    "SHS": "상해",
+    "SZS": "심천",
+    "TSE": "도쿄",
+    "HNX": "하노이",
+    "HSX": "호치민",
 }
 
 # 미국 순번10 종목타입
 US_STOCK_TYPE = {
-    "1": "주식", "2": "DR", "3": "미국워런트", "4": "미국우선주",
-    "7": "ETF/ETN", "22": "워런트", "34": "지수",
+    "1": "주식",
+    "2": "DR",
+    "3": "미국워런트",
+    "4": "미국우선주",
+    "7": "ETF/ETN",
+    "22": "워런트",
+    "34": "지수",
 }
 
 # 미국 순번12 매매구분(SELL ONLY 구분). 공식 코드표는 1/2만 정의하지만 "SELL ONLY
@@ -168,7 +199,9 @@ CURATION = {
         dict(seq=27, cat="참조용", usage="시가총액 기준 필터링"),
     ],
     "us": [
-        dict(seq=1, cat="사용", usage="주문(SKAM2101)·시세(GSS10030 등)의 krx_cd 파라미터로 원본 그대로 전달 — 번역 금지"),
+        dict(
+            seq=1, cat="사용", usage="주문(SKAM2101)·시세(GSS10030 등)의 krx_cd 파라미터로 원본 그대로 전달 — 번역 금지"
+        ),
         dict(seq=2, cat="사용", usage="주문(SKAM2101)·시세(GSS10030 등)의 is_cd 파라미터로 직접 사용 (티커)"),
         dict(seq=3, cat="사용", usage="종목 검색(/stcd)·자연어 종목명 해석 용도"),
         dict(seq=4, cat="사용", usage="종목 검색(영문명) 용도"),
@@ -190,18 +223,24 @@ CURATION = {
 MARKETS = {
     "kospi": dict(
         title="코스피(KOSPI) 종목 마스터 - 주문 관련 사용 필드",
-        source_xlsx="mst_코스피_mtsjname.xlsx", origin_mst="mtsjname.mst",
-        out_xlsx="openapi_mst_코스피_mtsjname.xlsx", out_md="openapi_mst_코스피_mtsjname.md",
+        source_xlsx="mst_코스피_mtsjname.xlsx",
+        origin_mst="mtsjname.mst",
+        out_xlsx="openapi_mst_코스피_mtsjname.xlsx",
+        out_md="openapi_mst_코스피_mtsjname.md",
     ),
     "kosdaq": dict(
         title="코스닥(KOSDAQ) 종목 마스터 - 주문 관련 사용 필드",
-        source_xlsx="mst_코스닥_mtsoutjname.xlsx", origin_mst="mtsoutjname.mst",
-        out_xlsx="openapi_mst_코스닥_mtsoutjname.xlsx", out_md="openapi_mst_코스닥_mtsoutjname.md",
+        source_xlsx="mst_코스닥_mtsoutjname.xlsx",
+        origin_mst="mtsoutjname.mst",
+        out_xlsx="openapi_mst_코스닥_mtsoutjname.xlsx",
+        out_md="openapi_mst_코스닥_mtsoutjname.md",
     ),
     "us": dict(
         title="해외주식(미국) 종목 마스터 - 주문 관련 사용 필드",
-        source_xlsx="mst_해외주식_FORENMST_US.xlsx", origin_mst="FORENMST_US.MST",
-        out_xlsx="openapi_mst_해외주식_FORENMST_US.xlsx", out_md="openapi_mst_해외주식_FORENMST_US.md",
+        source_xlsx="mst_해외주식_FORENMST_US.xlsx",
+        origin_mst="FORENMST_US.MST",
+        out_xlsx="openapi_mst_해외주식_FORENMST_US.xlsx",
+        out_md="openapi_mst_해외주식_FORENMST_US.md",
     ),
 }
 
@@ -222,7 +261,7 @@ def read_official_fields(xlsx_name):
     name_col = header.index("한글명")
     note_col = header.index("비고")
     fields = {}
-    for r in rows[header_idx + 1:]:
+    for r in rows[header_idx + 1 :]:
         if not r or not r[0]:
             continue
         try:
@@ -273,7 +312,9 @@ def validate_curation(api_codes):
                 raise RuntimeError(f"{key}: CURATION 순번 {item['seq']}이 공식 명세 {market['source_xlsx']}에 없습니다")
             for code in re.findall(r"[A-Z]{2,4}\d{4,5}", item["usage"]):
                 if code not in api_codes:
-                    raise RuntimeError(f"{key} 순번 {item['seq']}: 용도에 적힌 API '{code}'가 docs/api/api-list.md에 없습니다")
+                    raise RuntimeError(
+                        f"{key} 순번 {item['seq']}: 용도에 적힌 API '{code}'가 docs/api/api-list.md에 없습니다"
+                    )
     return officials
 
 
@@ -428,25 +469,33 @@ def build_domestic_rows():
     kosdaq = read_origin_mst("mtsoutjname.mst", min_cols=21)
     rows = []
     for f in kospi:
-        rows.append([
-            "KOSPI", f[0], f[1],
-            _label(f[3], SEC_GROUP),          # 순번4 증권그룹ID
-            _yn(f[20], "관리종목", "정상"),    # 순번21 관리종목여부
-            _yn(f[14], "거래정지", "정상"),    # 순번15 거래정지여부
-            _unit(f[10]),                      # 순번11 매수주문단위
-            _yn(f[24], "소수점매매가능", "소수점매매불가"),  # 순번25
-            _label(f[25], DECIMAL_STATE),      # 순번26 소수점매매상태
-        ])
+        rows.append(
+            [
+                "KOSPI",
+                f[0],
+                f[1],
+                _label(f[3], SEC_GROUP),  # 순번4 증권그룹ID
+                _yn(f[20], "관리종목", "정상"),  # 순번21 관리종목여부
+                _yn(f[14], "거래정지", "정상"),  # 순번15 거래정지여부
+                _unit(f[10]),  # 순번11 매수주문단위
+                _yn(f[24], "소수점매매가능", "소수점매매불가"),  # 순번25
+                _label(f[25], DECIMAL_STATE),  # 순번26 소수점매매상태
+            ]
+        )
     for f in kosdaq:
-        rows.append([
-            "KOSDAQ", f[0], f[1],
-            "",                                # 코스닥 원본에 증권그룹ID 없음
-            _yn(f[13], "관리종목", "정상"),    # 순번14 관리종목여부
-            _yn(f[18], "거래정지", "정상"),    # 순번19 거래정지여부
-            "",                                # 코스닥 원본에 주문단위 없음
-            _yn(f[19], "소수점매매가능", "소수점매매불가"),  # 순번20
-            _label(f[20], DECIMAL_STATE),      # 순번21 소수점매매상태
-        ])
+        rows.append(
+            [
+                "KOSDAQ",
+                f[0],
+                f[1],
+                "",  # 코스닥 원본에 증권그룹ID 없음
+                _yn(f[13], "관리종목", "정상"),  # 순번14 관리종목여부
+                _yn(f[18], "거래정지", "정상"),  # 순번19 거래정지여부
+                "",  # 코스닥 원본에 주문단위 없음
+                _yn(f[19], "소수점매매가능", "소수점매매불가"),  # 순번20
+                _label(f[20], DECIMAL_STATE),  # 순번21 소수점매매상태
+            ]
+        )
     return rows, len(kospi), len(kosdaq)
 
 
@@ -454,21 +503,48 @@ def build_us_rows():
     us = read_origin_mst("FORENMST_US.MST", min_cols=33)  # 최대 사용 인덱스 32(순번33)+1
     rows = []
     for f in us:
-        rows.append([
-            f[0], _label(f[0], EXCHANGE_NAME),  # 순번1 거래소코드(원본 유지) + 표시용
-            f[1], f[2], f[3], f[5],             # 순번2 티커 / 3 한글명 / 4 영문명 / 6 통화
-            _label(f[9], US_STOCK_TYPE),        # 순번10 종목타입
-            _label(f[11], US_TRADE_RESTRICTION),  # 순번12 매매구분
-            _unit(f[13]), _unit(f[14]),         # 순번14/15 매수/매도거래단위
-            _label(f[32], US_DECIMAL_YN),       # 순번33 소수점매매대상종목여부
-        ])
+        rows.append(
+            [
+                f[0],
+                _label(f[0], EXCHANGE_NAME),  # 순번1 거래소코드(원본 유지) + 표시용
+                f[1],
+                f[2],
+                f[3],
+                f[5],  # 순번2 티커 / 3 한글명 / 4 영문명 / 6 통화
+                _label(f[9], US_STOCK_TYPE),  # 순번10 종목타입
+                _label(f[11], US_TRADE_RESTRICTION),  # 순번12 매매구분
+                _unit(f[13]),
+                _unit(f[14]),  # 순번14/15 매수/매도거래단위
+                _label(f[32], US_DECIMAL_YN),  # 순번33 소수점매매대상종목여부
+            ]
+        )
     return rows
 
 
-DOMESTIC_HEADER = ["시장구분", "종목코드", "종목명", "종목구분", "관리종목여부",
-                   "거래정지여부", "매수주문단위", "소수점매매가능여부", "소수점매매상태"]
-US_HEADER = ["거래소코드", "거래소명", "종목코드", "종목명_한글", "종목명_영문", "통화코드",
-             "종목타입", "매매구분", "매수거래단위", "매도거래단위", "소수점매매가능여부"]
+DOMESTIC_HEADER = [
+    "시장구분",
+    "종목코드",
+    "종목명",
+    "종목구분",
+    "관리종목여부",
+    "거래정지여부",
+    "매수주문단위",
+    "소수점매매가능여부",
+    "소수점매매상태",
+]
+US_HEADER = [
+    "거래소코드",
+    "거래소명",
+    "종목코드",
+    "종목명_한글",
+    "종목명_영문",
+    "통화코드",
+    "종목타입",
+    "매매구분",
+    "매수거래단위",
+    "매도거래단위",
+    "소수점매매가능여부",
+]
 
 
 def write_field_mst(filename, header, rows):

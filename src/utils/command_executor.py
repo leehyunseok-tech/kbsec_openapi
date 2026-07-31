@@ -7,21 +7,20 @@ terminal.py는 화살표 키/Enter 인터랙티브 프롬프트의 결과를 텍
 변환된 텍스트("y"/"n" 또는 1-based 번호 문자열)만 알면 된다.
 """
 
-from typing import Dict, List
 from datetime import datetime
 
 
 class CommandPendingExecution:
     """대기 중인 명령어 실행 세션"""
 
-    def __init__(self, user_id, chat_id, commands: List[str]):
+    def __init__(self, user_id, chat_id, commands: list[str]):
         self.user_id = user_id
         self.chat_id = chat_id
         self.commands = commands
         self.created_at = datetime.now()
         self.status = "pending"
         self.current_index = 0
-        self.executed_results: Dict[int, str] = {}
+        self.executed_results: dict[int, str] = {}
 
     def get_confirmation_message(self) -> str:
         # 명령이 하나뿐이면 번호를 붙이지 않는다 — 세 클라이언트(터미널/텔레그램/웹)
@@ -54,7 +53,7 @@ class StockSelectionPending:
     사용자가 번호로 하나를 고르도록 대기하는 세션 (src/utils/stock_resolver.py 참고).
     """
 
-    def __init__(self, user_id, chat_id, commands: List[str], cmd_index: int, stock_name: str, candidates: list):
+    def __init__(self, user_id, chat_id, commands: list[str], cmd_index: int, stock_name: str, candidates: list):
         self.user_id = user_id
         self.chat_id = chat_id
         self.commands = commands  # 전체 명령어 목록. commands[cmd_index]의 첫 인자가 아직 종목명.
@@ -66,7 +65,7 @@ class StockSelectionPending:
     def title(self) -> str:
         return f"🔍 '{self.stock_name}' 검색 결과가 여러 건입니다. 번호를 입력하세요."
 
-    def option_labels(self) -> List[str]:
+    def option_labels(self) -> list[str]:
         return [f"{s.name}  {s.code}  [{s.market}]" for s in self.candidates]
 
     def get_selection_message(self) -> str:
@@ -74,7 +73,7 @@ class StockSelectionPending:
         lines.extend(f"{idx}. {label}" for idx, label in enumerate(self.option_labels(), 1))
         return "\n".join(lines)
 
-    def resolve_choice(self, choice_idx: int) -> List[str]:
+    def resolve_choice(self, choice_idx: int) -> list[str]:
         """1-based 선택 번호로 종목코드를 확정해 대입한 새 commands 리스트 반환."""
         code = self.candidates[choice_idx - 1].code
         parts = self.commands[self.cmd_index].split()
@@ -90,7 +89,7 @@ class ApiNameSelectionPending:
     사용자가 번호로 하나를 고르도록 대기하는 세션 (src/utils/api_resolver.py 참고).
     """
 
-    def __init__(self, user_id, chat_id, commands: List[str], cmd_index: int, api_name: str, candidates: list):
+    def __init__(self, user_id, chat_id, commands: list[str], cmd_index: int, api_name: str, candidates: list):
         self.user_id = user_id
         self.chat_id = chat_id
         self.commands = commands  # 전체 명령어 목록. commands[cmd_index]의 인자가 아직 API 한글이름.
@@ -102,7 +101,7 @@ class ApiNameSelectionPending:
     def title(self) -> str:
         return f"🔍 '{self.api_name}' API 검색 결과가 여러 건입니다. 번호를 입력하세요."
 
-    def option_labels(self) -> List[str]:
+    def option_labels(self) -> list[str]:
         return [f"{c.name}  {c.code}  [{c.category}]" for c in self.candidates]
 
     def get_selection_message(self) -> str:
@@ -110,7 +109,7 @@ class ApiNameSelectionPending:
         lines.extend(f"{idx}. {label}" for idx, label in enumerate(self.option_labels(), 1))
         return "\n".join(lines)
 
-    def resolve_choice(self, choice_idx: int) -> List[str]:
+    def resolve_choice(self, choice_idx: int) -> list[str]:
         """1-based 선택 번호로 API 코드를 확정해 대입한 새 commands 리스트 반환."""
         code = self.candidates[choice_idx - 1].code
         resolved = list(self.commands)
@@ -145,7 +144,7 @@ class ApiCallPending:
         f = self.current_field()
         return f"🔧 {self.spec.code} {self.spec.name} — API 직접호출 ({self.field_index + 1}/{len(self.fields)})\n{f.name_kr}({f.name_en}) 값을 선택하세요."
 
-    def option_labels(self) -> List[str]:
+    def option_labels(self) -> list[str]:
         return [f"{label} ({code})" for code, label in self.current_field().choices]
 
     def get_selection_message(self) -> str:
@@ -165,19 +164,23 @@ class ExecutionSessionManager:
     """사용자별 명령 실행 세션 관리"""
 
     def __init__(self):
-        self.sessions: Dict[str, object] = {}
+        self.sessions: dict[str, object] = {}
 
-    def create_session(self, user_id, chat_id, commands: List[str]) -> CommandPendingExecution:
+    def create_session(self, user_id, chat_id, commands: list[str]) -> CommandPendingExecution:
         session = CommandPendingExecution(user_id, chat_id, commands)
         self.sessions[str(user_id)] = session
         return session
 
-    def create_selection_session(self, user_id, chat_id, commands, cmd_index, stock_name, candidates) -> StockSelectionPending:
+    def create_selection_session(
+        self, user_id, chat_id, commands, cmd_index, stock_name, candidates
+    ) -> StockSelectionPending:
         session = StockSelectionPending(user_id, chat_id, commands, cmd_index, stock_name, candidates)
         self.sessions[str(user_id)] = session
         return session
 
-    def create_api_name_selection_session(self, user_id, chat_id, commands, cmd_index, api_name, candidates) -> ApiNameSelectionPending:
+    def create_api_name_selection_session(
+        self, user_id, chat_id, commands, cmd_index, api_name, candidates
+    ) -> ApiNameSelectionPending:
         session = ApiNameSelectionPending(user_id, chat_id, commands, cmd_index, api_name, candidates)
         self.sessions[str(user_id)] = session
         return session

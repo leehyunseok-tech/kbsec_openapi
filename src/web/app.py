@@ -45,10 +45,11 @@ from pydantic import BaseModel
 
 from config import config as app_config
 from src.paths import WEB_STATIC_DIR as STATIC_DIR
-from src.web.session_store import COOKIE_NAME, get_or_create
-from src.web import spec_browser
 from src.utils import stock_master
 from src.utils.api_spec import execute_api_call, load_api_spec
+from src.web import spec_browser
+from src.web.session_store import COOKIE_NAME, get_or_create
+
 AUTOLOAD = os.environ.get("KBSEC_WEB_AUTOLOAD") == "1"
 
 
@@ -309,19 +310,31 @@ def logout(request: Request, response: Response):
 
 def _domestic_json(s):
     return {
-        "kind": "domestic", "name": s.name, "code": s.code, "market": s.market,
-        "stock_type": s.stock_type, "managed": s.managed, "halted": s.halted,
-        "order_unit": s.order_unit, "decimal_tradable": s.decimal_tradable,
+        "kind": "domestic",
+        "name": s.name,
+        "code": s.code,
+        "market": s.market,
+        "stock_type": s.stock_type,
+        "managed": s.managed,
+        "halted": s.halted,
+        "order_unit": s.order_unit,
+        "decimal_tradable": s.decimal_tradable,
         "decimal_state": s.decimal_state,
     }
 
 
 def _overseas_json(s):
     return {
-        "kind": "overseas", "name": s.name_kr or s.name_en, "code": s.ticker,
-        "exchange": s.exchange, "exchange_name": s.exchange_name, "currency": s.currency,
-        "stock_type": s.stock_type, "trade_restriction": s.trade_restriction,
-        "buy_unit": s.buy_unit, "sell_unit": s.sell_unit,
+        "kind": "overseas",
+        "name": s.name_kr or s.name_en,
+        "code": s.ticker,
+        "exchange": s.exchange,
+        "exchange_name": s.exchange_name,
+        "currency": s.currency,
+        "stock_type": s.stock_type,
+        "trade_restriction": s.trade_restriction,
+        "buy_unit": s.buy_unit,
+        "sell_unit": s.sell_unit,
         "decimal_tradable": s.decimal_tradable,
     }
 
@@ -350,12 +363,7 @@ def stock_search(q: str = "", exact: str = ""):
 def stock_detect(text: str = ""):
     """자유 문장(자연어 명령) 속 종목 인식 — 'KB금융 10주 사줘' → KB금융(105560)."""
     stocks = stock_master.detect_in_text(text, limit=5)
-    return {
-        "stocks": [
-            _overseas_json(s) if hasattr(s, "ticker") else _domestic_json(s)
-            for s in stocks
-        ]
-    }
+    return {"stocks": [_overseas_json(s) if hasattr(s, "ticker") else _domestic_json(s) for s in stocks]}
 
 
 # ── API 명세 탐색/테스트 호출 (docs/api/md 기반) ────────────────────────

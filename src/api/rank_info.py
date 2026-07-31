@@ -11,7 +11,7 @@ from src.api.client import call_business_api
 
 def gsa10150(krx_cd="", std_dy="", vlm="", is_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
     """GSA10150 거래량상위 — 거래량상위
-    
+
     Args:
         krx_cd: 거래소코드 — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
         std_dy: 기준일 — 01: 전일,05:5일,10:10일, 20:20일, 60:60일, 90:90일
@@ -21,11 +21,11 @@ def gsa10150(krx_cd="", std_dy="", vlm="", is_cnt="", *, extra: dict | None = No
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "krx_cd": krx_cd,
-            "std_dy": std_dy,
-            "vlm": vlm,
-            "is_cnt": is_cnt,
-        }
+        "krx_cd": krx_cd,
+        "std_dy": std_dy,
+        "vlm": vlm,
+        "is_cnt": is_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -41,7 +41,7 @@ def gsa10150(krx_cd="", std_dy="", vlm="", is_cnt="", *, extra: dict | None = No
 
 def gsa10170(krx_cd="", is_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
     """GSA10170 시가총액상위 — 시가총액상위
-    
+
     Args:
         krx_cd: 거래소코드 KRX_CD — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
         is_cnt: 종목건수 IS_CNT
@@ -49,9 +49,9 @@ def gsa10170(krx_cd="", is_cnt="", *, extra: dict | None = None, token, host_url
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "krx_cd": krx_cd,
-            "is_cnt": is_cnt,
-        }
+        "krx_cd": krx_cd,
+        "is_cnt": is_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -65,9 +65,11 @@ def gsa10170(krx_cd="", is_cnt="", *, extra: dict | None = None, token, host_url
     )
 
 
-def gss10180(krx_cd="", clsf="", clsf2="", std_dy="", vlm="", is_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
+def gss10180(
+    krx_cd="", clsf="", clsf2="", std_dy="", vlm="", is_cnt="", *, extra: dict | None = None, token, host_url
+) -> dict:
     """GSS10180 신고_신저 — 신고신저
-    
+
     Args:
         krx_cd: 거래소코드 KRX_CD — NAS: 나스닥, NYS: 뉴욕거래소, AMX: 아멕스
         clsf: 구분 CLSF (1:신고 2:신저) — 0: 신고 1: 신저
@@ -79,13 +81,13 @@ def gss10180(krx_cd="", clsf="", clsf2="", std_dy="", vlm="", is_cnt="", *, extr
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "krx_cd": krx_cd,
-            "clsf": clsf,
-            "clsf2": clsf2,
-            "std_dy": std_dy,
-            "vlm": vlm,
-            "is_cnt": is_cnt,
-        }
+        "krx_cd": krx_cd,
+        "clsf": clsf,
+        "clsf2": clsf2,
+        "std_dy": std_dy,
+        "vlm": vlm,
+        "is_cnt": is_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -101,15 +103,15 @@ def gss10180(krx_cd="", clsf="", clsf2="", std_dy="", vlm="", is_cnt="", *, extr
 
 def ivm30010(mkt_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVM30010 업종랭킹 — 업종랭킹(MTS)(IVM30010)
-    
+
     Args:
         mkt_clsf: 시장구분 — 1:코스피 2:코스닥
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "mkt_clsf": mkt_clsf,
-        }
+        "mkt_clsf": mkt_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -125,7 +127,7 @@ def ivm30010(mkt_clsf="", *, extra: dict | None = None, token, host_url) -> dict
 
 def ivs10910(mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVS10910 시가대비등락률 상위 — 시가대비등락율상위(IVS10910)
-    
+
     Args:
         mkt_clsf: 시장구분 — 1:전체, 2:KOSPI, 3:KOSDAQ, 4:KOSPI200, 5:KOSDAQ150
         inq_cnt: 조회건수
@@ -134,10 +136,10 @@ def ivs10910(mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None,
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "mkt_clsf": mkt_clsf,
-            "inq_cnt": inq_cnt,
-            "srt_clsf": srt_clsf,
-        }
+        "mkt_clsf": mkt_clsf,
+        "inq_cnt": inq_cnt,
+        "srt_clsf": srt_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -153,15 +155,15 @@ def ivs10910(mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None,
 
 def ivs10920(inq_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVS10920 시가총액 상위 — 시가총액상위
-    
+
     Args:
         inq_cnt: 조회건수
         extra: INPUT 표에 없는 추가 dataBody 필드
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "inq_cnt": inq_cnt,
-        }
+        "inq_cnt": inq_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -175,9 +177,11 @@ def ivs10920(inq_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
     )
 
 
-def ivs11190(mkt_clsf="", srt_clsf="", thdy_bdy_clsf="", inq_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivs11190(
+    mkt_clsf="", srt_clsf="", thdy_bdy_clsf="", inq_cnt="", *, extra: dict | None = None, token, host_url
+) -> dict:
     """IVS11190 기간외등락률 순위 — 시간외단일가등락율순위(IVS11190)
-    
+
     Args:
         mkt_clsf: 시장구분 — 1:전체, 2:거래소, 3:코스닥
         srt_clsf: 정렬구분 — 1:상승율, 2:하락율
@@ -187,11 +191,11 @@ def ivs11190(mkt_clsf="", srt_clsf="", thdy_bdy_clsf="", inq_cnt="", *, extra: d
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "mkt_clsf": mkt_clsf,
-            "srt_clsf": srt_clsf,
-            "thdy_bdy_clsf": thdy_bdy_clsf,
-            "inq_cnt": inq_cnt,
-        }
+        "mkt_clsf": mkt_clsf,
+        "srt_clsf": srt_clsf,
+        "thdy_bdy_clsf": thdy_bdy_clsf,
+        "inq_cnt": inq_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -205,9 +209,11 @@ def ivs11190(mkt_clsf="", srt_clsf="", thdy_bdy_clsf="", inq_cnt="", *, extra: d
     )
 
 
-def ivu10020(excg_clsf="", mkt_clsf="", invstr_ccd="", prd_clsf="", rnk_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivu10020(
+    excg_clsf="", mkt_clsf="", invstr_ccd="", prd_clsf="", rnk_clsf="", *, extra: dict | None = None, token, host_url
+) -> dict:
     """IVU10020 매매 상위 — 외국인기관매매상위
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 0:거래소, 1:코스닥, 2:전체
@@ -218,12 +224,12 @@ def ivu10020(excg_clsf="", mkt_clsf="", invstr_ccd="", prd_clsf="", rnk_clsf="",
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-            "invstr_ccd": invstr_ccd,
-            "prd_clsf": prd_clsf,
-            "rnk_clsf": rnk_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+        "invstr_ccd": invstr_ccd,
+        "prd_clsf": prd_clsf,
+        "rnk_clsf": rnk_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -237,9 +243,11 @@ def ivu10020(excg_clsf="", mkt_clsf="", invstr_ccd="", prd_clsf="", rnk_clsf="",
     )
 
 
-def ivu10210(excg_clsf="", mkt_clsf="", thdy_bdy_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivu10210(
+    excg_clsf="", mkt_clsf="", thdy_bdy_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None, token, host_url
+) -> dict:
     """IVU10210 거래대금 상위 — ATS통합-거래대금상위
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 1:전체, 2:KOSPI, 3:KOSDAQ
@@ -250,12 +258,12 @@ def ivu10210(excg_clsf="", mkt_clsf="", thdy_bdy_clsf="", inq_cnt="", srt_clsf="
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-            "thdy_bdy_clsf": thdy_bdy_clsf,
-            "inq_cnt": inq_cnt,
-            "srt_clsf": srt_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+        "thdy_bdy_clsf": thdy_bdy_clsf,
+        "inq_cnt": inq_cnt,
+        "srt_clsf": srt_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -271,7 +279,7 @@ def ivu10210(excg_clsf="", mkt_clsf="", thdy_bdy_clsf="", inq_cnt="", srt_clsf="
 
 def ivu10240(excg_clsf="", mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVU10240 등락률 상위 — ATS통합-전일대비등락율상위
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 1:전체, 2:KOSPI, 3:KOSDAQ, 4:KOSPI200, 5:KOSDAQ150
@@ -281,11 +289,11 @@ def ivu10240(excg_clsf="", mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict 
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-            "inq_cnt": inq_cnt,
-            "srt_clsf": srt_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+        "inq_cnt": inq_cnt,
+        "srt_clsf": srt_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -299,9 +307,20 @@ def ivu10240(excg_clsf="", mkt_clsf="", inq_cnt="", srt_clsf="", *, extra: dict 
     )
 
 
-def ivu10270(excg_clsf="", mkt_clsf="", inq_cnt="", up_dwn_ccd="", minute_dy_ccd="", minute_dy_unt="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivu10270(
+    excg_clsf="",
+    mkt_clsf="",
+    inq_cnt="",
+    up_dwn_ccd="",
+    minute_dy_ccd="",
+    minute_dy_unt="",
+    *,
+    extra: dict | None = None,
+    token,
+    host_url,
+) -> dict:
     """IVU10270 급등_급락 상위 — ATS통합-가격급등/급락종목
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 1:전체, 2:KOSPI, 3:KOSDAQ
@@ -313,13 +332,13 @@ def ivu10270(excg_clsf="", mkt_clsf="", inq_cnt="", up_dwn_ccd="", minute_dy_ccd
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-            "inq_cnt": inq_cnt,
-            "up_dwn_ccd": up_dwn_ccd,
-            "minute_dy_ccd": minute_dy_ccd,
-            "minute_dy_unt": minute_dy_unt,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+        "inq_cnt": inq_cnt,
+        "up_dwn_ccd": up_dwn_ccd,
+        "minute_dy_ccd": minute_dy_ccd,
+        "minute_dy_unt": minute_dy_unt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -335,7 +354,7 @@ def ivu10270(excg_clsf="", mkt_clsf="", inq_cnt="", up_dwn_ccd="", minute_dy_ccd
 
 def ivu10280(excg_clsf="", mkt_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVU10280 거래량 상위 — ATS통합-당일거래량상위
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 시장구분 : 1:전체, 2:KOSPI, 3:KOSDAQ
@@ -343,9 +362,9 @@ def ivu10280(excg_clsf="", mkt_clsf="", *, extra: dict | None = None, token, hos
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -359,9 +378,21 @@ def ivu10280(excg_clsf="", mkt_clsf="", *, extra: dict | None = None, token, hos
     )
 
 
-def ivu10550(excg_clsf="", mkt_clsf="", inq_cnt="", nw_stk_lw_ccd="", std_clsf="", prd_clsf="", excd_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivu10550(
+    excg_clsf="",
+    mkt_clsf="",
+    inq_cnt="",
+    nw_stk_lw_ccd="",
+    std_clsf="",
+    prd_clsf="",
+    excd_clsf="",
+    *,
+    extra: dict | None = None,
+    token,
+    host_url,
+) -> dict:
     """IVU10550 신고_신저 — 신고가/신저가(IVU10550)
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         mkt_clsf: 시장구분 — 1:전체, 2:KOSPI, 3:KOSDAQ
@@ -374,14 +405,14 @@ def ivu10550(excg_clsf="", mkt_clsf="", inq_cnt="", nw_stk_lw_ccd="", std_clsf="
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "mkt_clsf": mkt_clsf,
-            "inq_cnt": inq_cnt,
-            "nw_stk_lw_ccd": nw_stk_lw_ccd,
-            "std_clsf": std_clsf,
-            "prd_clsf": prd_clsf,
-            "excd_clsf": excd_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "mkt_clsf": mkt_clsf,
+        "inq_cnt": inq_cnt,
+        "nw_stk_lw_ccd": nw_stk_lw_ccd,
+        "std_clsf": std_clsf,
+        "prd_clsf": prd_clsf,
+        "excd_clsf": excd_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -393,4 +424,3 @@ def ivu10550(excg_clsf="", mkt_clsf="", inq_cnt="", nw_stk_lw_ccd="", std_clsf="
         token=token,
         host_url=host_url,
     )
-

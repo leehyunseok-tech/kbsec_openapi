@@ -32,7 +32,7 @@ class MonitorBase:
         if not self.session.is_logged_in():
             return "❌ 로그인이 필요합니다."
         if require_list and not self._has_targets():
-            return f"❌ 감시 목록이 비어 있습니다. add 명령으로 먼저 추가하세요."
+            return "❌ 감시 목록이 비어 있습니다. add 명령으로 먼저 추가하세요."
         self._on_start()
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run_loop, daemon=True)

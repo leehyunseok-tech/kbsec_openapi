@@ -31,6 +31,7 @@ def get_logs_since(seq: int):
     with _log_lock:
         return [e for e in _LOG_BUFFER if e["seq"] > seq]
 
+
 # 요청/응답 바디에 등장하는 민감 필드 (대소문자 무시하고 매칭).
 # clientSecret: 앱시크릿, access_token/refresh_token: 발급된 토큰,
 # token: 토큰 폐기(/oauth2/revoke) 요청 바디의 접근토큰 필드.

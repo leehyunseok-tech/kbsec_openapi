@@ -15,11 +15,11 @@ docs/api/md/*.md를 직접 읽으므로, 명세 문서만 최신이면 코드 �
 """
 
 from src.utils.api_spec import (
+    default_data_body,
     describe_spec,
     execute_api_call,
     format_api_result,
     load_api_spec,
-    default_data_body,
     search_api_entries,
     selection_fields,
 )

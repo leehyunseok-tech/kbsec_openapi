@@ -22,9 +22,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # ── 설정 / 런타임 상태 (config/) ─────────────────────────────────────────────
 CONFIG_DIR = PROJECT_ROOT / "config"
-CONFIG_DATA_DIR = CONFIG_DIR / "data"          # settings_manager 등 런타임 상태 저장 폴더
-SETTINGS_JSON = CONFIG_DATA_DIR / "settings.json"      # 런타임 설정 (settings_manager.py)
-SCHEDULES_JSON = CONFIG_DATA_DIR / "schedules.json"    # 명령 예약 (schedule_manager.py)
+CONFIG_DATA_DIR = CONFIG_DIR / "data"  # settings_manager 등 런타임 상태 저장 폴더
+SETTINGS_JSON = CONFIG_DATA_DIR / "settings.json"  # 런타임 설정 (settings_manager.py)
+SCHEDULES_JSON = CONFIG_DATA_DIR / "schedules.json"  # 명령 예약 (schedule_manager.py)
 COOLDOWN_LOG_JSON = CONFIG_DATA_DIR / "cooldown_log.json"  # 재매수 쿨다운 (cooldown_log.py)
 
 # ── 체결 로그 (logs/) ────────────────────────────────────────────────────────
@@ -37,11 +37,11 @@ COMMAND_GUIDE_FOR_AI = PROJECT_ROOT / "docs" / "command_guide_for_ai.md"
 # ── API 명세 파이프라인 (docs/api/ → src/api/) ───────────────────────────────
 # xlsx(원본) → md(변환) → api-list.md/json(목록) → src/api/*.py(생성 코드) 순서.
 DOCS_API_DIR = PROJECT_ROOT / "docs" / "api"
-API_SPEC_XLSX_DIR = DOCS_API_DIR / "xlsx"      # KB 명세 원본 (업무구분별 폴더 구조)
-API_SPEC_MD_DIR = DOCS_API_DIR / "md"          # 변환된 md — api_spec.py/spec_browser.py가 런타임 파싱
-API_LIST_MD = DOCS_API_DIR / "api-list.md"     # 사람용 전체 API 목록 (generate_mst 검증에도 사용)
-API_LIST_JSON = DOCS_API_DIR / "api-list.json" # 런타임용 전체 API 목록 (api_spec.py 등 6곳)
-SRC_API_DIR = PROJECT_ROOT / "src" / "api"     # generate_api_client.py 산출물 위치
+API_SPEC_XLSX_DIR = DOCS_API_DIR / "xlsx"  # KB 명세 원본 (업무구분별 폴더 구조)
+API_SPEC_MD_DIR = DOCS_API_DIR / "md"  # 변환된 md — api_spec.py/spec_browser.py가 런타임 파싱
+API_LIST_MD = DOCS_API_DIR / "api-list.md"  # 사람용 전체 API 목록 (generate_mst 검증에도 사용)
+API_LIST_JSON = DOCS_API_DIR / "api-list.json"  # 런타임용 전체 API 목록 (api_spec.py 등 6곳)
+SRC_API_DIR = PROJECT_ROOT / "src" / "api"  # generate_api_client.py 산출물 위치
 
 # ── 종목마스터 파이프라인 (mst/, docs/mst/) ──────────────────────────────────
 # mst/origin(KB 배포 원본) → docs/mst(필드 선별 문서) + mst/api(런타임 데이터).

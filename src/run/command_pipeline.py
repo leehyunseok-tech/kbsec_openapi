@@ -15,6 +15,7 @@ user_id는 세션 매니저의 키다 — TelegramBot은 텔레그램 chat_id를
 고정 센티널(CLI_USER_ID)을 넘긴다.
 """
 
+from src.utils.api_resolver import resolve_first_api_name
 from src.utils.api_spec import execute_api_call, format_api_result
 from src.utils.command_executor import (
     ApiCallPending,
@@ -22,7 +23,6 @@ from src.utils.command_executor import (
     StockSelectionPending,
     get_session_manager,
 )
-from src.utils.api_resolver import resolve_first_api_name
 from src.utils.stock_resolver import resolve_first_ambiguous
 
 
@@ -57,7 +57,9 @@ class CommandPipelineMixin:
         status, *rest = resolve_first_ambiguous(commands)
         if status == "ambiguous":
             cmd_index, stock_name, candidates = rest
-            session = session_mgr.create_selection_session(user_id, user_id, commands, cmd_index, stock_name, candidates)
+            session = session_mgr.create_selection_session(
+                user_id, user_id, commands, cmd_index, stock_name, candidates
+            )
             return session.get_selection_message()
         if status == "not_found":
             (stock_name,) = rest
@@ -67,7 +69,9 @@ class CommandPipelineMixin:
         api_status, *api_rest = resolve_first_api_name(resolved_commands)
         if api_status == "ambiguous":
             cmd_index, api_name, candidates = api_rest
-            session = session_mgr.create_api_name_selection_session(user_id, user_id, resolved_commands, cmd_index, api_name, candidates)
+            session = session_mgr.create_api_name_selection_session(
+                user_id, user_id, resolved_commands, cmd_index, api_name, candidates
+            )
             return session.get_selection_message()
         if api_status == "not_found":
             (api_name,) = api_rest

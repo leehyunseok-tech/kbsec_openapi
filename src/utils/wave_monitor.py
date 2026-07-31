@@ -45,7 +45,9 @@ class WaveMonitor(MonitorBase):
 
     # ── 설정 ──────────────────────────────────────────────────────────────
     def set_config(self, buy_a, buy_b, buy_c, sell_d, sell_e, sell_f) -> str:
-        _save_config({"buy_a": buy_a, "buy_b": buy_b, "buy_c": buy_c, "sell_d": sell_d, "sell_e": sell_e, "sell_f": sell_f})
+        _save_config(
+            {"buy_a": buy_a, "buy_b": buy_b, "buy_c": buy_c, "sell_d": sell_d, "sell_e": sell_e, "sell_f": sell_f}
+        )
         return f"✅ 분할매매 설정 완료\n\n매수: -{buy_a}% / -{buy_b}% / 최저+{buy_c}%\n매도: +{sell_d}% / +{sell_e}% / 최고-{sell_f}%"
 
     def get_config_text(self) -> str:
@@ -92,7 +94,11 @@ class WaveMonitor(MonitorBase):
         ]
         for i, item in enumerate(lst, 1):
             st = self._states.get(item["stk_cd"])
-            progress = f"기준가 {st['ref_price']:,.0f}원 | 매수{st['buy_stage']}/3 매도{st['sell_stage']}/3" if st else "미시작"
+            progress = (
+                f"기준가 {st['ref_price']:,.0f}원 | 매수{st['buy_stage']}/3 매도{st['sell_stage']}/3"
+                if st
+                else "미시작"
+            )
             lines.append(f"{i}. ({item['stk_cd']}) {item['total_amount']:,}원  [{progress}]")
         return "\n".join(lines)
 
@@ -113,9 +119,14 @@ class WaveMonitor(MonitorBase):
 
             if stk_cd not in self._states:
                 self._states[stk_cd] = {
-                    "ref_price": cur_price, "buy_stage": 0, "sell_stage": 0,
-                    "trough_price": cur_price, "peak_price": cur_price,
-                    "total_bought_qty": 0, "per_stage_amt": per_stage_amt, "stk_nm": info["name"],
+                    "ref_price": cur_price,
+                    "buy_stage": 0,
+                    "sell_stage": 0,
+                    "trough_price": cur_price,
+                    "peak_price": cur_price,
+                    "total_bought_qty": 0,
+                    "per_stage_amt": per_stage_amt,
+                    "stk_nm": info["name"],
                 }
                 print(f"[wave] ({stk_cd}) 기준가 설정: {cur_price:,.0f}원", flush=True)
                 continue
@@ -144,7 +155,9 @@ class WaveMonitor(MonitorBase):
         st["total_bought_qty"] += qty
         cmd = f"buy {stk_cd} {qty}"
         print(f"[wave] {stage}차 매수 ({stk_cd}) {cur_price:,.0f}원 × {qty}주 → {cmd}", flush=True)
-        self.send_message(f"📊 분할매매 {stage}차 매수\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n실행: {cmd}")
+        self.send_message(
+            f"📊 분할매매 {stage}차 매수\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n실행: {cmd}"
+        )
         self._execute(cmd)
 
     def _check_sell(self, stk_cd, cur_price, st, cfg):
@@ -164,8 +177,14 @@ class WaveMonitor(MonitorBase):
         if stage == 3:
             cmd, qty_desc = f"sell {stk_cd}", "전량"
         else:
-            qty = max(1, total_qty // 3) if total_qty > 0 else (max(1, int(per_stage_amt // cur_price)) if per_stage_amt > 0 else 1)
+            qty = (
+                max(1, total_qty // 3)
+                if total_qty > 0
+                else (max(1, int(per_stage_amt // cur_price)) if per_stage_amt > 0 else 1)
+            )
             cmd, qty_desc = f"sell {stk_cd} {qty}", f"{qty}주"
         print(f"[wave] {stage}차 매도 ({stk_cd}) {cur_price:,.0f}원 {qty_desc} → {cmd}", flush=True)
-        self.send_message(f"📊 분할매매 {stage}차 매도\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty_desc}\n실행: {cmd}")
+        self.send_message(
+            f"📊 분할매매 {stage}차 매도\n종목: ({stk_cd}) {st.get('stk_nm', stk_cd)}\n현재가: {cur_price:,.0f}원  수량: {qty_desc}\n실행: {cmd}"
+        )
         self._execute(cmd)

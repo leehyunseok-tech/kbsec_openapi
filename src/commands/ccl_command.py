@@ -64,7 +64,9 @@ def handle_ccl(args, session):
         if result["success"]:
             success_list.append(f"  ✅ {name}({code}) {qty}주")
         else:
-            msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+            msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+                "resultMessage", "알 수 없는 오류"
+            )
             fail_list.append(f"  ❌ {name}({code}) {qty}주 - {msg}")
 
     lines = [f"미체결 일괄 취소: 성공 {len(success_list)}건 / 실패 {len(fail_list)}건\n"]

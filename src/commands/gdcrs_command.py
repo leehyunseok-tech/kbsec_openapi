@@ -93,7 +93,10 @@ def _handle_list():
     stocks = settings.get("gdcrs", {}).get("stocks", [])
     if not stocks:
         return "📭 골든크로스 목록이 비어있습니다.\n\n/골든크로스 add로 종목을 추가하세요."
-    intv_short, intv_long = settings.get("gdcrs", {}).get("intv_short", 5), settings.get("gdcrs", {}).get("intv_long", 20)
+    intv_short, intv_long = (
+        settings.get("gdcrs", {}).get("intv_short", 5),
+        settings.get("gdcrs", {}).get("intv_long", 20),
+    )
     lines = [f"📊 골든크로스 모니터링 목록\n\n분봉 설정: {intv_short}분 × {intv_long}분\n추적 종목: {len(stocks)}개\n"]
     lines.extend(f"{i}. {s.get('code', 'N/A')}   |   {s.get('amount', 0):,}원" for i, s in enumerate(stocks, 1))
     return "\n".join(lines)

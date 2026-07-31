@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 from src.paths import LOGS_DIR as _LOGS_DIR
+
 _CSV_HEADER = ["체결시간", "종목코드", "종목명", "매수/매도", "체결가", "수량", "전략", "잔여수량"]
 
 _lock = threading.Lock()
@@ -43,7 +44,9 @@ def consume_strategy(code: str) -> str:
         return _pending_strategies.pop(code.strip(), "수동")
 
 
-def log_trade(code: str, name: str, side: str, price: int, qty: int, strategy: str, remaining_qty: int, exec_time: str = "") -> bool:
+def log_trade(
+    code: str, name: str, side: str, price: int, qty: int, strategy: str, remaining_qty: int, exec_time: str = ""
+) -> bool:
     """체결 내역 CSV 기록 (중복 무시). True면 신규 기록됨."""
     time_str = exec_time or datetime.now().strftime("%H:%M:%S")
     key = (code.strip(), time_str, side, qty)
@@ -67,7 +70,7 @@ def generate_summary() -> str:
         return "📋 오늘 체결 내역이 없습니다."
 
     rows = []
-    with open(path, "r", encoding="utf-8-sig") as f:
+    with open(path, encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
             t = row.get("체결시간", "")
             if not t or t.startswith("---"):
@@ -104,13 +107,12 @@ def generate_summary() -> str:
         f"📊 수익률: {sign}{profit_rate:.2f}%"
     )
 
-    with _lock:
-        with open(path, "a", newline="", encoding="utf-8-sig") as f:
-            w = csv.writer(f)
-            w.writerow([])
-            w.writerow(["--- 일일 요약 ---"])
-            for line in summary.split("\n"):
-                if line.strip():
-                    w.writerow([line.strip()])
+    with _lock, open(path, "a", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f)
+        w.writerow([])
+        w.writerow(["--- 일일 요약 ---"])
+        for line in summary.split("\n"):
+            if line.strip():
+                w.writerow([line.strip()])
 
     return summary

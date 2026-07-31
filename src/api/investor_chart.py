@@ -11,7 +11,7 @@ from src.api.client import call_business_api
 
 def ivu10420(excg_clsf="", is_cd="", *, extra: dict | None = None, token, host_url) -> dict:
     """IVU10420 거래원 — 당일주요외국계거래원
-    
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         is_cd: 종목코드
@@ -19,9 +19,9 @@ def ivu10420(excg_clsf="", is_cd="", *, extra: dict | None = None, token, host_u
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "is_cd": is_cd,
-        }
+        "excg_clsf": excg_clsf,
+        "is_cd": is_cd,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -35,9 +35,21 @@ def ivu10420(excg_clsf="", is_cd="", *, extra: dict | None = None, token, host_u
     )
 
 
-def ivu10430(excg_clsf="", is_cd="", strt_dt="", end_dt="", amt_q_clsf="", trd_clsf="", acml_clsf="", *, extra: dict | None = None, token, host_url) -> dict:
-    """IVU10430 투자자 — 
-    
+def ivu10430(
+    excg_clsf="",
+    is_cd="",
+    strt_dt="",
+    end_dt="",
+    amt_q_clsf="",
+    trd_clsf="",
+    acml_clsf="",
+    *,
+    extra: dict | None = None,
+    token,
+    host_url,
+) -> dict:
+    """IVU10430 투자자 —
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         is_cd: 종목코드
@@ -50,14 +62,14 @@ def ivu10430(excg_clsf="", is_cd="", strt_dt="", end_dt="", amt_q_clsf="", trd_c
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "is_cd": is_cd,
-            "strt_dt": strt_dt,
-            "end_dt": end_dt,
-            "amt_q_clsf": amt_q_clsf,
-            "trd_clsf": trd_clsf,
-            "acml_clsf": acml_clsf,
-        }
+        "excg_clsf": excg_clsf,
+        "is_cd": is_cd,
+        "strt_dt": strt_dt,
+        "end_dt": end_dt,
+        "amt_q_clsf": amt_q_clsf,
+        "trd_clsf": trd_clsf,
+        "acml_clsf": acml_clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -71,9 +83,11 @@ def ivu10430(excg_clsf="", is_cd="", strt_dt="", end_dt="", amt_q_clsf="", trd_c
     )
 
 
-def ivu10450(excg_clsf="", is_cd="", amt_q_clsf="", prd_clsf="", inq_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
-    """IVU10450 프로그램 — 
-    
+def ivu10450(
+    excg_clsf="", is_cd="", amt_q_clsf="", prd_clsf="", inq_cnt="", *, extra: dict | None = None, token, host_url
+) -> dict:
+    """IVU10450 프로그램 —
+
     Args:
         excg_clsf: 거래소구분 — 0:통합, 1:KRX, 2:NXT
         is_cd: 종목코드
@@ -84,12 +98,12 @@ def ivu10450(excg_clsf="", is_cd="", amt_q_clsf="", prd_clsf="", inq_cnt="", *, 
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "excg_clsf": excg_clsf,
-            "is_cd": is_cd,
-            "amt_q_clsf": amt_q_clsf,
-            "prd_clsf": prd_clsf,
-            "inq_cnt": inq_cnt,
-        }
+        "excg_clsf": excg_clsf,
+        "is_cd": is_cd,
+        "amt_q_clsf": amt_q_clsf,
+        "prd_clsf": prd_clsf,
+        "inq_cnt": inq_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -101,4 +115,3 @@ def ivu10450(excg_clsf="", is_cd="", amt_q_clsf="", prd_clsf="", inq_cnt="", *, 
         token=token,
         host_url=host_url,
     )
-

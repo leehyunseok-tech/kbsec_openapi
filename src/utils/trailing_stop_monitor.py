@@ -9,10 +9,10 @@
 
 from datetime import datetime
 
-from src.utils.monitor_base import MonitorBase
-from src.utils.holdings_valuation import get_holdings_with_profit
-from src.utils.settings_manager import SettingsManager
 from src.utils import trade_logger
+from src.utils.holdings_valuation import get_holdings_with_profit
+from src.utils.monitor_base import MonitorBase
+from src.utils.settings_manager import SettingsManager
 
 
 class TrailingStopMonitor(MonitorBase):
@@ -57,13 +57,19 @@ class TrailingStopMonitor(MonitorBase):
             drop_from_peak = (peak - h["cur_price"]) / peak * 100 if peak > 0 else 0
             profit_rate = h["profit_rate"]
 
-            print(f"[trst] {code}({h['name']}) 현재={h['cur_price']:,.0f} 수익={profit_rate:+.1f}% 고점대비={drop_from_peak:.1f}%하락", flush=True)
+            print(
+                f"[trst] {code}({h['name']}) 현재={h['cur_price']:,.0f} 수익={profit_rate:+.1f}% 고점대비={drop_from_peak:.1f}%하락",
+                flush=True,
+            )
 
             if profit_rate >= min_profit and drop_from_peak >= drop_rate:
                 self._trigger_sell(code, h["name"], h["qty"], profit_rate, drop_from_peak)
 
     def _trigger_sell(self, code, name, qty, profit_rate, drop_from_peak):
-        print(f"[trst] 🔴 발동! {code}({name}) 수익={profit_rate:+.1f}% 고점대비={drop_from_peak:.1f}%하락 → 전량 매도", flush=True)
+        print(
+            f"[trst] 🔴 발동! {code}({name}) 수익={profit_rate:+.1f}% 고점대비={drop_from_peak:.1f}%하락 → 전량 매도",
+            flush=True,
+        )
         self.sold_today.add(code)
         trade_logger.register_order(code, "트레일링스탑")
         try:

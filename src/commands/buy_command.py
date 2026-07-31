@@ -8,13 +8,13 @@ tick 조정 매수, 자동매매 중복매수 가드, 주문 타임아웃 감시
 (docs/features.md 참고, 개선 예정).
 """
 
-from src.api.order import ssam1802, skam2101
+from src.api.order import skam2101, ssam1802
 from src.api.price_info import ivu10140
+from src.utils.cooldown_log import get_remaining, is_in_cooldown
 from src.utils.formatting import format_number
-from src.utils.settings_manager import SettingsManager
-from src.utils.cooldown_log import is_in_cooldown, get_remaining
-from src.utils.stock_master import find_overseas_by_ticker
 from src.utils.price_lookup import get_overseas_current_price
+from src.utils.settings_manager import SettingsManager
+from src.utils.stock_master import find_overseas_by_ticker
 
 
 def _is_domestic_code(stock_code: str) -> bool:
@@ -68,8 +68,8 @@ def _format_result(result, order_type, quantity):
     return f"""✅ 매수주문 접수
 
 {order_type}  {quantity}주
-주문번호: {body.get('ordr_no', 'N/A')}
-메시지: {body.get('o_msg', '')}"""
+주문번호: {body.get("ordr_no", "N/A")}
+메시지: {body.get("o_msg", "")}"""
 
 
 # ── 해외주식 매수 (SKAM2101) ──────────────────────────────────────────────────
@@ -109,8 +109,8 @@ def _format_overseas_result(result, order_type, quantity, ticker):
     return f"""✅ 해외 매수주문 접수
 
 {ticker}  {order_type}  {quantity}주
-주문번호: {body.get('ordr_no', 'N/A')}
-메시지: {body.get('o_msg', '')}"""
+주문번호: {body.get("ordr_no", "N/A")}
+메시지: {body.get("o_msg", "")}"""
 
 
 def _handle_overseas_buy(overseas_stock, args, session):
@@ -144,7 +144,9 @@ def _handle_overseas_buy(overseas_stock, args, session):
 
         result = _place_overseas_order(overseas_stock, quantity, price_info["price"], session)
         if not result["success"]:
-            error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+            error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+                "resultMessage", "알 수 없는 오류"
+            )
             return f"❌ 해외 금액 기반 매수 실패\n\n오류: {error_msg}"
 
         actual_amount = quantity * price_info["price"]
@@ -179,7 +181,9 @@ def _handle_overseas_buy(overseas_stock, args, session):
 
     result = _place_overseas_order(overseas_stock, quantity, price, session)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 해외 매수주문 실패\n\n오류: {error_msg}"
 
     order_type = f"시장가(현재가 ${price:.2f} 기준)" if was_market else f"지정가 ${price:.2f}"
@@ -250,7 +254,9 @@ def _handle_domestic_buy(stock_code, args, session):
 
         result = _place_order(stock_code, quantity, None, session)
         if not result["success"]:
-            error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+            error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+                "resultMessage", "알 수 없는 오류"
+            )
             return f"❌ 금액 기반 매수 실패\n\n오류: {error_msg}"
 
         actual_amount = quantity * price_info["price"]
@@ -279,7 +285,9 @@ def _handle_domestic_buy(stock_code, args, session):
 
     result = _place_order(stock_code, quantity, price, session)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 매수주문 실패\n\n오류: {error_msg}"
 
     order_type = f"지정가 {format_number(price)}원" if price else "시장가"

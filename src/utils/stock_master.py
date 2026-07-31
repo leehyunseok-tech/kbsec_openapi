@@ -79,9 +79,15 @@ def _load_domestic():
     kospi, kosdaq = [], []
     for f in _read_rows("openapi_field_kospi-kosdaq.mst"):
         stock = DomesticStock(
-            market=f[0], code=f[1], name=f[2], stock_type=f[3],
-            managed=f[4], halted=f[5], order_unit=f[6],
-            decimal_tradable=f[7], decimal_state=f[8],
+            market=f[0],
+            code=f[1],
+            name=f[2],
+            stock_type=f[3],
+            managed=f[4],
+            halted=f[5],
+            order_unit=f[6],
+            decimal_tradable=f[7],
+            decimal_state=f[8],
         )
         (kospi if f[0] == "KOSPI" else kosdaq).append(stock)
     return kospi, kosdaq
@@ -95,11 +101,21 @@ def _load_overseas():
     """
     stocks = []
     for f in _read_rows("openapi_field_foren-us.mst"):
-        stocks.append(OverseasStock(
-            exchange=f[0], exchange_name=f[1], ticker=f[2], name_kr=f[3], name_en=f[4],
-            currency=f[5], stock_type=f[6], trade_restriction=f[7],
-            buy_unit=f[8], sell_unit=f[9], decimal_tradable=f[10],
-        ))
+        stocks.append(
+            OverseasStock(
+                exchange=f[0],
+                exchange_name=f[1],
+                ticker=f[2],
+                name_kr=f[3],
+                name_en=f[4],
+                currency=f[5],
+                stock_type=f[6],
+                trade_restriction=f[7],
+                buy_unit=f[8],
+                sell_unit=f[9],
+                decimal_tradable=f[10],
+            )
+        )
     return stocks
 
 

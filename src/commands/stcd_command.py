@@ -31,7 +31,9 @@ def handle_stcd(args, session):
     lines = [f"🔍 '{' '.join(args)}' 검색 결과"]
     if domestic_unique:
         lines.append(f"\n국내 ({len(domestic_unique)}건, 최대 20건 표시):")
-        lines.append("  [종목명] [종목코드] [시장구분] [종목구분] [관리종목여부] [거래정지여부] [매수주문단위] [소수점매매가능여부] [소수점매매상태]")
+        lines.append(
+            "  [종목명] [종목코드] [시장구분] [종목구분] [관리종목여부] [거래정지여부] [매수주문단위] [소수점매매가능여부] [소수점매매상태]"
+        )
         for s in domestic_unique[:20]:
             lines.append(
                 f"  [{s.name}] [{s.code}] [{s.market}] [{s.stock_type}] "
@@ -39,7 +41,9 @@ def handle_stcd(args, session):
             )
     if overseas_unique:
         lines.append(f"\n해외 ({len(overseas_unique)}건, 최대 20건 표시):")
-        lines.append("  [종목명] [티커] [거래소명] [통화코드] [종목타입] [매매구분] [매수거래단위] [매도거래단위] [소수점매매가능여부]")
+        lines.append(
+            "  [종목명] [티커] [거래소명] [통화코드] [종목타입] [매매구분] [매수거래단위] [매도거래단위] [소수점매매가능여부]"
+        )
         for s in overseas_unique[:20]:
             lines.append(
                 f"  [{s.name_kr or s.name_en}] [{s.ticker}] [{s.exchange_name}] [{s.currency}] "

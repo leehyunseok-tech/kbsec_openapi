@@ -1,6 +1,6 @@
 """현재가 조회 헬퍼 (국내 IVU10140 / 해외 GSS10030 기반). 폴링 모니터·매매 명령이 공용으로 사용."""
 
-from src.api.price_info import ivu10140, gss10030
+from src.api.price_info import gss10030, ivu10140
 
 
 def get_current_price(stock_code: str, token: str, host_url: str):

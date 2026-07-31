@@ -3,8 +3,8 @@
 import json
 
 from config import config
-from src.utils.api_logger import log_api_error, log_api_request, log_api_response
 from src.api.client import _post
+from src.utils.api_logger import log_api_error, log_api_request, log_api_response
 
 TOKEN_ENDPOINT = "/oauth2/token"
 REVOKE_ENDPOINT = "/oauth2/revoke"
@@ -67,10 +67,22 @@ def get_token(host_url, client_key, client_secret):
         }
     except json.JSONDecodeError as e:
         log_api_error("JSON 파싱 오류", str(e))
-        return {"status_code": None, "body": {"error": str(e)}, "access_token": None, "expires_in": None, "success": False}
+        return {
+            "status_code": None,
+            "body": {"error": str(e)},
+            "access_token": None,
+            "expires_in": None,
+            "success": False,
+        }
     except Exception as e:
         log_api_error("네트워크 오류", str(e))
-        return {"status_code": None, "body": {"error": str(e)}, "access_token": None, "expires_in": None, "success": False}
+        return {
+            "status_code": None,
+            "body": {"error": str(e)},
+            "access_token": None,
+            "expires_in": None,
+            "success": False,
+        }
 
 
 def revoke_token(host_url, access_token, client_key, client_secret):

@@ -35,10 +35,25 @@ class GridMonitor(MonitorBase):
         lst = _load_list()
         for item in lst:
             if item["stk_cd"] == stk_cd:
-                item.update({"base_price": base_price, "interval": interval, "order_amount": order_amount, "max_stages": max_stages})
+                item.update(
+                    {
+                        "base_price": base_price,
+                        "interval": interval,
+                        "order_amount": order_amount,
+                        "max_stages": max_stages,
+                    }
+                )
                 _save_list(lst)
                 return f"✅ ({stk_cd}) 그리드 업데이트됨\n기준가 {base_price:,}원 | 간격 {interval}% | 주문금액 {order_amount:,}원 | 최대 {max_stages}단계"
-        lst.append({"stk_cd": stk_cd, "base_price": base_price, "interval": interval, "order_amount": order_amount, "max_stages": max_stages})
+        lst.append(
+            {
+                "stk_cd": stk_cd,
+                "base_price": base_price,
+                "interval": interval,
+                "order_amount": order_amount,
+                "max_stages": max_stages,
+            }
+        )
         _save_list(lst)
         buy_levels = ", ".join(f"{base_price * (1 - (n * interval / 100)):,.0f}" for n in range(1, max_stages + 1))
         sell_levels = ", ".join(f"{base_price * (1 + (n * interval / 100)):,.0f}" for n in range(1, max_stages + 1))
@@ -64,8 +79,14 @@ class GridMonitor(MonitorBase):
         lines = [f"📋 그리드 목록 ({state_str})\n"]
         for i, item in enumerate(lst, 1):
             st = self._states.get(item["stk_cd"])
-            progress = f"매수발동 {len(st['buy_triggered'])}/{item['max_stages']} 매도발동 {len(st['sell_triggered'])}/{item['max_stages']}" if st else "미시작"
-            lines.append(f"{i}. ({item['stk_cd']}) 기준가 {item['base_price']:,}원 간격 {item['interval']}% 금액 {item['order_amount']:,}원 {item['max_stages']}단계  [{progress}]")
+            progress = (
+                f"매수발동 {len(st['buy_triggered'])}/{item['max_stages']} 매도발동 {len(st['sell_triggered'])}/{item['max_stages']}"
+                if st
+                else "미시작"
+            )
+            lines.append(
+                f"{i}. ({item['stk_cd']}) 기준가 {item['base_price']:,}원 간격 {item['interval']}% 금액 {item['order_amount']:,}원 {item['max_stages']}단계  [{progress}]"
+            )
         return "\n".join(lines)
 
     def _check_all(self):
@@ -87,7 +108,12 @@ class GridMonitor(MonitorBase):
             self._check_levels(stk_cd, cur_price, item, self._states[stk_cd])
 
     def _check_levels(self, stk_cd, cur_price, item, st):
-        base, interval, order_amount, max_stages = item["base_price"], item["interval"], item["order_amount"], item["max_stages"]
+        base, interval, order_amount, max_stages = (
+            item["base_price"],
+            item["interval"],
+            item["order_amount"],
+            item["max_stages"],
+        )
         stk_nm = st["stk_nm"]
 
         for n in range(1, max_stages + 1):
@@ -99,7 +125,9 @@ class GridMonitor(MonitorBase):
                 cmd = f"buy {stk_cd} {qty}"
                 st["buy_triggered"].add(n)
                 print(f"[grid] 매수 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}", flush=True)
-                self.send_message(f"🔵 그리드 {n}단계 매수\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}")
+                self.send_message(
+                    f"🔵 그리드 {n}단계 매수\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}"
+                )
                 self._execute(cmd)
 
         for n in range(1, max_stages + 1):
@@ -111,5 +139,7 @@ class GridMonitor(MonitorBase):
                 cmd = f"sell {stk_cd} {qty}"
                 st["sell_triggered"].add(n)
                 print(f"[grid] 매도 레벨{n} ({stk_cd}) {cur_price:,.0f}원 {qty}주 → {cmd}", flush=True)
-                self.send_message(f"🔴 그리드 {n}단계 매도\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}")
+                self.send_message(
+                    f"🔴 그리드 {n}단계 매도\n종목: ({stk_cd}) {stk_nm}\n현재가: {cur_price:,.0f}원  수량: {qty}주\n레벨가: {level_price:,.0f}원  실행: {cmd}"
+                )
                 self._execute(cmd)

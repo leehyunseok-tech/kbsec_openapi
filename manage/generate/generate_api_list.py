@@ -29,7 +29,9 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # sys.path 부트스트랩 전용 — 경로 상수는 src/paths.py에서
 sys.path.insert(0, str(PROJECT_ROOT))  # 파일 직접 실행(-m 없이) 시에도 src.paths import가 풀리도록
-from src.paths import API_SPEC_MD_DIR as SPEC_DIR, API_LIST_MD as OUT_MD, API_LIST_JSON as OUT_JSON  # noqa: E402
+from src.paths import API_LIST_JSON as OUT_JSON
+from src.paths import API_LIST_MD as OUT_MD
+from src.paths import API_SPEC_MD_DIR as SPEC_DIR  # noqa: E402
 
 # 파일명 형식: <코드?>-<이름>-YYYYMMDD-HHMMSS.md  (코드가 없는 경우도 있음, 예: "토큰 발급-...")
 FILENAME_RE = re.compile(r"^(?P<title>.+)-(?P<date>\d{8})-(?P<time>\d{6})$")

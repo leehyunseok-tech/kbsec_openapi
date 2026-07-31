@@ -5,11 +5,14 @@ rank 명령 처리 - 상위 종목 랭킹 조회.
 4 업종랭킹(IVM30010).
 """
 
-from src.api.rank_info import ivu10210, ivu10240, ivu10280, ivm30010
-from src.utils.formatting import format_number, compare_sign
+from src.api.rank_info import ivm30010, ivu10210, ivu10240, ivu10280
+from src.utils.formatting import compare_sign, format_number
 
 RANK_FUNCS = {
-    "1": ("거래대금상위", lambda session: ivu10210(inq_cnt="20", token=session.access_token, host_url=session.host_url)),
+    "1": (
+        "거래대금상위",
+        lambda session: ivu10210(inq_cnt="20", token=session.access_token, host_url=session.host_url),
+    ),
     "2": ("등락률상위", lambda session: ivu10240(token=session.access_token, host_url=session.host_url)),
     "3": ("거래량상위", lambda session: ivu10280(token=session.access_token, host_url=session.host_url)),
 }
@@ -44,7 +47,9 @@ def handle_rank(args, session, execute_command=None):
     name, func = entry
     result = func(session)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ {name} 조회 실패\n\n오류: {error_msg}"
 
     return _format_stock_rank(name, result)
@@ -80,7 +85,9 @@ def _format_stock_rank(name, result):
 def _get_sector_rank(session):
     result = ivm30010(token=session.access_token, host_url=session.host_url)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 업종랭킹 조회 실패\n\n오류: {error_msg}"
 
     body = result["body"].get("dataBody", {})

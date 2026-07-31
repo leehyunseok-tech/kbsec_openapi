@@ -9,9 +9,22 @@
 from src.api.client import call_business_api
 
 
-def gsc10060(krx_cd="", is_cd="", chrt_clsf="", bndl="", mdfy_stk_prc_use_f="", rcrd_c="", srch_strt_dy="", clsf="", *, extra: dict | None = None, token, host_url) -> dict:
+def gsc10060(
+    krx_cd="",
+    is_cd="",
+    chrt_clsf="",
+    bndl="",
+    mdfy_stk_prc_use_f="",
+    rcrd_c="",
+    srch_strt_dy="",
+    clsf="",
+    *,
+    extra: dict | None = None,
+    token,
+    host_url,
+) -> dict:
     """GSC10060 통합차트 — 차트
-    
+
     Args:
         krx_cd: 거래소코드 KRX_CD
         is_cd: 종목코드 IS_CD
@@ -25,15 +38,15 @@ def gsc10060(krx_cd="", is_cd="", chrt_clsf="", bndl="", mdfy_stk_prc_use_f="", 
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "krx_cd": krx_cd,
-            "is_cd": is_cd,
-            "chrt_clsf": chrt_clsf,
-            "bndl": bndl,
-            "mdfy_stk_prc_use_f": mdfy_stk_prc_use_f,
-            "rcrd_c": rcrd_c,
-            "srch_strt_dy": srch_strt_dy,
-            "clsf": clsf,
-        }
+        "krx_cd": krx_cd,
+        "is_cd": is_cd,
+        "chrt_clsf": chrt_clsf,
+        "bndl": bndl,
+        "mdfy_stk_prc_use_f": mdfy_stk_prc_use_f,
+        "rcrd_c": rcrd_c,
+        "srch_strt_dy": srch_strt_dy,
+        "clsf": clsf,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -47,9 +60,22 @@ def gsc10060(krx_cd="", is_cd="", chrt_clsf="", bndl="", mdfy_stk_prc_use_f="", 
     )
 
 
-def ivs11560(info_ccd="", mkt_clsf="", chrt_clsf="", minute_tck_indx="", is_cd="", inq_clsf="", strt_dy="", inq_cnt="", *, extra: dict | None = None, token, host_url) -> dict:
+def ivs11560(
+    info_ccd="",
+    mkt_clsf="",
+    chrt_clsf="",
+    minute_tck_indx="",
+    is_cd="",
+    inq_clsf="",
+    strt_dy="",
+    inq_cnt="",
+    *,
+    extra: dict | None = None,
+    token,
+    host_url,
+) -> dict:
     """IVS11560 통합차트 — 통합차트
-    
+
     Args:
         info_ccd: 정보구분코드 — 1:원주가 2:수정주가(KOSPI, KOSDAQ 종목만)
         mkt_clsf: 시장구분 — 0:KOSPI 1:KOSDAQ
@@ -63,15 +89,15 @@ def ivs11560(info_ccd="", mkt_clsf="", chrt_clsf="", minute_tck_indx="", is_cd="
         token, host_url: 인증 토큰 및 호스트 URL
     """
     data_body = {
-            "info_ccd": info_ccd,
-            "mkt_clsf": mkt_clsf,
-            "chrt_clsf": chrt_clsf,
-            "minute_tck_indx": minute_tck_indx,
-            "is_cd": is_cd,
-            "inq_clsf": inq_clsf,
-            "strt_dy": strt_dy,
-            "inq_cnt": inq_cnt,
-        }
+        "info_ccd": info_ccd,
+        "mkt_clsf": mkt_clsf,
+        "chrt_clsf": chrt_clsf,
+        "minute_tck_indx": minute_tck_indx,
+        "is_cd": is_cd,
+        "inq_clsf": inq_clsf,
+        "strt_dy": strt_dy,
+        "inq_cnt": inq_cnt,
+    }
     if extra:
         data_body.update(extra)
     return call_business_api(
@@ -83,4 +109,3 @@ def ivs11560(info_ccd="", mkt_clsf="", chrt_clsf="", minute_tck_indx="", is_cd="
         token=token,
         host_url=host_url,
     )
-

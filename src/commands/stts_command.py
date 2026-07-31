@@ -3,9 +3,20 @@
 from src.utils.settings_manager import SettingsManager
 
 KNOWN_KEYS = {
-    "market_hours", "stop_loss", "gdcrs", "ddcrs", "trailing_stop",
-    "order_timeout", "cooldown_hours", "max_holdings", "blacklist",
-    "brk_rate", "brk_watch_list", "wave_config", "wave_watch_list", "grid_watch_list",
+    "market_hours",
+    "stop_loss",
+    "gdcrs",
+    "ddcrs",
+    "trailing_stop",
+    "order_timeout",
+    "cooldown_hours",
+    "max_holdings",
+    "blacklist",
+    "brk_rate",
+    "brk_watch_list",
+    "wave_config",
+    "wave_watch_list",
+    "grid_watch_list",
 }
 
 
@@ -16,11 +27,15 @@ def handle_stts(args):
 
     if "market_hours" in settings:
         h = settings["market_hours"]
-        message += f"📊 장 시간 (market_hours)\n  시작: {h.get('start_time', 'N/A')}  종료: {h.get('end_time', 'N/A')}\n\n"
+        message += (
+            f"📊 장 시간 (market_hours)\n  시작: {h.get('start_time', 'N/A')}  종료: {h.get('end_time', 'N/A')}\n\n"
+        )
 
     if "stop_loss" in settings:
         sl = settings["stop_loss"]
-        message += f"💰 익절/손절 (stop_loss)\n  익절: +{sl.get('take_profit', 5.0)}%  손절: {sl.get('stop_loss', -5.0)}%\n\n"
+        message += (
+            f"💰 익절/손절 (stop_loss)\n  익절: +{sl.get('take_profit', 5.0)}%  손절: {sl.get('stop_loss', -5.0)}%\n\n"
+        )
 
     if "gdcrs" in settings:
         g = settings["gdcrs"]
@@ -47,7 +62,11 @@ def handle_stts(args):
     message += f"📦 최대 보유 종목 수 (max_holdings)\n  한도: {f'{max_hold}개' if max_hold else '제한 없음'}\n\n"
 
     blacklist = settings.get("blacklist", [])
-    message += f"🚫 블랙리스트 (blacklist)\n  " + (f"{', '.join(blacklist)} ({len(blacklist)}개)" if blacklist else "없음") + "\n\n"
+    message += (
+        "🚫 블랙리스트 (blacklist)\n  "
+        + (f"{', '.join(blacklist)} ({len(blacklist)}개)" if blacklist else "없음")
+        + "\n\n"
+    )
 
     brk_rate, brk_list = settings.get("brk_rate", 3.0), settings.get("brk_watch_list", [])
     message += f"📈 돌파매수 (brk)\n  기준 상승률: +{float(brk_rate):.1f}%  감시 종목: {len(brk_list)}개\n\n"

@@ -35,7 +35,11 @@ def handle_grid(args, session, monitor=None):
             return "❌ 기준가/간격/주문금액은 0보다 커야 합니다."
         if not (1 <= max_stages <= 10):
             return "❌ 최대단계는 1~10 사이여야 합니다."
-        return monitor.add(stk_cd, base_price, interval, order_amount, max_stages) if monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        return (
+            monitor.add(stk_cd, base_price, interval, order_amount, max_stages)
+            if monitor
+            else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."
+        )
 
     if sub == "list":
         return monitor.get_list_text() if monitor else "❌ 내부 오류: 모니터가 초기화되지 않았습니다."

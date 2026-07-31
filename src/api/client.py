@@ -27,8 +27,7 @@ def build_business_headers(token):
     }
 
 
-def call_business_api(api_name, api_code, endpoint, data_body, required, token, host_url,
-                       ip_addr=None, mac_addr=None):
+def call_business_api(api_name, api_code, endpoint, data_body, required, token, host_url, ip_addr=None, mac_addr=None):
     """
     KB증권 업무 API(토큰 발급 제외) 공용 호출.
 

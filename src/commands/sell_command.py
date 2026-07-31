@@ -9,13 +9,13 @@ API 자체가 없어 해결 불가, docs/features.md 참고). 가격을 생략�
 모두 적용된다.
 """
 
-from src.api.order import ssam1801, skam2101
 from src.api.account import ssqm1801
-from src.utils.formatting import format_number
-from src.utils.settings_manager import SettingsManager
+from src.api.order import skam2101, ssam1801
 from src.utils.cooldown_log import record_sell
-from src.utils.stock_master import find_overseas_by_ticker
+from src.utils.formatting import format_number
 from src.utils.price_lookup import get_overseas_current_price
+from src.utils.settings_manager import SettingsManager
+from src.utils.stock_master import find_overseas_by_ticker
 
 
 def _is_domestic_code(stock_code: str) -> bool:
@@ -31,7 +31,9 @@ def _normalize_code(is_no: str) -> str:
 def _get_holdings(session):
     result = ssqm1801(token=session.access_token, host_url=session.host_url)
     if not result["success"]:
-        return None, result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        return None, result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
     records = result["body"].get("dataBody", {}).get("Record1", []) or []
     return records, None
 
@@ -101,7 +103,9 @@ def _handle_overseas_sell(overseas_stock, args, session):
 
     result = _place_overseas_sell(overseas_stock, quantity, price, session)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 해외 매도주문 실패\n\n오류: {error_msg}"
 
     record_sell(ticker)
@@ -110,8 +114,8 @@ def _handle_overseas_sell(overseas_stock, args, session):
     return f"""✅ 해외 매도주문 접수
 
 {ticker}  {order_type}  {quantity}주
-주문번호: {body.get('ordr_no', 'N/A')}
-메시지: {body.get('o_msg', '')}"""
+주문번호: {body.get("ordr_no", "N/A")}
+메시지: {body.get("o_msg", "")}"""
 
 
 def handle_sell(args, session):
@@ -190,7 +194,9 @@ def _handle_domestic_sell(stock_code, args, session):
 
     result = _place_sell(stock_code, quantity, price, session)
     if not result["success"]:
-        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+        error_msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+            "resultMessage", "알 수 없는 오류"
+        )
         return f"❌ 매도주문 실패\n\n오류: {error_msg}"
 
     record_sell(stock_code)
@@ -199,8 +205,8 @@ def _handle_domestic_sell(stock_code, args, session):
     return f"""✅ 매도주문 접수
 
 {order_type}  {quantity}주
-주문번호: {body.get('ordr_no', 'N/A')}
-메시지: {body.get('o_msg', '')}"""
+주문번호: {body.get("ordr_no", "N/A")}
+메시지: {body.get("o_msg", "")}"""
 
 
 def _handle_sell_all(session) -> str:
@@ -233,10 +239,15 @@ def _handle_sell_all(session) -> str:
             record_sell(code)
             success_list.append(f"  ✅ {name}({code}) {qty:,}주")
         else:
-            msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get("resultMessage", "알 수 없는 오류")
+            msg = result["body"].get("error") or result["body"].get("dataHeader", {}).get(
+                "resultMessage", "알 수 없는 오류"
+            )
             fail_list.append(f"  ❌ {name}({code}) {qty:,}주 - {msg}")
 
-    lines = [f"전체 매도: 성공 {len(success_list)}건 / 실패 {len(fail_list)}건" + (f" / 제외 {len(skip_list)}건" if skip_list else "")]
+    lines = [
+        f"전체 매도: 성공 {len(success_list)}건 / 실패 {len(fail_list)}건"
+        + (f" / 제외 {len(skip_list)}건" if skip_list else "")
+    ]
     if success_list:
         lines.append("\n매도 완료:")
         lines.extend(success_list)
