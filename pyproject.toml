@@ -1,8 +1,26 @@
 [project]
 name = "kbsec-api"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.14"
+description = "KB증권 OpenAPI(REST) 기반 자동매매 시스템 — 텔레그램/터미널/웹 트리플 클라이언트"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "leehyunseok-tech", email = "leehyunseok.tech@gmail.com" }]
+keywords = ["kbsec", "openapi", "trading", "stock", "telegram-bot", "fastapi"]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Natural Language :: Korean",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
 dependencies = [
     "anthropic>=0.117.0",
     "fastapi>=0.139.2",
@@ -12,3 +30,46 @@ dependencies = [
     "schedule>=1.2.2",
     "uvicorn[standard]>=0.51.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/leehyunseok-tech/kbsec_openapi"
+Repository = "https://github.com/leehyunseok-tech/kbsec_openapi"
+Issues = "https://github.com/leehyunseok-tech/kbsec_openapi/issues"
+
+[dependency-groups]
+dev = ["ruff>=0.14.0"]
+
+# 이 저장소는 라이브러리가 아니라 애플리케이션이다 — `uv run python -m src.run.<모듈>`처럼
+# 프로젝트 루트를 sys.path에 올려 실행하므로 자기 자신을 빌드/설치하지 않는다.
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes (미사용 import/변수, f-string 오류 등)
+    "I",   # isort (import 정렬)
+    "UP",  # pyupgrade (구식 문법 현대화)
+    "B",   # flake8-bugbear (흔한 버그 패턴)
+    "C4",  # comprehension 개선
+    "SIM", # 불필요하게 복잡한 분기 단순화
+]
+ignore = [
+    "E501", # 줄 길이는 formatter가 담당 — 한글 주석이 많아 강제 줄바꿈이 오히려 가독성을 해침
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 클라이언트 진입점은 모듈 상단에서 stdout 인코딩을 재설정한 뒤 import해야 해서 E402가 불가피하다.
+"src/run/*.py" = ["E402"]
+# 생성 스크립트는 파일 직접 실행을 지원하려고 sys.path 부트스트랩 후 import한다.
+"manage/generate/*.py" = ["E402"]
+# CURATION 표는 dict(seq=1, cat="사용", ...) 형태의 키워드 인자로 써야 표처럼 읽힌다 —
+# 딕셔너리 리터럴로 바꾸면 따옴표가 늘어 표 가독성이 떨어지므로 의도적으로 유지한다.
+"manage/generate/generate_mst.py" = ["E402", "C408"]
+
+[tool.ruff.format]
+quote-style = "double"

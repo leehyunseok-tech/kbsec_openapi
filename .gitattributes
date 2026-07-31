@@ -1,0 +1,21 @@
+# 기본: 텍스트 파일은 저장소에 LF로 저장하고, 체크아웃 시 OS 기본에 맞춘다.
+* text=auto
+
+# 셸 스크립트는 반드시 LF — Windows에서 CRLF로 체크아웃되면 macOS/Linux에서
+# `bad interpreter: /usr/bin/env bash^M` 오류가 난다.
+*.sh text eol=lf
+
+# 배치 파일은 반드시 CRLF — cmd.exe가 LF only 배치를 잘못 파싱하는 경우가 있다.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 바이너리/산출물 — diff·자동 개행 변환 대상에서 제외
+*.xlsx binary
+*.mst binary
+*.png binary
+*.jpg binary
+*.gif binary
+
+# GitHub 언어 통계에서 자동 생성물·문서 자산을 제외해 실제 작성 코드 비율을 보이게 한다.
+src/api/*.py linguist-generated=true
+docs/** linguist-documentation=true

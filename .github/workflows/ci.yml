@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & format (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: ruff check
+        run: uv run ruff check src manage
+      - name: ruff format --check
+        run: uv run ruff format --check src manage
+
+  build:
+    name: Import check (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # requires-python = ">=3.11" 이 실제로 지켜지는지 최소 버전부터 확인한다.
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Create config from template
+        # config/config.py 는 실제 키가 담겨 gitignore 대상이라 CI에는 없다.
+        # import 검증만 하면 되므로 템플릿을 그대로 복사해 쓴다(네트워크 호출 없음).
+        run: cp config/config.example.py config/config.py
+      - name: Syntax check
+        run: uv run --python ${{ matrix.python-version }} python -m compileall -q src manage
+      - name: Import all runtime modules
+        # 세 클라이언트가 실제로 import 되는지 확인 — 트리플 클라이언트가 서로 다른
+        # 모듈을 끌어쓰므로 하나만 봐서는 깨진 import를 놓친다.
+        run: |
+          uv run --python ${{ matrix.python-version }} python - <<'PY'
+          import importlib
+          mods = [
+              "src.run.telegram", "src.run.terminal", "src.run.web",
+              "src.web.app", "src.web.client", "src.api.registry",
+              "src.utils.api_spec", "src.utils.direct_api_command",
+              "src.commands.command_meta",
+          ]
+          for m in mods:
+              importlib.import_module(m)
+          from src.api.registry import list_apis
+          assert len(list_apis()) == 74, f"expected 74 APIs, got {len(list_apis())}"
+          print(f"OK: {len(mods)} modules imported, {len(list_apis())} APIs registered")
+          PY
+
+  codegen:
+    name: Generated code is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: cp config/config.example.py config/config.py
+      - name: Regenerate src/api from docs/api/md
+        run: uv run python -m manage.generate.generate_api_client
+      - name: Fail if regeneration changed anything
+        # src/api/*.py 는 docs/api/md 에서 생성되는 산출물이다. 여기서 diff가 나면
+        # 명세만 고치고 재생성을 깜빡했거나, 생성 파일을 손으로 고친 것이다.
+        run: |
+          if ! git diff --exit-code --stat src/api; then
+            echo "::error::src/api 가 docs/api/md 와 어긋납니다. 'uv run python -m manage.generate.generate_api_client' 를 실행하고 결과를 커밋하세요."
+            exit 1
+          fi
+
+  web-js:
+    name: Web JS syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: node --check on all web scripts
+        run: for f in src/web/static/js/*.js; do node --check "$f"; done
