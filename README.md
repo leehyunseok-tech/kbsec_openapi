@@ -20,14 +20,14 @@ KB증권 [OpenAPI](https://developer.kbsec.com)(REST, 74개 API)를 활용한 **
 
 Git이나 GitHub을 몰라도 괜찮습니다. 아래 링크를 클릭하면 소스 코드 전체가 압축파일(zip)로 바로 다운로드됩니다.
 
-**➡️ [소스 코드 다운로드 (zip)](https://github.com/leehyunseok-tech/kbsec_openapi_trading/archive/refs/heads/main.zip)**
+**➡️ [소스 코드 다운로드 (zip)](https://github.com/leehyunseok-tech/kbsec_openapi/archive/refs/heads/main.zip)**
 
-1. 위 링크를 클릭하면 `kbsec_openapi_trading-main.zip` 파일이 바로 다운로드됩니다(별도 로그인/가입 불필요).
+1. 위 링크를 클릭하면 `kbsec_openapi-main.zip` 파일이 바로 다운로드됩니다(별도 로그인/가입 불필요).
 2. 다운로드된 zip 파일을 **마우스 오른쪽 클릭 → "압축 풀기"**(Windows) 또는 더블클릭(macOS)으로 압축을 풉니다.
-3. 압축이 풀린 `kbsec_openapi_trading-main` 폴더로 들어갑니다. **이후 모든 명령/스크립트는 이 폴더 안에서 실행합니다.**
+3. 압축이 풀린 `kbsec_openapi-main` 폴더로 들어갑니다. **이후 모든 명령/스크립트는 이 폴더 안에서 실행합니다.**
 4. 아래 "1. 원클릭 설치"로 이어서 진행하세요.
 
-> 💡 Git에 익숙하다면 `git clone https://github.com/leehyunseok-tech/kbsec_openapi_trading.git`으로 받아도 동일합니다.
+> 💡 Git에 익숙하다면 `git clone https://github.com/leehyunseok-tech/kbsec_openapi.git`으로 받아도 동일합니다.
 
 ### 1. 원클릭 설치 (권장)
 
