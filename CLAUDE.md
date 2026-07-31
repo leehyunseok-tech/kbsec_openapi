@@ -40,6 +40,7 @@ uv run python -m manage.generate.generate_mst         # mst/origin → 종목마
 ### 검증 (커밋 전 이 순서로)
 
 ```bash
+uv run pytest tests/                   # 테스트 (가장 먼저 — 명령 정합성 회귀를 잡는다)
 uv run ruff check src manage           # 린트 — 0 errors 유지가 기준
 uv run ruff format src manage          # 포맷 (--check 를 붙이면 검사만)
 uv run python -m compileall -q src manage   # 문법
@@ -48,7 +49,8 @@ node --check src/web/static/js/app.js  # 웹 JS (static/js/*.js 전부)
 
 - **린터/포매터는 ruff 하나로 통일**했고 설정은 `pyproject.toml`의 `[tool.ruff]`에 있다. 규칙을 끌 때는 반드시 **이유를 주석으로** 남긴다(현재 `E501`, `generate_mst.py`의 `C408` 등이 그렇게 처리돼 있다).
 - **자동 생성 코드(`src/api/*.py`)도 lint·format 대상**이다. `generate_api_client.py`가 생성 직후 자기 산출물에 `ruff format`을 적용하므로(codegen → format), 재생성해도 CI가 깨지지 않는다. 생성 코드에서 lint 오류가 나면 **파일이 아니라 생성기 템플릿을 고친다**.
-- **아직 자동화된 테스트 스위트는 없다.** 기능 검증은 터미널 클라이언트나 일회성 스크립트로 직접 호출해 확인한다. 실제 API 호출 검증은 운영환경(실거래) 계정이라 주문 계열은 특히 주의.
+- **테스트(`tests/`)는 KB API를 호출하지 않는다** — 명령 등록 구조·레지스트리 바인딩·JSON 원자성처럼 네트워크 없이 검증 가능한 것만 다룬다. `conftest.py`가 `config/config.py`가 없으면 템플릿을 복사하므로 실제 키 없이도 돈다. 주문/시세처럼 실제 호출이 필요한 기능은 여전히 터미널 클라이언트로 직접 확인해야 하고, 운영환경(실거래) 계정이라 주문 계열은 특히 주의.
+- 명령을 건드렸다면 `tests/test_command_parity.py`가 세 클라이언트 정합성을, `tests/test_registry.py`가 핸들러에 넘어가는 인자를 검사한다. 여기서 실패하면 **테스트가 아니라 코드를 의심**할 것 — 실제로 드리프트를 잡으라고 만든 테스트다. 다만 의도적인 차이라면 테스트 상단의 예외 상수(`WEB_ONLY_MISSING`, `INTENTIONALLY_DIFFERENT_HANDLERS`)에 이유와 함께 등록한다.
 - CI는 `.github/workflows/ci.yml` — ruff(lint+format), 3.11/3.12/3.13 import 검증, **생성 코드 최신성 검사**(재생성 후 diff가 나면 실패), 웹 JS 문법을 확인한다. `docs/api/md`만 고치고 `generate_api_client` 재실행을 깜빡하면 여기서 잡힌다.
 
 ## 커밋 메시지 규칙
@@ -101,6 +103,9 @@ KB증권 REST API를 활용한 텔레그램/터미널/웹 기반 자동매매 �
 - `manage/` (프로젝트 루트, **`src/`가 아님** — 런타임 코드가 전혀 아니므로 `config/`·`docs/`·`mst/`와 같은 층위의 독립 폴더) — 운영/관리 스크립트 전체를 모아둔 곳. 세 하위 폴더로 나뉜다: `manage/generate/`(데이터·코드 생성 스크립트, `uv run python -m manage.generate.<파일명>`으로 실행 — `generate_mst.py`는 종목마스터 파이프라인(위 `mst/` 항목 참고), 나머지 4종(`convert_xlsx_to_md.py`/`generate_api_list.py`/`generate_api_client.py`/`generate_api_docs.py`)은 `docs/api/xlsx/*.xlsx` → `docs/api/md/*.md` → `docs/api/api-list.md`/`.json` → `src/api/*.py`+`registry.py` 순으로 이어지는 API 명세 자동 생성 체인이며 `generate_api_docs.py`가 xlsx→md 변환+목록 갱신을 한 번에 묶어 실행함), `manage/run/`(텔레그램/터미널/웹 클라이언트 실행 스크립트, 과거 프로젝트 루트의 `run-*.bat`/`run-*.sh`), `manage/install/`(신규 클론 환경 설치 스크립트, 과거 루트의 `install-project.bat`/`.sh`) — `manage/run/`·`manage/install/`의 `.bat`/`.sh`는 프로젝트 루트에서 두 단계 아래로 옮겨졌으므로 내부 `cd`가 `%~dp0..\..`(bat)/`$(dirname ...)/../..`(sh)로 프로젝트 루트까지 되짚어가도록 되어 있다. `docs/`에는 `.py` 파일이 전혀 없다(전부 `manage/generate/`로 이동됨). 각 스크립트의 상세 역할·삭제 가능 여부·산출물·실행 시점은 `docs/개발환경/manage.md` 참고.
 - `src/msgr/telegram/` — `tel_receive.py`/`tel_send.py`(텔레그램 Bot API 전송계층). 추후 다른 메신저(디스코드/슬랙 등)를 추가하면 `src/msgr/<백엔드>/`로 나란히 추가할 예정. (과거 `src/messenger/`였으나 `src/msgr/`로 리네임됨 — 상세는 `docs/개발환경/개발환경.md` 참고.)
 - `src/commands/` — 명령 핸들러(`{name}_command.py`, 함수 1개 = 명령 1개). 메신저 종류와 무관한 공용 로직이라 `msgr/`가 아닌 `src/` 바로 아래 둠 — `telegram.py`/`terminal.py`/`web`이 동일하게 호출한다.
+- `src/commands/registry.py` — **명령 등록의 단일 소스**. `COMMON_COMMANDS`에 `CommandSpec`으로 한 번만 선언하면 세 클라이언트가 `build_common_commands(ctx)` 한 줄로 가져다 쓴다. 클라이언트마다 다른 의존성(문서/사진 전송기, 하위 명령 실행 콜백, brk·wave·grid 모니터)은 각 클라이언트가 상속한 `CommandContext`가 주입한다 — 핸들러들의 선택 파라미터가 전부 `None` 기본값이라 값을 못 주는 클라이언트는 `None`을 넘기면 되고 이는 인자 생략과 동작이 같다. **웹은 `monitor()`로 반드시 자기 인스턴스의 모니터를 넘겨야 한다**(전역 싱글턴을 쓰면 마지막 접속자가 다른 사용자의 brk/wave/grid 명령을 가로챈다). 도입 전에는 동일한 위임 래퍼가 세 파일에 100개 가까이 복사돼 있었다.
+- `src/utils/logging_config.py` — 로깅 설정(`setup_logging()`은 세 진입점이 시작 시 호출). **백그라운드 모니터의 진단 출력만** 로거로 보내고, `terminal_ui.py` 프롬프트나 배너처럼 사용자에게 지금 보여주는 화면은 `print()`로 남긴다 — 전자는 사후에 되짚어야 할 기록이고 후자는 UI다. 콘솔은 기존 `print`와 같은 모양(메시지만), 파일(`logs/app.log`, 5MB×5 로테이션)에는 타임스탬프·레벨·모듈명까지 남긴다. 새 진단 로그는 `get_logger(__name__)`을 쓰고, 오류 경로는 `logger.exception()`으로 트레이스백을 남길 것.
+- `src/utils/console.py` — 표준 스트림 UTF-8 강제(`force_utf8_streams()`). Windows cp949 콘솔에서 이모지/한글이 깨지는 것을 막되, `reconfigure`가 없는 스트림(pytest의 `DontReadFromInput`, 파이프 등)은 건너뛴다 — 무조건 호출하면 그런 환경에서 **모듈 import 자체가 실패**한다.
 - `src/web/` — 웹 인터페이스 구현 전체. `app.py`(FastAPI — 정적 파일 서빙 + `/api/*` 순수 JSON 라우트, Jinja2 등 서버 템플릿 없음), `client.py`(`WebClient` — 브라우저 세션 1개당 인스턴스 1개, **다중 사용자**라 config.py 앱키로 자동 로그인하지 않고 설정 화면에서 사용자별 client_key/client_secret을 받아 메모리에만 보관), `session_store.py`(쿠키 `kbsec_web_sid` ↔ WebClient 인메모리 매핑), `spec_browser.py`(`docs/api/md` 폴더 구조를 그대로 읽어 웹 "API 명세" 화면 트리를 구성), `static/`(순수 HTML+CSS+JS 프론트엔드 — 외부 라이브러리/CDN 없음). **주의**: 설정값·자동매매 감시목록(`config/data/settings.json`)은 서버 공용이라 웹 사용자 간 공유된다(문서화된 제약).
   - **인증은 2계층이며 서로 별개다**: ① 화면 접속 관문 — `app.py`의 opt-in HTTP Basic Auth 미들웨어. `KBSEC_WEB_BASIC_AUTH_USER`/`..._PASS` 환경변수(없으면 config.py의 `web_basic_auth_user`/`web_basic_auth_pass`)를 **둘 다** 채웠을 때만 켜지며, 정적 파일과 `/api/*` 전 경로를 막는다. ② KB 계좌 로그인 — ①을 통과한 뒤 설정 화면에서 입력하는 client_key/client_secret. 기본 바인딩은 `127.0.0.1`이라 로컬에서는 ①이 꺼져 있어도 되지만, `KBSEC_WEB_HOST=0.0.0.0` 등으로 외부에 노출할 때는 ①을 반드시 켠다. 비밀번호 비교는 non-ASCII 때문에 `secrets.compare_digest`에 str을 넘기면 500이 나므로 UTF-8 바이트로 인코딩해 비교한다(회귀 주의).
 - `src/run/telegram.py` — `TelegramBot`: 텔레그램 폴링 기반 운영 클라이언트. (과거 `main.py`였으나 런처 인자 `telegram`과 이름을 맞추기 위해 `telegram.py`로 리네임됨.)
@@ -118,15 +123,19 @@ KB증권 REST API를 활용한 텔레그램/터미널/웹 기반 자동매매 �
 
 명령어를 추가/변경/삭제할 때마다 **아래를 항상 동시에 완료**해야 합니다. 하나라도 빠지면 코드·도움말·AI 가이드가 불일치해 오작동합니다.
 
-1. `src/commands/{name}_command.py`에 `handle_{name}(args, session, ...)` 구현
-2. `src/run/telegram.py`의 `self.commands` 딕셔너리와 `HELP_TEXT`에 등록
-3. `src/run/terminal.py`의 `TerminalClient.commands` 딕셔너리에도 동일하게 등록
-4. `src/web/client.py`의 `WebClient.commands` 딕셔너리에도 동일하게 등록 (트리플 클라이언트 아키텍처 — `telegram.py`/`terminal.py`/`web/client.py`는 같은 핸들러를 공유해야 함)
+1. `src/commands/{name}_command.py`에 `handle_{name}(args: list[str], session, ...) -> str` 구현
+2. **`src/commands/registry.py`의 `COMMON_COMMANDS`에 `CommandSpec` 한 줄 추가** — 이 한 줄이 telegram/terminal/web 세 클라이언트에 동시에 등록된다. 클라이언트 파일은 건드리지 않는다.
+   - `needs=("session",)`처럼 핸들러가 받을 의존성을 선언하면 각 클라이언트의 `CommandContext`가 알아서 주입한다(`document_sender`/`photo_sender`/`execute_command`, brk·wave·grid는 `monitor_kwarg`).
+   - 클라이언트마다 **동작 자체가 달라야 하는** 명령(`login`/`help`/`api`/`start`/`stop`/`power`/`종료`)만 예외적으로 각 클라이언트에 직접 등록한다 — 목록은 `registry.CLIENT_SPECIFIC` 참고.
+3. `src/run/telegram.py`의 `HELP_TEXT`에 도움말 한 줄 추가 (세 클라이언트가 이 문자열을 공유한다)
+4. **`src/commands/command_meta.py`의 `COMMANDS_META`에 한글 명령 항목 추가** — 명령어는 **한글이 기본, 영문은 숨김 별칭** 체계다(`login`과 저수준 `/api`·`/call`·`/info`·`/list`만 영문 예외). 각 클라이언트는 `self.commands`를 만든 뒤 `self.commands.update(korean_command_map(self.commands))` 한 줄로 한글 별칭을 일괄 등록한다. `command_meta.py`는 이 한글↔영문 매핑의 단일 소스이자, 웹 "/" 자동완성 드롭다운(`GET /api/commands`)의 데이터 소스다. (AI 변환기는 계속 영문을 출력하고 별칭으로 실행되므로 `docs/command_guide_for_ai.md`는 영문 기준을 유지한다.)
 5. **`docs/command_guide_for_ai.md`에 해당 명령어 섹션 추가/수정** — 이 문서는 `src/utils/ai_command_converter.py`가 Claude API 시스템 프롬프트에 그대로 삽입하는 실제 런타임 참조 문서다. 갱신하지 않으면 AI가 자연어를 잘못된 명령어로 변환한다.
 6. `docs/features.md`의 해당 기능 상태도 필요시 갱신
-7. **`src/commands/command_meta.py`의 `COMMANDS_META`에 한글 명령 항목 추가** — 명령어는 **한글이 기본, 영문은 숨김 별칭** 체계다(`login`과 저수준 `/api`·`/call`·`/info`·`/list`만 영문 예외). 각 클라이언트는 `self.commands`(영문 키)를 만든 뒤 `self.commands.update(korean_command_map(self.commands))` 한 줄로 한글 별칭을 일괄 등록한다. `command_meta.py`는 이 한글↔영문 매핑의 단일 소스이자, 웹 "/" 자동완성 드롭다운(`GET /api/commands`)의 데이터 소스다. 새 명령을 추가하면 여기에도 등록해야 자동완성·한글 별칭이 반영된다. (AI 변환기는 계속 영문을 출력하고 별칭으로 실행되므로 `docs/command_guide_for_ai.md`는 영문 기준을 유지한다.)
+7. `uv run pytest tests/`로 확인 — `tests/test_command_parity.py`가 세 클라이언트 명령 집합 일치와 한글 별칭 등록을, `tests/test_registry.py`가 바인딩 인자를 검사한다.
 
-**예외 — `commands` 딕셔너리를 거치지 않는 명령들**: `/call`·`/info`·`/list`(저수준 직접 호출)와 `/{API코드}-{API명}` 형태의 API 전체 자동 실행 커맨드 74개는 위 2~4번(`commands` 딕셔너리 등록)을 따르지 않는다. 이들은 각 클라이언트 `_dispatch_direct()`의 "알 수 없는 명령어" 폴백 직전에서 하드코딩 분기(`/call`류) 또는 동적 판정(`src/utils/direct_api_command.py`의 `resolve_direct_command`)으로 처리된다. 74개 전용 커맨드는 `docs/api/api-list.json` + `docs/api/md/*.md`만 읽어 `api_spec.py` 로직을 재사용하므로, 명세가 추가/변경되면 코드 수정 없이 자동으로 새 커맨드가 생긴다. 이들은 5번(`docs/command_guide_for_ai.md`)에도 **의도적으로 등록하지 않는다** — AI 자연어 변환이 이 토큰을 스스로 만들어 실거래 주문을 잘못 실행하는 것을 막기 위함. 사람이 읽는 요약은 `docs/개발환경/command_summary.md` 9절에 있다.
+> 📌 **과거 규칙과의 차이**: 예전에는 2~4번이 "telegram/terminal/web 세 파일의 `commands` 딕셔너리에 각각 등록"이었다. 세 클라이언트가 동일한 위임 래퍼를 100개 가까이 복사해 들고 있었기 때문인데, `src/commands/registry.py` 도입으로 **한 줄 선언으로 대체**됐다. 클라이언트 파일에 `handle_command_*` 래퍼를 새로 추가하지 말 것 — 그건 레지스트리로 표현할 수 없는 진짜 클라이언트별 차이일 때만 쓴다.
+
+**예외 — `commands` 딕셔너리를 거치지 않는 명령들**: `/call`·`/info`·`/list`(저수준 직접 호출)와 `/{API코드}-{API명}` 형태의 API 전체 자동 실행 커맨드 74개는 위 2번(레지스트리 등록)을 따르지 않는다. 이들은 각 클라이언트 `_dispatch_direct()`의 "알 수 없는 명령어" 폴백 직전에서 하드코딩 분기(`/call`류) 또는 동적 판정(`src/utils/direct_api_command.py`의 `resolve_direct_command`)으로 처리된다. 74개 전용 커맨드는 `docs/api/api-list.json` + `docs/api/md/*.md`만 읽어 `api_spec.py` 로직을 재사용하므로, 명세가 추가/변경되면 코드 수정 없이 자동으로 새 커맨드가 생긴다. 이들은 5번(`docs/command_guide_for_ai.md`)에도 **의도적으로 등록하지 않는다** — AI 자연어 변환이 이 토큰을 스스로 만들어 실거래 주문을 잘못 실행하는 것을 막기 위함. 사람이 읽는 요약은 `docs/개발환경/command_summary.md` 9절에 있다.
 
 ### 코드 생성 규칙
 

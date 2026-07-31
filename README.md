@@ -579,8 +579,9 @@ KB API에는 실시간 웹소켓이 없어 REST 폴링 방식입니다 — 전�
 ## 🛠️ 개발 (기여하기)
 
 ```bash
-uv sync                                 # 의존성 + 개발 도구(ruff) 설치
+uv sync                                 # 의존성 + 개발 도구(ruff, pytest) 설치
 
+uv run pytest tests/                    # 테스트
 uv run ruff check src manage            # 린트
 uv run ruff format src manage           # 포맷 (--check 를 붙이면 검사만)
 uv run python -m compileall -q src manage   # 문법
@@ -589,8 +590,11 @@ node --check src/web/static/js/app.js   # 웹 JS
 
 - **Python 3.11 이상**을 지원합니다. CI가 3.11/3.12/3.13에서 전체 모듈 import를 검증하므로, 3.12+ 전용 문법·표준 라이브러리 API는 쓰지 마세요.
 - 린터·포매터는 **ruff** 하나로 통일했고 설정은 `pyproject.toml`의 `[tool.ruff]`에 있습니다. 규칙을 끌 때는 이유를 주석으로 남깁니다.
+- **새 명령어를 추가할 때는 `src/commands/registry.py`의 `COMMON_COMMANDS`에 한 줄만 추가**하면 텔레그램/터미널/웹 세 클라이언트에 동시에 등록됩니다. 클라이언트 파일에 위임 래퍼를 새로 만들지 마세요 — 자세한 절차는 [CLAUDE.md](CLAUDE.md)의 "필수 규칙" 참고.
+- 테스트는 **KB API를 호출하지 않습니다**(명령 등록 구조·레지스트리 바인딩·JSON 원자성 검증). 실제 키 없이도 돌아가며, 주문/시세처럼 실제 호출이 필요한 기능은 터미널 클라이언트로 직접 확인해야 합니다.
 - `src/api/*.py`는 **자동 생성 파일**입니다. 손으로 고치지 말고 `docs/api/md`를 고친 뒤 `uv run python -m manage.generate.generate_api_client`를 실행하세요 — CI가 "재생성 후 diff 없음"을 검사하므로 재생성을 빠뜨리면 실패합니다.
 - `config/data/*.json`(설정·예약·쿨다운)을 다루는 코드는 반드시 `src/utils/json_store.py`를 경유하세요. 자동매매 모니터 스레드와 웹 사용자가 동시에 쓰는 파일이라 원자적 쓰기 + 락이 필요합니다.
+- 백그라운드 모니터의 진단 출력은 `src/utils/logging_config.py`의 `get_logger(__name__)`를 씁니다(파일 로그 `logs/app.log`에 남음). 사용자에게 지금 보여주는 화면(프롬프트·배너)은 `print()` 그대로 두세요.
 - 커밋 메시지는 `<타입>: <한글 요약>` 형식입니다(`feat`/`fix`/`docs`/`refactor`/`web`/`mst`/`skill`/`install`).
 - 서식만 바꾼 대규모 커밋은 `.git-blame-ignore-revs`에 등록되어 있습니다. 로컬 blame에서 제외하려면 최초 1회 `git config blame.ignoreRevsFile .git-blame-ignore-revs`를 실행하세요.
 
