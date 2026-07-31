@@ -25,6 +25,24 @@ jobs:
       - name: ruff format --check
         run: uv run ruff format --check src manage
 
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Create config from template
+        # 테스트는 KB API를 호출하지 않지만 클라이언트 import에 config 모듈이 필요하다.
+        run: cp config/config.example.py config/config.py
+      - run: uv sync --frozen --python ${{ matrix.python-version }}
+      - run: uv run --python ${{ matrix.python-version }} pytest tests/
+
   build:
     name: Import check (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
