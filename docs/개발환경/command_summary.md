@@ -9,7 +9,7 @@
   동작**하므로 어느 쪽을 입력해도 됩니다 — 예: `/상태` = `/status`, `/종목정보 105560` =
   `/srch 005930`. AI 자연어 변환은 여전히 영문 명령을 출력하며 이 별칭으로 실행됩니다.
   한글↔영문 매핑의 단일 소스는 `src/commands/command_meta.py`입니다.
-- 세 클라이언트(`src/run/main.py`/`src/run/terminal.py`/`src/web/client.py`) 모두 같은
+- 세 클라이언트(`src/run/telegram.py`/`src/run/terminal.py`/`src/web/client.py`) 모두 같은
   `src/commands/*_command.py` 핸들러를 공유하므로 동작은 동일합니다. 여기 예시는 `/`
   접두어 기준(텔레그램/웹)으로 적었습니다 — 터미널에서도 `/` 그대로 입력하면 됩니다.
 - 국내 종목은 6자리 코드(`005930`), 해외(미국) 종목은 티커(`IONQ`)를 사용합니다.
@@ -831,7 +831,7 @@ API를 호출**한다 — 즉 `/감시시작` 이후에는 사람이 개입하�
 ```
 
 **동작 방식**: API 호출 없이 각 클라이언트에 하드코딩된 `HELP_TEXT` 문자열을 그대로
-반환한다(`src/run/main.py`/`terminal.py`/`web/client.py`). 인증/조회/매매/설정/예약·
+반환한다(`src/run/telegram.py`/`terminal.py`/`web/client.py`). 인증/조회/매매/설정/예약·
 기록/자동매매/API 직접호출 카테고리별 명령을 한 화면에 요약해 보여준다. (9절의 API
 전체 자동 실행 커맨드 74개는 목록이 길어 `/도움말`에는 포함하지 않으며, `/api list`나
 웹 트리로 찾는다.)
@@ -916,7 +916,7 @@ INPUT 표의 **모든 입력 필드**에 값을 넣을 수 있으며, **두 가�
 `src/utils/direct_api_command.py`가 핵심 로직이며, `/api`와 동일하게
 `docs/api/api-list.json`(코드→md 파일 매핑) + `docs/api/md/*.md`(INPUT 표 파싱)만
 읽어 실행한다(`registry.py`/`CODE_TO_MODULE` 무관). 3개 클라이언트
-(`src/run/main.py`/`src/run/terminal.py`/`src/web/client.py`)의 `_dispatch_direct()`
+(`src/run/telegram.py`/`src/run/terminal.py`/`src/web/client.py`)의 `_dispatch_direct()`
 가 "알 수 없는 명령어" 처리 직전에 토큰을 판별해 공통으로 호출하므로, `commands`
 딕셔너리에 74개를 개별 등록하지 않는다(`/call`·`/info`·`/list`와 같은 전례).
 같은 이유로 `docs/command_guide_for_ai.md`에는 의도적으로 등록하지 않았다 — AI
@@ -969,7 +969,7 @@ INPUT 표의 **모든 입력 필드**에 값을 넣을 수 있으며, **두 가�
 | `stls` | `손절매`, `자동손절` | (전용 설정 명령 없음) | 자동 손절/익절 감시 시작/중단(`/익절`·`/손절` 기준값 사용) | `/감시시작 stls` |
 | `hold` | `보유감시`, `보유` | (전용 설정 명령 없음) | 보유종목 변경 감지 시작/중단 | `/감시시작 hold` |
 
-**동작 방식**: `src/run/main.py`/`terminal.py`/`src/web/client.py`의 `_dispatch_monitor()`가
+**동작 방식**: `src/run/telegram.py`/`terminal.py`/`src/web/client.py`의 `_dispatch_monitor()`가
 `AUTOTRADE_FEATURE_ALIASES.get(feature, feature)`로 먼저 한글→영문 변환을 시도한 뒤,
 `_AUTOTRADE_FEATURES = ("stls", "gdcrs", "ddcrs", "trst", "hold", "brk", "wave", "grid")`
 목록에 있는 내부 키인지 확인한다. `stls`/`hold`는 전용 설정 명령이 없어(감시 목록을

@@ -104,13 +104,13 @@ KB증권 OpenAPI를 활용한 텔레그램/터미널/웹 기반 자동매매 Age
 | 명령 예약 (`rsv`) | ✅ | `src/commands/rsv_command.py`, `src/utils/schedule_manager.py` |
 | 체결 내역 CSV (`log`) | ✅ | `src/commands/log_command.py`, `src/utils/trade_logger.py` |
 | 체결 내역 AI 분석 (`anss`) | ✅ | `src/commands/anss_command.py`, `src/utils/trade_analyzer.py` |
-| 일일 거래 요약 자동 전송 (매일 15:31) | ✅ | `src/run/main.py` (`_daily_report_job`) |
+| 일일 거래 요약 자동 전송 (매일 15:31) | ✅ | `src/run/telegram.py` (`_daily_report_job`) |
 
 ## 6. AI 자연어 명령 변환
 
 | 기능 | 상태 | 담당 파일 | 비고 |
 |---|---|---|---|
-| `/` 유무로 커맨드·자연어 구분 | ✅ | `src/run/main.py`/`src/run/terminal.py`의 `process_command`/`_dispatch_direct` | `/`로 시작하면 AI를 거치지 않고 곧바로 실행(예: `/매수 105560 10`), `/` 없으면 단어가 실제 명령어와 같아도 무조건 자연어로 취급해 Claude로 보낸다(예: `buy 005930 10`도 자연어). rsv 예약 재실행처럼 이미 해석된 문자열을 신뢰하고 즉시 실행해야 하는 내부 호출은 `_dispatch_direct()`로 이 판단 자체를 우회한다 |
+| `/` 유무로 커맨드·자연어 구분 | ✅ | `src/run/telegram.py`/`src/run/terminal.py`의 `process_command`/`_dispatch_direct` | `/`로 시작하면 AI를 거치지 않고 곧바로 실행(예: `/매수 105560 10`), `/` 없으면 단어가 실제 명령어와 같아도 무조건 자연어로 취급해 Claude로 보낸다(예: `buy 005930 10`도 자연어). rsv 예약 재실행처럼 이미 해석된 문자열을 신뢰하고 즉시 실행해야 하는 내부 호출은 `_dispatch_direct()`로 이 판단 자체를 우회한다 |
 | 자연어 → 명령어 변환 (Claude API) | ✅ | `src/utils/ai_command_converter.py` | `docs/command_guide_for_ai.md`를 시스템 프롬프트에 삽입, ephemeral 프롬프트 캐싱 |
 | 종목명 → 종목코드 로컬 해석 | ✅ | `src/utils/stock_resolver.py` | `buy`/`sell`/`srch`/`investor`는 Claude가 종목코드를 직접 추측하지 않고 종목명을 그대로 넘기면, `mst/api/` 로컬 검색으로 결정적으로 코드를 확정한다(코드 오추측 방지). `buy`/`sell`/`srch`는 국내 검색이 비면 해외(미국) 티커로 한 번 더 검색한다(`investor`는 해외 API 자체가 없어 국내 전용 유지). 검색 결과가 2건 이상이면 번호 선택 세션(`StockSelectionPending`)으로 사용자에게 후보를 보여주고 선택받는다. `rsv`에 중첩된 명령은 예외(기존처럼 Claude가 직접 코드로 변환) |
 | 실행 전 확인/선택 UI | ✅ | `src/utils/command_executor.py`, `src/run/command_pipeline.py`, `src/utils/terminal_ui.py`, `src/web/static/js/app.js` | 확인은 **터미널에서 Enter(그 외 키는 취소)**, **텔레그램에서 ✅/❌ 인라인 버튼 탭**, **웹에서 화면 버튼 클릭**으로 한다. 후보가 여럿인 선택(종목명/API명/`/api` 필드값)은 터미널은 화살표 `↑↓`+Enter 또는 번호 직접 입력, 텔레그램은 후보별 인라인 버튼 탭, 웹은 후보별 버튼 클릭으로 고른다. 세션 해석 로직 자체는 세 클라이언트가 공유하는 텍스트("y"/"n"/1-based 번호) 기반이라 변하지 않고, 그 텍스트를 어떻게 입력받는지만 클라이언트별로 다르다 |
@@ -131,7 +131,7 @@ KB증권 API에는 실시간 웹소켓이 없어, 실시간 시세가 필요한 
 | 분할매매 (`wave`) | ✅ | `src/utils/wave_monitor.py`, `src/commands/wave_command.py` | |
 | 그리드 트레이딩 (`grid`) | ✅ | `src/utils/grid_monitor.py`, `src/commands/grid_command.py` | |
 | 보유종목 변경 감지 (`hold`) | ✅ | `src/utils/holdings_monitor.py` | `SSQM1801`(보유) + `SSQM2341`(체결내역 매칭 후 CSV 기록) |
-| `start`/`stop` 통합 디스패치 | ✅ | `src/run/main.py`/`src/run/terminal.py`의 `_dispatch_monitor` | |
+| `start`/`stop` 통합 디스패치 | ✅ | `src/run/telegram.py`/`src/run/terminal.py`의 `_dispatch_monitor` | |
 
 ### 폴링 모니터 공용 인프라
 
@@ -161,7 +161,7 @@ brk/wave/grid/holdings 등 각 모니터가 공통으로 쓰는 threading 폴링
 | 종목마스터 | 로컬 파일(`mst/api/openapi_field_*.mst`) — API 호출 불필요 |
 | src/api/ 모듈 생성 방식 | `manage/generate/generate_api_client.py`가 명세(md)에서 자동 생성 |
 | 자동매매 모니터 구조 | `src/utils/monitor_base.py` 공용 베이스 상속 |
-| 트리플 클라이언트 공용 파이프라인 | `src/run/command_pipeline.py`(`CommandPipelineMixin`) — main.py(텔레그램)/terminal.py(터미널)/web(브라우저) 공유 |
+| 트리플 클라이언트 공용 파이프라인 | `src/run/command_pipeline.py`(`CommandPipelineMixin`) — telegram.py(텔레그램)/terminal.py(터미널)/web(브라우저) 공유 |
 | 웹 인터페이스 | `src/web/`(FastAPI JSON API + 순수 HTML/CSS/JS, 서버 템플릿 없음), 실행은 `src/run/web.py`(`manage/run/run-web.*`) — 브라우저 쿠키당 `WebClient` 1개(다중 사용자, 각자 앱키로 로그인), 시크릿은 서버 메모리에만 보관. 실행 화면의 출력/히스토리/확인 프롬프트는 페이지 이동·새로고침 후에도 유지(sessionStorage + `/api/pending`), 로그인 상태에선 토큰재발급·화면초기화·로그아웃(KB `/oauth2/revoke` 토큰폐기) 버튼 제공. 단 설정값/자동매매 감시목록(`config/data/settings.json`)은 서버 공용 |
 | 웹 API 명세 탐색/테스트 | `src/web/spec_browser.py` + `src/web/static/api.html` — `docs/api/md` 폴더 구조 그대로 트리 탐색, 명세 md 열람, INPUT 폼(기본값: 선택지 첫 코드/필수는 공백 채움/그 외 빈 문자열) 편집 후 실제 KB API 테스트 호출(JSON 응답 원문 표시). 주문 계열(SSAM/SKAM)은 경고+확인 대화상자 |
 

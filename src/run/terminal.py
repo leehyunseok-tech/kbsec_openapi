@@ -1,7 +1,7 @@
 """
 KB증권 API 터미널 클라이언트 (듀얼 클라이언트 아키텍처).
 
-main.py(TelegramBot)와 동일한 src/commands/*.py 핸들러를 공유하는
+telegram.py(TelegramBot)와 동일한 src/commands/*.py 핸들러를 공유하는
 TerminalClient — 텔레그램 없이 터미널에서 봇 명령어를 그대로 테스트할 수 있다.
 추가로 API 코드 기반 저수준 직접 호출(call/info/list)도 제공한다.
 
@@ -13,7 +13,7 @@ TerminalClient — 텔레그램 없이 터미널에서 봇 명령어를 그대�
 (`docs/features.md` 참고).
 
 '/'로 시작하면 명확한 커맨드로 간주해 AI 없이 곧바로 실행되고, '/' 없이 입력하면
-자연어로 간주해 무조건 Claude로 변환 후 확인을 거쳐 실행된다(main.py와 동일 규칙).
+자연어로 간주해 무조건 Claude로 변환 후 확인을 거쳐 실행된다(telegram.py와 동일 규칙).
 
 명령어:
   /login real                  로그인 (토큰 발급)
@@ -103,10 +103,10 @@ LOW_LEVEL_HELP = """── 저수준 직접 호출 (API 코드 기반) ──
 
 
 class TerminalClient(CommandPipelineMixin):
-    """main.py의 TelegramBot과 동일한 명령 핸들러를 공유하는 터미널 클라이언트.
+    """telegram.py의 TelegramBot과 동일한 명령 핸들러를 공유하는 터미널 클라이언트.
 
     AI 자연어 변환 이후의 처리(종목명/API명 해석, 선택/확인 세션, 일괄 실행)는
-    main.py와 공유하는 CommandPipelineMixin(src/run/command_pipeline.py)에 있다.
+    telegram.py와 공유하는 CommandPipelineMixin(src/run/command_pipeline.py)에 있다.
     """
 
     def __init__(self):
@@ -178,7 +178,7 @@ class TerminalClient(CommandPipelineMixin):
         return handle_status(args, self.session)
 
     def handle_command_help(self, args):
-        from src.run.main import HELP_TEXT
+        from src.run.telegram import HELP_TEXT
 
         return HELP_TEXT.strip() + "\n" + LOW_LEVEL_HELP
 

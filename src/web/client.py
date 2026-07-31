@@ -1,7 +1,7 @@
 """
 웹 인터페이스용 클라이언트 (듀얼 → 트리플 클라이언트 아키텍처의 세 번째 축).
 
-main.py(TelegramBot)/terminal.py(TerminalClient)와 동일하게 CommandPipelineMixin을
+telegram.py(TelegramBot)/terminal.py(TerminalClient)와 동일하게 CommandPipelineMixin을
 공유해 명령 처리(AI 변환 이후 종목명/API명 해석 → 확인/선택 세션 → 일괄 실행) 로직이
 세 클라이언트 모두 하나의 소스(src/run/command_pipeline.py)를 따르게 한다.
 
@@ -16,7 +16,7 @@ main.py(TelegramBot)/terminal.py(TerminalClient)와 동일하게 CommandPipeline
 
 브라우저 세션 1개 = WebClient 인스턴스 1개 = SessionManager(토큰) 1개 + 모니터
 스레드 세트 1벌. command_executor.py의 확인/선택 세션은 프로세스 전역 싱글턴이라
-user_id로 서로 구분해야 하는데(main.py는 텔레그램 chat_id, terminal.py는 고정
+user_id로 서로 구분해야 하는데(telegram.py는 텔레그램 chat_id, terminal.py는 고정
 CLI_USER_ID를 쓰는 것과 동일한 이유), 여기서는 웹 세션 쿠키 값 자체를 user_id로 쓴다.
 """
 
@@ -90,7 +90,7 @@ LOW_LEVEL_HELP = """── 저수준 직접 호출 (API 코드 기반) ──
 class WebClient(CommandPipelineMixin):
     """웹 브라우저 세션(쿠키) 하나에 대응하는 클라이언트.
 
-    main.py/terminal.py와 동일한 src/commands/*.py 핸들러를 공유한다. 다른 점은
+    telegram.py/terminal.py와 동일한 src/commands/*.py 핸들러를 공유한다. 다른 점은
     로그인(login) 방식과, 모니터 알림을 텔레그램 전송/콘솔 출력 대신 이 인스턴스의
     메모리 큐에 쌓아 프론트엔드가 폴링(/api/notifications)해 가져가게 하는 부분뿐이다.
     """
@@ -115,7 +115,7 @@ class WebClient(CommandPipelineMixin):
         self._notify_lock = threading.Lock()
         self.notifications = deque(maxlen=200)
 
-        # 주의: main.py/terminal.py처럼 set_brk_monitor() 등으로 전역 등록하지 않는다 —
+        # 주의: telegram.py/terminal.py처럼 set_brk_monitor() 등으로 전역 등록하지 않는다 —
         # 웹은 브라우저 세션마다 WebClient가 새로 생기므로, 전역 등록하면 마지막에 접속한
         # 사용자의 모니터가 다른 모든 사용자의 brk/wave/grid 명령을 가로챈다. 대신
         # handle_brk/handle_wave/handle_grid에 monitor 인자로 자기 것을 명시적으로 넘긴다.
@@ -236,7 +236,7 @@ class WebClient(CommandPipelineMixin):
 
         CommandPendingExecution은 confirm(예/아니오), 나머지(StockSelectionPending/
         ApiNameSelectionPending/ApiCallPending)는 공통 title()/option_labels()를 쓰는
-        select(번호 선택)로 통일해 다룬다 — main.py의 _buttons_for_session, terminal.py의
+        select(번호 선택)로 통일해 다룬다 — telegram.py의 _buttons_for_session, terminal.py의
         _prompt_for_session과 같은 분기 구조다.
         """
         session_mgr = get_session_manager()
@@ -247,7 +247,7 @@ class WebClient(CommandPipelineMixin):
             return {"kind": "confirm", "message": session.get_confirmation_message()}
         return {"kind": "select", "title": session.title(), "options": session.option_labels()}
 
-    # ── 명령 핸들러 (main.py/terminal.py와 동일하게 self.session 위임) ──
+    # ── 명령 핸들러 (telegram.py/terminal.py와 동일하게 self.session 위임) ──
     def handle_command_login(self, args):
         return "ℹ️ 웹에서는 우측 상단 '설정' 화면에서 앱키(client_key)/시크릿(client_secret)을 입력하면 자동으로 로그인됩니다."
 
@@ -255,7 +255,7 @@ class WebClient(CommandPipelineMixin):
         return handle_status(args, self.session)
 
     def handle_command_help(self, args):
-        from src.run.main import HELP_TEXT
+        from src.run.telegram import HELP_TEXT
 
         return HELP_TEXT.strip() + "\n" + LOW_LEVEL_HELP
 
@@ -467,7 +467,7 @@ class WebClient(CommandPipelineMixin):
     # ── 진입점 ────────────────────────────────────────────────────────
     def process_command(self, text):
         """
-        구분 기준은 오직 '/' 유무다 — terminal.py/main.py와 동일한 규칙.
+        구분 기준은 오직 '/' 유무다 — terminal.py/telegram.py와 동일한 규칙.
         '/'로 시작하면 명확한 커맨드로 간주해 AI 없이 곧바로 실행하고, '/' 없이
         입력되면 자연어로 간주해 무조건 Claude로 변환 후 확인을 거친다.
         """

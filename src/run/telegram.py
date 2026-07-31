@@ -4,7 +4,7 @@ KB증권 API 텔레그램 봇.
 운영: 텔레그램 폴링 기반 봇. 개발/테스트는 src/run/terminal.py를 사용하세요.
 
 사용법:
-  uv run python -m src.run.main   (또는 manage/run/run-main.bat / manage/run/run-main.sh)
+  uv run python -m src.run.telegram   (또는 manage/run/run-telegram.bat / manage/run/run-telegram.sh)
 """
 
 import sys
