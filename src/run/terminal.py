@@ -35,9 +35,9 @@ import sys
 
 # Windows 콘솔 기본 코드페이지(cp949)는 이모지/일부 한글 조합을 인코딩하지 못해
 # UnicodeEncodeError가 나므로, stdout/stderr를 UTF-8로 강제한다.
-sys.stdin.reconfigure(encoding="utf-8")
-sys.stdout.reconfigure(encoding="utf-8")
-sys.stderr.reconfigure(encoding="utf-8")
+from src.utils.console import force_utf8_streams
+
+force_utf8_streams(include_stdin=True)
 
 from src.commands.anss_command import handle_anss
 from src.commands.api_command import handle_api

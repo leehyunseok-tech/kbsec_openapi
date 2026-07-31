@@ -10,8 +10,9 @@ KB증권 API 텔레그램 봇.
 import sys
 import time
 
-sys.stdout.reconfigure(encoding="utf-8")
-sys.stderr.reconfigure(encoding="utf-8")
+from src.utils.console import force_utf8_streams
+
+force_utf8_streams()
 
 import schedule as schedule_lib
 

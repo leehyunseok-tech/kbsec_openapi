@@ -43,8 +43,9 @@ import threading
 import time
 import webbrowser
 
-sys.stdout.reconfigure(encoding="utf-8")
-sys.stderr.reconfigure(encoding="utf-8")
+from src.utils.console import force_utf8_streams
+
+force_utf8_streams()
 
 import uvicorn
 
