@@ -98,9 +98,23 @@ case "$TARGET" in
   terminal) DESC="터미널 클라이언트";                     SCRIPT="run-terminal.sh" ;;
   web)      DESC="웹 클라이언트 (http://localhost:8000)"; SCRIPT="run-web.sh" ;;
   -h|--help|help)
-    echo "사용법: run-kbsec-openapi [telegram|terminal|web] [추가인자...]"
+    echo "사용법: run-kbsec-openapi [telegram|terminal|web [token]] [--help|-h|help]"
+    echo
+    echo "세 클라이언트는 같은 명령을 공유합니다 — 어떤 방식으로 계좌와"
+    echo "상호작용하고 싶은지에 따라 골라 쓰면 됩니다."
     echo
     show_options
+    echo
+    echo "예시:"
+    echo "  ./run-kbsec-openapi                웹 클라이언트 실행 (기본값)"
+    echo "  ./run-kbsec-openapi terminal       터미널 클라이언트 실행"
+    echo "  ./run-kbsec-openapi telegram       텔레그램 Agent 실행"
+    echo "  ./run-kbsec-openapi web token      웹 클라이언트 실행 + 자동 로그인"
+    echo "  ./run-kbsec-openapi help           이 도움말 표시"
+    echo
+    echo "최초 실행 전: config/config.example.py 를 config/config.py 로 복사한 뒤"
+    echo "실제 KB증권 API 키를 채워 넣으세요."
+    echo "개별 스크립트로도 직접 실행할 수 있습니다: ./manage/run/run-*.sh"
     exit 0
     ;;
   *)
@@ -127,6 +141,28 @@ else
 fi
 echo "[OK] 통합 런처 생성: ./run-kbsec-openapi (및 run-kbsec-openapi.sh)"
 
+# -- 6) 클라이언트별 더블클릭 실행 숏컷 -------------------------
+# 웹-실행.sh / 터미널-실행.sh / 텔레그램-실행.sh — 파라미터를 몰라도
+# 파일탐색기(macOS Finder / Linux 파일관리자)에서 실행 권한만 있으면 바로
+# 열 수 있도록 클라이언트별로 하나씩 만든다. (파일관리자에 따라 더블클릭 시
+# "실행" 대신 편집기로 열리거나 확인창이 뜰 수 있음 — 그 경우 터미널에서
+# ./웹-실행.sh 처럼 직접 실행하면 된다.)
+for name_script_desc in "웹-실행:run-web.sh:웹 클라이언트" "터미널-실행:run-terminal.sh:터미널 클라이언트" "텔레그램-실행:run-telegram.sh:텔레그램 Agent"; do
+  IFS=: read -r shortcut_name target_script desc <<< "$name_script_desc"
+  target_arg="${target_script#run-}"
+  target_arg="${target_arg%.sh}"
+  cat > "${shortcut_name}.sh" <<SHORTCUT
+#!/usr/bin/env bash
+# KB증권 ${desc} 더블클릭 실행 숏컷 (Unix: macOS / Linux).
+# 실제 구현: manage/run/${target_script} (동일 동작: ./run-kbsec-openapi ${target_arg})
+# 종료: 실행된 창을 닫거나 Ctrl+C.
+cd "\$(dirname "\${BASH_SOURCE[0]}")" || exit 1
+exec ./manage/run/${target_script} "\$@"
+SHORTCUT
+  chmod +x "${shortcut_name}.sh"
+done
+echo "[OK] 더블클릭 실행 숏컷 생성: 웹-실행.sh / 터미널-실행.sh / 텔레그램-실행.sh"
+
 echo
 echo "============================================================"
 echo " 설치 완료. 다음 단계:"
@@ -138,4 +174,6 @@ echo "       ./run-kbsec-openapi            # 웹 클라이언트 (기본, http:
 echo "       ./run-kbsec-openapi terminal   # 터미널 클라이언트 (가장 빠른 시작)"
 echo "       ./run-kbsec-openapi telegram   # 텔레그램 Agent"
 echo "     (개별 스크립트도 그대로 사용 가능: ./manage/run/run-*.sh)"
+echo "  3. 또는 클릭 한 번으로: 웹-실행.sh / 터미널-실행.sh / 텔레그램-실행.sh"
+echo "     (종료하려면 실행된 창을 닫거나 Ctrl+C)"
 echo

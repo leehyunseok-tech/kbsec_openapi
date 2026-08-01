@@ -22,6 +22,15 @@ logs/
 /run-kbsec-openapi.sh
 /run-kbsec-openapi.bat
 
+# 클라이언트별 더블클릭 실행 숏컷 — 위와 동일하게 install-project.*가 생성하는
+# 로컬 산출물(리포에 커밋하지 않음).
+/웹-실행.bat
+/웹-실행.sh
+/터미널-실행.bat
+/터미널-실행.sh
+/텔레그램-실행.bat
+/텔레그램-실행.sh
+
 # 로컬 Claude Code 권한/설정 (개인 머신 전용, 팀 공유 대상 아님)
 .claude/
 .idea/
