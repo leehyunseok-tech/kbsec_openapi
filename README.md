@@ -82,7 +82,7 @@ install-kbsec-openapi.bat      # Windows (탐색기에서 더블클릭해도 됨
 - **Python** — https://www.python.org/downloads/ (Windows는 설치 시 "Add python.exe to PATH" 체크)
 - **uv** (파이썬 패키지 관리자) — 설치: `winget install --id=astral-sh.uv -e` (install-project 스크립트가 자동 설치해 줌)
 - KB증권 개발자포털에서 발급받은 **앱키(client_key) / 앱시크릿(client_secret)**
-- (텔레그램 Agent 사용 시) 텔레그램 봇 토큰([@BotFather](https://t.me/BotFather)) 및 Chat ID
+- (텔레그램 Agent 사용 시) 텔레그램 봇 토큰 및 Chat ID — [상세 설정 가이드](docs/텔레그램-설정.md) 참고, [@BotFather](https://t.me/BotFather)에서 발급
 - (자연어 명령 사용 시, 선택) [Anthropic API Key](https://platform.anthropic.com)
 
 ### 3. 의존성 설치
@@ -104,6 +104,7 @@ real_client_key = "실전용_앱키"
 real_client_secret = "실전용_앱시크릿"
 
 # (선택) 텔레그램 Agent — src/run/telegram.py(운영용 Agent) 사용 시 필요, src/run/terminal.py만 쓰면 불필요
+# 봇 토큰과 Chat ID 발급 방법: docs/텔레그램-설정.md 참고
 telegram_token = "텔레그램_봇_토큰"
 telegram_chat_id = "텔레그램_챗ID"
 
